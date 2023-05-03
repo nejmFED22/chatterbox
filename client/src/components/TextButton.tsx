@@ -26,7 +26,6 @@ export default function TextButton({
 }
 
 const styledButton = {
-  margin: "0.5rem 0.5rem 0rem",
   lineHeight: 1,
   fontWeight: 400,
   padding: { xs: "0.3rem 0.6rem", sm: "0.3rem 2rem" },

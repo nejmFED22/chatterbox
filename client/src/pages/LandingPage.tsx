@@ -4,17 +4,13 @@ import { z } from "zod";
 import TextButton from "../components/TextButton";
 
 const schema = z.object({
-  name: z.string().min(3).max(20),
+  username: z.string().min(3).max(20),
 });
 
 type FormValues = z.infer<typeof schema>;
 
 export default function LandingPage() {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isValid },
-  } = useForm<FormValues>({
+  const { register, handleSubmit, formState: { errors, isValid } } = useForm<FormValues>({
     mode: "onChange",
     resolver: async (data) => {
       try {
@@ -37,9 +33,10 @@ export default function LandingPage() {
   return (
     <Box sx={outerContainer}>
       <Typography variant="h1">
-        Welcome to Chatterb□x!
+        Welcome to Chatterb🄾x!
         <br />
         What's your name?
+        {/* □ ▣ ❑ ⛾ 🞔 🞑 ⌗ ⬚ 🞖*/}
       </Typography>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Box sx={formContainer}>
@@ -47,9 +44,9 @@ export default function LandingPage() {
             fullWidth
             id="username"
             variant="standard"
-            {...register("name", { required: true })}
-            error={Boolean(errors.name)}
-            helperText={errors.name?.message}
+            {...register("username", { required: true })}
+            error={Boolean(errors.username)}
+            helperText={errors.username?.message}
             sx={textFieldStyles}
             autoComplete="off"
           />
@@ -71,7 +68,7 @@ const formContainer = {
   flexDirection: { xs: "column", sm: "row" },
   maxWidth: "52rem",
   marginTop: { xs: "6rem", sm: "3rem" },
-  alignItems: { xs: "center", sm: "end" },
+  alignItems: "end",
 };
 
 const textFieldStyles = {
@@ -81,5 +78,5 @@ const textFieldStyles = {
 };
 
 const buttonContainer = {
-  marginTop: { xs: "2rem", sm: "0rem" },
+  padding: {xs: "1rem 0rem", sm: "0.5rem 0.5rem 0rem"},
 }
