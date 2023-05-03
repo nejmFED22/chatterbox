@@ -51,14 +51,30 @@ export default function MessageStack() {
       user: "Doe Doe",
       content: "Hello World again again!",
     },
+    {
+      id: 10,
+      user: "Doe Doe",
+      content: "Hello World again again!",
+    },
+    {
+      id: 11,
+      user: "Doe Doe",
+      content: "Hello World again again!",
+    },
+    {
+      id: 12,
+      user: "Doe Doe",
+      content: "Hello World again again!",
+    },
   ];
+
   return (
     <Stack sx={styledStack}>
       {mockMessages.map((message) => (
         <Card key={message.id}>
           <CardContent sx={styledCardContent(username === message.user)}>
-            <Typography variant="body1">{message.user}</Typography>
-            <Typography variant="h5">{message.content}</Typography>
+            <Typography variant="body2">{message.user}</Typography>
+            <Typography variant="h4">{message.content}</Typography>
           </CardContent>
         </Card>
       ))}
