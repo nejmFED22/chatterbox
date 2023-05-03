@@ -1,29 +1,32 @@
 import { Button } from "@mui/material";
+import { theme } from "../theme";
 
 interface Props {
     children: React.ReactNode;
     onClick?: () => void;
-    size?: "medium" | "large";
 }
 
-export default function TextButton({ children, size = "medium", onClick }: Props) {
+export default function TextButton({ children, onClick }: Props) {
     return (
-        <Button variant="outlined" size={size} type="submit" sx={styledButton} onClick={onClick}>
+        <Button variant="outlined" type="submit" sx={styledButton} onClick={onClick}>
             {children}
         </Button>
     )
 }
 
 const styledButton = {
-    margin: "0rem 0.5rem",
-    padding: "0.1rem 0.8rem",
-    backgroundColor: "#C1FF10",
-    color: "black",
-    borderColor: "black",
+    margin: "0.5rem 0.5rem 0rem",
+    lineHeight: 1,
+    fontWeight: 400,
+    padding: {xs: "0.3rem 0.3rem", sm: "0.3rem 2rem"},
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.primary.dark,
+    borderColor: theme.palette.primary.dark,
+    fontSize: {xs: "18px", sm: "24px"},
     textTransform: "none",
     "&:hover": {
-        backgroundColor: "black",
-        color: "white",
-        borderColor: "black",
+        backgroundColor: theme.palette.primary.dark,
+        color: theme.palette.primary.light,
+        borderColor: theme.palette.primary.dark,
     }
 }

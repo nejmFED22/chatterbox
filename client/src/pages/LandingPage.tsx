@@ -36,7 +36,7 @@ export default function LandingPage() {
 
   return (
     <Box sx={outerContainer}>
-      <Typography sx={textStyling}>
+      <Typography variant="h1">
         Welcome to Chatterb□x!
         <br />
         What's your name?
@@ -51,7 +51,9 @@ export default function LandingPage() {
             error={Boolean(errors.name)}
             helperText={errors.name?.message}
           />
-          <TextButton size="large">Continue</TextButton>
+          <Box>
+            <TextButton>Continue</TextButton>
+          </Box>
         </Box>
       </form>
     </Box>
@@ -62,13 +64,11 @@ const outerContainer = {
   padding: "45px",
 };
 
-const textStyling = {
-  fontSize: 100,
-};
-
 const formContainer = {
   display: "flex",
-  flexDirection: "row",
-  width: "50%",
-  marginTop: "3rem"
+  flexDirection: { xs: "column", sm: "row" },
+  maxWidth: "52rem",
+  marginTop: "3rem",  
+  alignItems: {xs: "center", sm: "end"},
 };
+
