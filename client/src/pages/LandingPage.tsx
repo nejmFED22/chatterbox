@@ -10,6 +10,10 @@ const schema = z.object({
 type FormValues = z.infer<typeof schema>;
 
 export default function LandingPage() {
+  
+  //Jag installerade @hookform/resolvers som David gjort i sitt exempel,
+  //men formuläret brjade strula så avinstallerade igen. 
+  //Kanske försöker igen vid ett senare tillfälle.
   const { register, handleSubmit, formState: { errors, isValid } } = useForm<FormValues>({
     mode: "onChange",
     resolver: async (data) => {
