@@ -13,9 +13,9 @@ export default function LandingPage() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm<FormValues>({
-    mode: "onSubmit",
+    mode: "onChange",
     resolver: async (data) => {
       try {
         const parsedData = schema.parse(data);
@@ -50,9 +50,11 @@ export default function LandingPage() {
             {...register("name", { required: true })}
             error={Boolean(errors.name)}
             helperText={errors.name?.message}
+            sx={textFieldStyles}
+            autoComplete="off"
           />
-          <Box>
-            <TextButton>Continue</TextButton>
+          <Box sx={buttonContainer}>
+            <TextButton disabled={!isValid}>Continue</TextButton>
           </Box>
         </Box>
       </form>
@@ -68,7 +70,16 @@ const formContainer = {
   display: "flex",
   flexDirection: { xs: "column", sm: "row" },
   maxWidth: "52rem",
-  marginTop: "3rem",  
-  alignItems: {xs: "center", sm: "end"},
+  marginTop: { xs: "6rem", sm: "3rem" },
+  alignItems: { xs: "center", sm: "end" },
 };
 
+const textFieldStyles = {
+  input: {
+    textAlign: "center",
+  },
+};
+
+const buttonContainer = {
+  marginTop: { xs: "2rem", sm: "0rem" },
+}
