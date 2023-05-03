@@ -1,18 +1,22 @@
 import { CloseOutlined } from "@mui/icons-material";
 import MenuIcon from "@mui/icons-material/Menu";
-import { Box, Container, IconButton, useMediaQuery } from "@mui/material";
+import {
+  Box,
+  Container,
+  IconButton,
+  useMediaQuery,
+  useScrollTrigger,
+} from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Slide from "@mui/material/Slide";
 import Typography from "@mui/material/Typography";
-import useScrollTrigger from "@mui/material/useScrollTrigger";
-import * as React from "react";
+import { ReactElement } from "react";
 
-interface Props {
-  children: React.ReactElement;
+interface HideOnScrollProps {
+  children: ReactElement;
 }
 
-function HideOnScroll(props: Props) {
-  const { children } = props;
+function HideOnScroll({ children }: HideOnScrollProps) {
   const trigger = useScrollTrigger();
 
   return (
