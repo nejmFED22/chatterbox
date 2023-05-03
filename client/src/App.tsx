@@ -1,13 +1,14 @@
-import './App.css'
-import TextButton from './components/TextButton'
+import { ThemeProvider } from "@emotion/react";
+import "./App.css";
+import TextButton from "./components/TextButton";
+import { theme } from "./theme";
 
 function App() {
-
   return (
-    <>
-      <TextButton>Continue</TextButton>
-    </>
-  )
+    <ThemeProvider theme={theme}>
+      <>
+        <TextButton>Continue</TextButton>
+      </>
+    </ThemeProvider>
+  );
 }
-
-export default App
