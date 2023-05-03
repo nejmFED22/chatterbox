@@ -8,7 +8,7 @@ import Header from "../components/header";
 export default function ChatPage() {
   return (
     <Fragment>
-      <Container sx={containerStyling}>
+      <Container sx={styledContainer}>
         <Header />
         <MessageStack />
         <MessageInput />
@@ -18,8 +18,6 @@ export default function ChatPage() {
   );
 }
 
-const containerStyling: CSSProperties = {
+const styledContainer: CSSProperties = {
   height: "100vh",
-  display: "flex",
-  flexDirection: "column",
 };
