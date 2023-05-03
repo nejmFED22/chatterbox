@@ -1,13 +1,12 @@
-import './App.css'
-import TextButton from './components/TextButton'
+import "./App.css";
+import Header from "./components/Header";
 
 function App() {
-
   return (
     <>
-      <TextButton>Continue</TextButton>
+      <Header />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
