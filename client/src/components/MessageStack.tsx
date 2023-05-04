@@ -1,9 +1,24 @@
-import { Card, CardContent, Stack, Typography } from "@mui/material";
+import {
+  Card,
+  CardContent,
+  Container,
+  Divider,
+  Stack,
+  Typography,
+  useMediaQuery,
+} from "@mui/material";
 import { CSSProperties, useState } from "react";
+import { theme } from "../theme";
 
-export default function MessageStack() {
+interface Props {
+  marginBottom: string;
+}
+
+export default function MessageStack({ marginBottom }: Props) {
   // We'll fetch this from the context eventually
   const [username] = useState("John Doe");
+
+  const largeScreen = useMediaQuery(theme.breakpoints.up("md"));
 
   const mockMessages = [
     {
@@ -69,27 +84,42 @@ export default function MessageStack() {
   ];
 
   return (
-    <Stack sx={styledStack}>
+    <Stack
+      divider={<Divider sx={styledDivider} />}
+      sx={{ marginBottom, ...styledStack }}
+    >
       {mockMessages.map((message) => (
         <Card key={message.id}>
-          <CardContent sx={styledCardContent(username === message.user)}>
-            <Typography variant="body2">{message.user}</Typography>
-            <Typography variant="h4">{message.content}</Typography>
-          </CardContent>
+          <Container>
+            <CardContent sx={styledCardContent(username === message.user)}>
+              <Typography variant="body2">{message.user}</Typography>
+              <Typography variant={largeScreen ? "h3" : "h4"}>
+                {message.content}
+              </Typography>
+            </CardContent>
+          </Container>
         </Card>
       ))}
     </Stack>
   );
 }
 
-function styledCardContent(isItMe: boolean): CSSProperties {
+function styledCardContent(isItMe: boolean) {
   const textAlign = isItMe ? "right" : "left";
   return {
     padding: 0,
+    "&:last-child": {
+      paddingBottom: 0,
+    },
     textAlign,
   };
 }
 
 const styledStack: CSSProperties = {
   width: "100%",
+};
+
+const styledDivider: CSSProperties = {
+  margin: "1.2rem 0",
+  borderColor: "black",
 };

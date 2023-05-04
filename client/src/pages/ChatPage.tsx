@@ -35,9 +35,7 @@ export default function ChatPage() {
         width={windowWidth}
       />
       <Box sx={{ width: windowWidth, ...styledBox }} component={"main"}>
-        <Container sx={{ marginBottom: inputHeight }}>
-          <MessageStack />
-        </Container>
+        <MessageStack marginBottom={`${inputHeight}px`} />
         <Container component={"div"} sx={styledInputContainer} ref={inputRef}>
           <MessageInput isMobile={isMobile} />
         </Container>
