@@ -39,7 +39,7 @@ export default function ChatPage() {
           <MessageStack />
         </Container>
         <Container component={"div"} sx={styledInputContainer} ref={inputRef}>
-          <MessageInput />
+          <MessageInput isMobile={isMobile} />
         </Container>
       </Box>
       <Sidebar
