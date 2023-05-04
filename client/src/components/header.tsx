@@ -29,9 +29,14 @@ function HideOnScroll({ children }: HideOnScrollProps) {
 interface HeaderProps {
   toggleSidebar: () => void;
   sidebarOpen: boolean;
+  drawerWidth: number;
 }
 
-export default function Header({ toggleSidebar, sidebarOpen }: HeaderProps) {
+export default function Header({
+  toggleSidebar,
+  drawerWidth,
+  sidebarOpen,
+}: HeaderProps) {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const handleSidebarToggle = () => {
@@ -39,12 +44,10 @@ export default function Header({ toggleSidebar, sidebarOpen }: HeaderProps) {
   };
   const getStyleAppBar = () => {
     return {
+      position: "absolute",
       background: "#000",
       padding: "0.15rem 0",
       height: "3.26rem",
-
-      width:
-        sidebarOpen || !isMobile ? `calc(100% - ${drawerWidth}px)` : "100%",
       mr: { sm: `${drawerWidth}px` },
       left: 0,
       "@media (max-width: 600px)": {
@@ -84,8 +87,6 @@ export default function Header({ toggleSidebar, sidebarOpen }: HeaderProps) {
   );
 }
 
-const drawerWidth = 240;
-
 const styledContainer = {
   display: "flex",
   justifyContent: "space-between",
@@ -98,13 +99,8 @@ const styledLeft = {
   justifyContent: "space-between",
   alignItems: "center",
   color: "#fff",
-  // fontSize: "1.875rem",
   paddingLeft: 0,
   fontWeight: "400",
-
-  // "@media (max-width: 600px)": {
-  //   fontSize: "1.25rem",
-  // },
 };
 
 const styledMenuIcon = {

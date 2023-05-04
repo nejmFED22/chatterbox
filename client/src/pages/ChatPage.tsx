@@ -1,9 +1,10 @@
-import { Box, Container } from "@mui/material";
+import { Box, Container, useMediaQuery } from "@mui/material";
 import { CSSProperties, Fragment, useEffect, useRef, useState } from "react";
 import MessageInput from "../components/MessageInput";
 import MessageStack from "../components/MessageStack";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/header";
+import { theme } from "../theme";
 
 export default function ChatPage() {
   const [inputHeight, setInputHeight] = useState(0);
@@ -13,6 +14,14 @@ export default function ChatPage() {
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+  function getBoxStyles() {
+    return {
+      position: "relative",
+      width: !isMobile ? `calc(100% - ${drawerWidth}px)` : "100%",
+    };
+  }
 
   useEffect(() => {
     inputRef.current && setInputHeight(inputRef.current.clientHeight);
@@ -20,8 +29,12 @@ export default function ChatPage() {
 
   return (
     <Fragment>
-      <Header toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
-      <Box sx={styledBox} component={"main"}>
+      <Box sx={getBoxStyles()} component={"main"}>
+        <Header
+          toggleSidebar={toggleSidebar}
+          drawerWidth={drawerWidth}
+          sidebarOpen={sidebarOpen}
+        />
         <Container sx={{ marginBottom: inputHeight }}>
           <MessageStack />
         </Container>
@@ -29,18 +42,16 @@ export default function ChatPage() {
           <MessageInput />
         </Container>
       </Box>
-      <Sidebar toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
+      <Sidebar
+        toggleSidebar={toggleSidebar}
+        sidebarOpen={sidebarOpen}
+        isMobile={isMobile}
+      />
     </Fragment>
   );
 }
 
-const styledBox: CSSProperties = {
-  position: "relative",
-};
-
 const styledInputContainer: CSSProperties = {
-  position: "fixed",
+  position: "sticky",
   bottom: 0,
-  left: 0,
-  right: 0,
 };

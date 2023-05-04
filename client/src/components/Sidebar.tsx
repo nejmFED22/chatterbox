@@ -8,7 +8,6 @@ import {
   IconButton,
   Link,
   Typography,
-  useMediaQuery,
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
@@ -24,14 +23,15 @@ const users = ["Jenny", "Nat", "Marcus", "Ellen"];
 export default function Sidebar({
   toggleSidebar,
   sidebarOpen,
+  isMobile,
 }: {
   toggleSidebar: () => void;
   sidebarOpen: boolean;
+  isMobile: boolean;
 }) {
   const handleSidebarToggle = () => {
     toggleSidebar();
   };
-  const isMobile = useMediaQuery("(max-width: 600px)");
 
   return (
     <Box sx={sidebarStyles}>
