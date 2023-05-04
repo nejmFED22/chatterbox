@@ -3,24 +3,26 @@ import { useState } from "react";
 
 export default function UsernameInputField() {
 
-  const loggedInUser = localStorage.getItem("username")
-  const [username, setUsername] = useState("");
+  const [loggedInUser, setLoggedInUser] = useState(localStorage.getItem("username"));
+  const [inputValue, setInputValue] = useState("");
 
-  const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUsername(event.target.value);
+  function handleUsernameChange(event: React.ChangeEvent<HTMLInputElement>) {
+    setInputValue(event.target.value);
   };
 
-  const handleSaveUsername = () => {
-    if (username !== "") {
-      localStorage.setItem("username", username);
-      setUsername("");
+  function handleLogin() {
+    if (inputValue !== "") {
+      localStorage.setItem("username", inputValue);
+      setLoggedInUser(inputValue);
+      setInputValue("");
     } else {
       console.log("Empty username is not allowed")
     }
   };
 
-  const handleLogout = () => {
+  function handleLogout() {
     localStorage.removeItem("username");
+    setLoggedInUser(null);
   };
 
   return (
@@ -32,10 +34,10 @@ export default function UsernameInputField() {
       )}
       <TextField
         label="Enter username"
-        value={username}
+        value={inputValue}
         onChange={handleUsernameChange}
       />
-      <Button variant="contained" onClick={handleSaveUsername}>
+      <Button variant="contained" onClick={handleLogin}>
         Save
       </Button>
       <Button variant="contained" onClick={handleLogout}>
