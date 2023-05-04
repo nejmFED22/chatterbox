@@ -153,7 +153,7 @@ const styledListItem = {
   textDecoration: "none",
   cursor: "pointer",
   // ...hoverStyles,
-  ...activeStyles,
+  // ...activeStyles,
 };
 
 const styledAccordion = {
@@ -167,8 +167,8 @@ const styledAccordion = {
 
 const styledAccordionSummary = {
   minHeight: "0px",
-  paddingLeft: "0px",
-  ...activeStyles,
+  padding: "0px",
+  // ...activeStyles,
 };
 
 const styledAccordionInner = {
