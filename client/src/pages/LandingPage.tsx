@@ -12,15 +12,21 @@ const schema = z.object({
 type FormValues = z.infer<typeof schema>;
 
 export default function LandingPage() {
-  const { loggedInUser, setLoggedInUser} = useSocket();  
+  const { loggedInUser, setLoggedInUser } = useSocket();
 
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<FormValues>({
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<FormValues>({
     mode: "onChange",
     resolver: zodResolver(schema),
   });
 
   const watchedUsername = watch("username");
-  const isValid = !errors.username && watchedUsername && watchedUsername.length >= 3;
+  const isValid =
+    !errors.username && watchedUsername && watchedUsername.length >= 3;
 
   const onSubmit = (data: FormValues) => {
     if (data.username) {
@@ -41,7 +47,7 @@ export default function LandingPage() {
       </Typography>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Box sx={formContainer}>
-        <TextField
+          <TextField
             fullWidth
             id="username"
             variant="standard"
@@ -85,5 +91,5 @@ const textFieldStyles = {
 };
 
 const buttonContainer = {
-  padding: {xs: "1rem 0rem", sm: "0.5rem 0.5rem 0rem"},
-}
+  padding: { xs: "1rem 0rem", sm: "0.5rem 0.5rem 0rem" },
+};

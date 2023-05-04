@@ -9,7 +9,7 @@ import { Socket, io } from "socket.io-client";
 import {
   ClientToServerEvents,
   ServerToClientEvents,
-} from "../../../server/communication";
+} from "../../../communications";
 
 interface ContextValues {
   socket: Socket;

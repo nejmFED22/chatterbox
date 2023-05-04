@@ -1,7 +1,9 @@
+// Servern skickar
 export interface ServerToClientEvents {
   message: (message: string) => void;
 }
 
+// Klienten skickar
 export interface ClientToServerEvents {
   message: (message: string) => void;
   join: (room: string) => void;

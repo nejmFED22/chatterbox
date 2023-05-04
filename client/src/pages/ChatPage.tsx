@@ -18,14 +18,17 @@ export default function ChatPage() {
     inputRef.current && setInputHeight(inputRef.current.clientHeight);
   }, [inputRef]);
 
+  // Not working, fix later
+  useEffect(() => {
+    window.scrollTo(0, document.body.scrollHeight);
+  }, []);
+
   return (
     <Fragment>
       <Header toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
       <Box sx={styledBox} component={"main"}>
-        <Container sx={{ marginBottom: inputHeight }}>
-          <MessageStack />
-        </Container>
-        <Container component={"div"} sx={styledInputContainer} ref={inputRef}>
+        <MessageStack marginBottom={`${inputHeight}px`} />
+        <Container ref={inputRef} sx={styledInputContainer}>
           <MessageInput />
         </Container>
       </Box>
@@ -37,7 +40,6 @@ export default function ChatPage() {
 const styledBox: CSSProperties = {
   position: "relative",
 };
-
 const styledInputContainer: CSSProperties = {
   position: "fixed",
   bottom: 0,

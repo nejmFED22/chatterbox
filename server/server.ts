@@ -4,7 +4,7 @@ import {
   InterServerEvents,
   ServerToClientEvents,
   SocketData,
-} from "./communication";
+} from "../communications";
 
 const io = new Server<
   ClientToServerEvents,
