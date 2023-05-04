@@ -1,4 +1,4 @@
-import { Box, ThemeProvider, Typography } from "@mui/material";
+import { Box, ThemeProvider } from "@mui/material";
 import { useState } from "react";
 import "./App.css";
 import Sidebar from "./components/Sidebar";
@@ -22,7 +22,6 @@ function App() {
       <>
         <Header toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
         <Sidebar toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
-        {loggedInUser ? <ChatPage /> : <LandingPage />}
       </>
       <Box
         component="main"
@@ -32,13 +31,7 @@ function App() {
           width: { sm: `calc(94% - ${drawerWidth}px)` },
         }}
       >
-        <Typography paragraph>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Rhoncus
-          dolor purus non enim praesent elementum facilisis leo vel. Risus at
-          ultrices mi tempus imperdiet. Semper risus in hendrerit gravida rutrum
-          qui
-        </Typography>
+        {loggedInUser ? <ChatPage /> : <LandingPage />}
       </Box>
     </ThemeProvider>
   );
