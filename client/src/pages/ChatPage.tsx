@@ -1,14 +1,18 @@
 import { Box, Container } from "@mui/material";
 import { CSSProperties, Fragment, useEffect, useRef, useState } from "react";
-import Header from "../components/Header";
 import MessageInput from "../components/MessageInput";
 import MessageStack from "../components/MessageStack";
 import Sidebar from "../components/Sidebar";
+import Header from "../components/header";
 
 export default function ChatPage() {
   const [inputHeight, setInputHeight] = useState(0);
-
   const inputRef = useRef<HTMLDivElement>(null);
+  const drawerWidth = 240;
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
 
   useEffect(() => {
     inputRef.current && setInputHeight(inputRef.current.clientHeight);
@@ -16,8 +20,8 @@ export default function ChatPage() {
 
   return (
     <Fragment>
+      <Header toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
       <Box sx={styledBox} component={"main"}>
-        <Header />
         <Container sx={{ marginBottom: inputHeight }}>
           <MessageStack />
         </Container>
@@ -25,7 +29,7 @@ export default function ChatPage() {
           <MessageInput />
         </Container>
       </Box>
-      <Sidebar />
+      <Sidebar toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
     </Fragment>
   );
 }
