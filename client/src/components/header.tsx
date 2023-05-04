@@ -26,20 +26,43 @@ function HideOnScroll({ children }: HideOnScrollProps) {
     </Slide>
   );
 }
+interface HeaderProps {
+  toggleSidebar: () => void;
+  sidebarOpen: boolean;
+}
 
-export default function Header() {
+export default function Header({ toggleSidebar, sidebarOpen }: HeaderProps) {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+  const handleSidebarToggle = () => {
+    toggleSidebar();
+  };
+  const getStyleAppBar = () => {
+    return {
+      background: "#000",
+      padding: "0.15rem 0",
+      height: "3.26rem",
+
+      width:
+        sidebarOpen || !isMobile ? `calc(100% - ${drawerWidth}px)` : "100%",
+      mr: { sm: `${drawerWidth}px` },
+      left: 0,
+      "@media (max-width: 600px)": {
+        fontSize: "1.25rem",
+      },
+    };
+  };
 
   return (
     <>
       <HideOnScroll>
-        <AppBar sx={styledAppBar}>
+        <AppBar sx={getStyleAppBar()}>
           <Container maxWidth="lg" sx={styledContainer}>
             <Box sx={styledLeft}>
               <IconButton aria-label="exit-room" sx={styledLeft}>
                 <CloseOutlined sx={styledLeft} />
               </IconButton>
-              <Typography variant="h6" component="div" sx={styledLeft}>
+              <Typography variant="body1" component="div" sx={styledLeft}>
                 Room: 1337
               </Typography>
             </Box>
@@ -48,9 +71,10 @@ export default function Header() {
                 size="small"
                 sx={styledMenuIcon}
                 color="inherit"
-                aria-label="open drawer"
+                aria-label="open sidebar"
+                onClick={handleSidebarToggle}
               >
-                <MenuIcon sx={styledMenuIcon} />
+                {!sidebarOpen ? <MenuIcon sx={styledMenuIcon} /> : null}
               </IconButton>
             )}
           </Container>
@@ -60,18 +84,13 @@ export default function Header() {
   );
 }
 
-const styledAppBar = {
-  background: "#000",
-  padding: "1rem 0",
-  "@media (max-width: 600px)": {
-    fontSize: "1.25rem",
-  },
-};
+const drawerWidth = 240;
 
 const styledContainer = {
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
+  height: "62.4px",
 };
 
 const styledLeft = {
@@ -79,14 +98,16 @@ const styledLeft = {
   justifyContent: "space-between",
   alignItems: "center",
   color: "#fff",
-  fontSize: "1.875rem",
+  // fontSize: "1.875rem",
   paddingLeft: 0,
+  fontWeight: "400",
 
-  "@media (max-width: 600px)": {
-    fontSize: "1.25rem",
-  },
+  // "@media (max-width: 600px)": {
+  //   fontSize: "1.25rem",
+  // },
 };
 
 const styledMenuIcon = {
   fontSize: "1.65rem",
+  color: theme.palette.primary.light,
 };
