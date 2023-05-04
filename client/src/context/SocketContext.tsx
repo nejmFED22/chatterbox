@@ -14,7 +14,9 @@ import {
 interface ContextValues {
   socket: Socket;
   loggedInUser: string | null;
-  setLoggedInUser: React.Dispatch<React.SetStateAction<string | null>>
+  setLoggedInUser: React.Dispatch<React.SetStateAction<string | null>>;
+  sendMessage: (message: string) => void;
+  createRoom: (roomName: string, firstUser: string) => void;
 }
 
 const SocketContext = createContext<ContextValues>(null as any);
@@ -22,8 +24,11 @@ export const useSocket = () => useContext(SocketContext);
 // export const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io();
 
 function SocketProvider({ children }: PropsWithChildren) {
-  const [socket] = useState<Socket<ServerToClientEvents, ClientToServerEvents>>(io);
-  const [loggedInUser, setLoggedInUser] = useState(localStorage.getItem("username"));
+  const [socket] =
+    useState<Socket<ServerToClientEvents, ClientToServerEvents>>(io);
+  const [loggedInUser, setLoggedInUser] = useState(
+    localStorage.getItem("username")
+  );
 
   useEffect(() => {
     function connect() {
@@ -38,6 +43,10 @@ function SocketProvider({ children }: PropsWithChildren) {
 
     socket.on("connect", connect);
     socket.on("message", message);
+    socket.on("roomCreated", (roomName: string) => {
+      // socket.join(roomName); Invalid code but I want to do something like this.
+      console.log(`Joined room ${roomName}`);
+    });
     socket.on("disconnect", disconnect);
 
     return () => {
@@ -47,8 +56,19 @@ function SocketProvider({ children }: PropsWithChildren) {
     };
   }, [socket]);
 
+  function sendMessage(message: string) {
+    socket.emit("message", message);
+  }
+
+  function createRoom(roomName: string, firstUser: string) {
+    socket.emit("createRoom", roomName, firstUser);
+    console.log(socket.id);
+  }
+
   return (
-    <SocketContext.Provider value={{ socket, loggedInUser, setLoggedInUser }}>
+    <SocketContext.Provider
+      value={{ socket, loggedInUser, setLoggedInUser, sendMessage, createRoom }}
+    >
       {children}
     </SocketContext.Provider>
   );

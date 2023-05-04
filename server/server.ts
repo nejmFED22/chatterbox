@@ -5,6 +5,7 @@ import {
   ServerToClientEvents,
   SocketData,
 } from "../communications";
+import { Room } from "../types";
 
 const io = new Server<
   ClientToServerEvents,
@@ -13,11 +14,24 @@ const io = new Server<
   SocketData
 >();
 
+const rooms: Room[] = [];
+
 io.on("connection", (socket) => {
   console.log("A user has connected");
   socket.emit("message", "Message from server");
   socket.on("disconnect", (socket) => {
     console.log("A user has disconnected");
+  });
+  socket.on("createRoom", (roomName, firstUser) => {
+    const newRoom: Room = {
+      roomName,
+      users: [firstUser],
+      messages: [],
+    };
+    rooms.push(newRoom);
+    console.log(rooms);
+    socket.emit("roomCreated", newRoom.roomName);
+    console.log(socket.id);
   });
 });
 
