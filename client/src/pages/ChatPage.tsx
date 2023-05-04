@@ -4,6 +4,7 @@ import MessageInput from "../components/MessageInput";
 import MessageStack from "../components/MessageStack";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/header";
+import { useSocket } from "../context/SocketContext";
 import { theme } from "../theme";
 
 export default function ChatPage() {
@@ -12,10 +13,12 @@ export default function ChatPage() {
   const drawerWidth = 240;
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [windowWidth, setWindowWidth] = useState<string>("100%");
+  const { joinRoom } = useSocket();
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  joinRoom("default-room");
 
   useEffect(() => {
     setWindowWidth(isMobile ? "100%" : `calc(100% - ${drawerWidth}px)`);
