@@ -1,22 +1,29 @@
-import { Box, Typography } from "@mui/material";
+import { Box, ThemeProvider, Typography } from "@mui/material";
 import { useState } from "react";
 import "./App.css";
 import Sidebar from "./components/Sidebar";
 import Header from "./components/header";
+import { useSocket } from "./context/SocketContext";
+import ChatPage from "./pages/ChatPage";
+import LandingPage from "./pages/LandingPage";
+import { theme } from "./theme";
 
 function App() {
   const drawerWidth = 240;
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { loggedInUser } = useSocket();
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
   return (
-    <>
-      <Header toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
-      <Sidebar toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
-
+    <ThemeProvider theme={theme}>
+      <>
+        <Header toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
+        <Sidebar toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
+        {loggedInUser ? <ChatPage /> : <LandingPage />}
+      </>
       <Box
         component="main"
         sx={{
@@ -33,7 +40,7 @@ function App() {
           qui
         </Typography>
       </Box>
-    </>
+    </ThemeProvider>
   );
 }
 

@@ -13,22 +13,24 @@ import {
 
 interface ContextValues {
   socket: Socket;
+  loggedInUser: string | null;
+  setLoggedInUser: React.Dispatch<React.SetStateAction<string | null>>
 }
 
 const SocketContext = createContext<ContextValues>(null as any);
 export const useSocket = () => useContext(SocketContext);
-export const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io();
+// export const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io();
 
 function SocketProvider({ children }: PropsWithChildren) {
-  const [socket] =
-    useState<Socket<ServerToClientEvents, ClientToServerEvents>>(io);
+  const [socket] = useState<Socket<ServerToClientEvents, ClientToServerEvents>>(io);
+  const [loggedInUser, setLoggedInUser] = useState(localStorage.getItem("username"));
 
   useEffect(() => {
     function connect() {
       console.log("Connected to server");
     }
     function disconnect() {
-      console.log("Disonnected from server");
+      console.log("Disconnected from server");
     }
     function message(message: string) {
       console.log(message);
@@ -39,14 +41,14 @@ function SocketProvider({ children }: PropsWithChildren) {
     socket.on("disconnect", disconnect);
 
     return () => {
-      socket.on("connect", connect);
+      socket.off("connect", connect);
       socket.off("message", message);
       socket.off("disconnect", disconnect);
     };
   }, [socket]);
 
   return (
-    <SocketContext.Provider value={{ socket }}>
+    <SocketContext.Provider value={{ socket, loggedInUser, setLoggedInUser }}>
       {children}
     </SocketContext.Provider>
   );
