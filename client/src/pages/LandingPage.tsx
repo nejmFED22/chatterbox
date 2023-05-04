@@ -1,4 +1,5 @@
 import { Box, TextField, Typography } from "@mui/material";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import TextButton from "../components/TextButton";
@@ -10,6 +11,9 @@ const schema = z.object({
 type FormValues = z.infer<typeof schema>;
 
 export default function LandingPage() {
+
+  const [loggedInUser, setLoggedInUser] = useState(localStorage.getItem("username"));
+  const [inputValue, setInputValue] = useState("");
   
   //Jag installerade @hookform/resolvers som David gjort i sitt exempel,
   //men formuläret brjade strula så avinstallerade igen. 
@@ -30,8 +34,18 @@ export default function LandingPage() {
     },
   });
 
-  const onSubmit = (data: FormValues) => {
-    console.log(data);
+  function handleUsernameChange(event: React.ChangeEvent<HTMLInputElement>) {
+    setInputValue(event.target.value);
+  };
+
+  const onSubmit = () => {
+    if (inputValue !== "") {
+      localStorage.setItem("username", inputValue);
+      setLoggedInUser(inputValue);
+      setInputValue("");
+    } else {
+      console.log("Empty username is not allowed")
+    }
   };
 
   return (
@@ -52,6 +66,8 @@ export default function LandingPage() {
             error={Boolean(errors.username)}
             helperText={errors.username?.message}
             sx={textFieldStyles}
+            value={inputValue}
+            onChange={handleUsernameChange}
             autoComplete="off"
           />
           <Box sx={buttonContainer}>
@@ -59,11 +75,17 @@ export default function LandingPage() {
           </Box>
         </Box>
       </form>
+      {loggedInUser ? (
+        <p>Current user logged in: {loggedInUser}</p>
+      ) : (
+        <p>Not logged in</p>
+      )}
     </Box>
   );
 }
 
 const outerContainer = {
+  marginTop: "7rem",
   padding: "45px",
 };
 
