@@ -1,8 +1,9 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, TextField, Typography } from "@mui/material";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import TextButton from "../components/TextButton";
+import { useSocket } from "../context/SocketContext";
 
 const schema = z.object({
   username: z.string().min(3).max(20),
@@ -11,40 +12,22 @@ const schema = z.object({
 type FormValues = z.infer<typeof schema>;
 
 export default function LandingPage() {
+  const { loggedInUser, setLoggedInUser} = useSocket();  
 
-  const [loggedInUser, setLoggedInUser] = useState(localStorage.getItem("username"));
-  const [inputValue, setInputValue] = useState("");
-  
-  //Jag installerade @hookform/resolvers som David gjort i sitt exempel,
-  //men formuläret brjade strula så avinstallerade igen. 
-  //Kanske försöker igen vid ett senare tillfälle.
-  const { register, handleSubmit, formState: { errors, isValid } } = useForm<FormValues>({
+  const { register, handleSubmit, watch, formState: { errors } } = useForm<FormValues>({
     mode: "onChange",
-    resolver: async (data) => {
-      try {
-        const parsedData = schema.parse(data);
-        return { values: parsedData, errors: {} };
-      } catch (error) {
-        if (error instanceof z.ZodError) {
-          const errorFields = error.flatten().fieldErrors;
-          return { values: {}, errors: errorFields };
-        }
-        throw error;
-      }
-    },
+    resolver: zodResolver(schema),
   });
 
-  function handleUsernameChange(event: React.ChangeEvent<HTMLInputElement>) {
-    setInputValue(event.target.value);
-  };
+  const watchedUsername = watch("username");
+  const isValid = !errors.username && watchedUsername && watchedUsername.length >= 3;
 
-  const onSubmit = () => {
-    if (inputValue !== "") {
-      localStorage.setItem("username", inputValue);
-      setLoggedInUser(inputValue);
-      setInputValue("");
+  const onSubmit = (data: FormValues) => {
+    if (data.username) {
+      localStorage.setItem("username", data.username);
+      setLoggedInUser(data.username);
     } else {
-      console.log("Empty username is not allowed")
+      console.log("Empty username is not allowed");
     }
   };
 
@@ -58,7 +41,7 @@ export default function LandingPage() {
       </Typography>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Box sx={formContainer}>
-          <TextField
+        <TextField
             fullWidth
             id="username"
             variant="standard"
@@ -66,8 +49,6 @@ export default function LandingPage() {
             error={Boolean(errors.username)}
             helperText={errors.username?.message}
             sx={textFieldStyles}
-            value={inputValue}
-            onChange={handleUsernameChange}
             autoComplete="off"
           />
           <Box sx={buttonContainer}>

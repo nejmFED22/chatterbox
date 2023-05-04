@@ -11,6 +11,7 @@ import AppBar from "@mui/material/AppBar";
 import Slide from "@mui/material/Slide";
 import Typography from "@mui/material/Typography";
 import { ReactElement } from "react";
+import { theme } from "../theme";
 
 interface HideOnScrollProps {
   children: ReactElement;
@@ -27,7 +28,7 @@ function HideOnScroll({ children }: HideOnScrollProps) {
 }
 
 export default function Header() {
-  const isMobile = useMediaQuery("(max-width: 600px)");
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   return (
     <>
