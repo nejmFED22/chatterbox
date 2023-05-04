@@ -11,17 +11,15 @@ export default function ChatPage() {
   const inputRef = useRef<HTMLDivElement>(null);
   const drawerWidth = 240;
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [windowWidth, setWindowWidth] = useState<string>("100%");
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  function getBoxStyles() {
-    return {
-      position: "relative",
-      width: !isMobile ? `calc(100% - ${drawerWidth}px)` : "100%",
-    };
-  }
+  useEffect(() => {
+    setWindowWidth(isMobile ? "100%" : `calc(100% - ${drawerWidth}px)`);
+  }, [isMobile]);
 
   useEffect(() => {
     inputRef.current && setInputHeight(inputRef.current.clientHeight);
@@ -29,12 +27,14 @@ export default function ChatPage() {
 
   return (
     <Fragment>
-      <Box sx={getBoxStyles()} component={"main"}>
-        <Header
-          toggleSidebar={toggleSidebar}
-          drawerWidth={drawerWidth}
-          sidebarOpen={sidebarOpen}
-        />
+      <Header
+        toggleSidebar={toggleSidebar}
+        drawerWidth={drawerWidth}
+        sidebarOpen={sidebarOpen}
+        isMobile={isMobile}
+        width={windowWidth}
+      />
+      <Box sx={{ width: windowWidth, ...styledBox }} component={"main"}>
         <Container sx={{ marginBottom: inputHeight }}>
           <MessageStack />
         </Container>
@@ -50,6 +50,10 @@ export default function ChatPage() {
     </Fragment>
   );
 }
+
+const styledBox: CSSProperties = {
+  position: "relative",
+};
 
 const styledInputContainer: CSSProperties = {
   position: "sticky",

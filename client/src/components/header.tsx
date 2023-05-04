@@ -1,12 +1,6 @@
 import { CloseOutlined } from "@mui/icons-material";
 import MenuIcon from "@mui/icons-material/Menu";
-import {
-  Box,
-  Container,
-  IconButton,
-  useMediaQuery,
-  useScrollTrigger,
-} from "@mui/material";
+import { Box, Container, IconButton, useScrollTrigger } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Slide from "@mui/material/Slide";
 import Typography from "@mui/material/Typography";
@@ -30,36 +24,24 @@ interface HeaderProps {
   toggleSidebar: () => void;
   sidebarOpen: boolean;
   drawerWidth: number;
+  isMobile: boolean;
+  width: string;
 }
 
 export default function Header({
   toggleSidebar,
-  drawerWidth,
   sidebarOpen,
+  isMobile,
+  width,
 }: HeaderProps) {
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-
   const handleSidebarToggle = () => {
     toggleSidebar();
-  };
-  const getStyleAppBar = () => {
-    return {
-      position: "absolute",
-      background: "#000",
-      padding: "0.15rem 0",
-      height: "3.26rem",
-      mr: { sm: `${drawerWidth}px` },
-      left: 0,
-      "@media (max-width: 600px)": {
-        fontSize: "1.25rem",
-      },
-    };
   };
 
   return (
     <>
       <HideOnScroll>
-        <AppBar sx={getStyleAppBar()}>
+        <AppBar sx={{ width, ...styledAppBar }}>
           <Container maxWidth="lg" sx={styledContainer}>
             <Box sx={styledLeft}>
               <IconButton aria-label="exit-room" sx={styledLeft}>
@@ -86,6 +68,16 @@ export default function Header({
     </>
   );
 }
+
+const styledAppBar = {
+  background: "#000",
+  padding: "0.15rem 0",
+  height: "3.26rem",
+  left: 0,
+  "@media (max-width: 600px)": {
+    fontSize: "1.25rem",
+  },
+};
 
 const styledContainer = {
   display: "flex",

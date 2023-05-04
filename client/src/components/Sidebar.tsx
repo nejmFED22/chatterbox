@@ -95,7 +95,9 @@ export default function Sidebar({
 const sidebarStyles = {
   display: "flex",
   width: "100vw",
-  zIndex: 10,
+  "&>.MuiDrawer-root": {
+    zIndex: 1300,
+  },
 };
 
 const styledBox = {
