@@ -13,6 +13,8 @@ import {
 
 interface ContextValues {
   socket: Socket;
+  loggedInUser: string | null;
+  setLoggedInUser: React.Dispatch<React.SetStateAction<string | null>>
 }
 
 const SocketContext = createContext<ContextValues>(null as any);
@@ -21,6 +23,7 @@ export const useSocket = () => useContext(SocketContext);
 
 function SocketProvider({ children }: PropsWithChildren) {
   const [socket] = useState<Socket<ServerToClientEvents, ClientToServerEvents>>(io);
+  const [loggedInUser, setLoggedInUser] = useState(localStorage.getItem("username"));
 
   useEffect(() => {
     function connect() {
@@ -45,7 +48,7 @@ function SocketProvider({ children }: PropsWithChildren) {
   }, [socket]);
 
   return (
-    <SocketContext.Provider value={{ socket }}>
+    <SocketContext.Provider value={{ socket, loggedInUser, setLoggedInUser }}>
       {children}
     </SocketContext.Provider>
   );
