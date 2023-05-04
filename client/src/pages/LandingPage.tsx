@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import TextButton from "../components/TextButton";
+import { useSocket } from "../context/SocketContext";
 
 const schema = z.object({
   username: z.string().min(3).max(20),
@@ -12,7 +13,7 @@ type FormValues = z.infer<typeof schema>;
 
 export default function LandingPage() {
 
-  const [loggedInUser, setLoggedInUser] = useState(localStorage.getItem("username"));
+  const { loggedInUser, setLoggedInUser} = useSocket();
   const [inputValue, setInputValue] = useState("");
   
   //Jag installerade @hookform/resolvers som David gjort i sitt exempel,
