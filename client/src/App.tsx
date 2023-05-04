@@ -1,16 +1,16 @@
 import { ThemeProvider } from "@emotion/react";
-import { useState } from "react";
 import "./App.css";
 import ChatPage from "./pages/ChatPage";
 import LandingPage from "./pages/LandingPage";
 
+import { useSocket } from "./context/SocketContext";
 import { theme } from "./theme";
 
 export default function App() {
-  const [user] = useState(true);
+  const { loggedInUser } = useSocket();
   return (
     <ThemeProvider theme={theme}>
-      {user ? <ChatPage /> : <LandingPage />}
+      <>{loggedInUser ? <ChatPage /> : <LandingPage />}</>
     </ThemeProvider>
   );
 }
