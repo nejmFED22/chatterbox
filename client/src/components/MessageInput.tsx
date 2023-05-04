@@ -10,7 +10,5 @@ export default function MessageInput() {
 }
 
 const inputBoxStyling: CSSProperties = {
-  position: "absolute",
-  bottom: 0,
   backgroundColor: "Blue",
 };

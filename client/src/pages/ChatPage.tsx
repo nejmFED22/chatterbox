@@ -1,4 +1,4 @@
-import { Container } from "@mui/material";
+import { Box, Container } from "@mui/material";
 import { CSSProperties, Fragment } from "react";
 import Header from "../components/Header";
 import MessageInput from "../components/MessageInput";
@@ -8,17 +8,27 @@ import Sidebar from "../components/Sidebar";
 export default function ChatPage() {
   return (
     <Fragment>
-      <Container sx={styledContainer}>
+      <Box sx={styledBox} component={"main"}>
         <Header />
-        <MessageInput />
-        <MessageStack />
-      </Container>
+        <Container>
+          <MessageStack />
+        </Container>
+        <Container sx={styledInputContainer}>
+          <MessageInput />
+        </Container>
+      </Box>
       <Sidebar />
     </Fragment>
   );
 }
 
-const styledContainer: CSSProperties = {
-  height: "100vh",
-  overflowY: "scroll",
+const styledBox: CSSProperties = {
+  position: "relative",
+};
+
+const styledInputContainer: CSSProperties = {
+  position: "fixed",
+  bottom: 0,
+  left: 0,
+  right: 0,
 };
