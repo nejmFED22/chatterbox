@@ -1,5 +1,6 @@
 import { FormControl, Paper, TextField, Typography } from "@mui/material";
 import { useState } from "react";
+import { useSocket } from "../context/SocketContext";
 import TextButton from "./TextButton";
 
 interface Props {
@@ -9,6 +10,7 @@ interface Props {
 export default function MessageInput({ isMobile }: Props) {
   const [userTyping, setUserTyping] = useState(false);
   const [message, setMessage] = useState("");
+  const { socket } = useSocket();
 
   function handleTyping(e: React.ChangeEvent<HTMLInputElement>) {
     setUserTyping(true);
@@ -18,7 +20,9 @@ export default function MessageInput({ isMobile }: Props) {
 
   function sendMessage(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    socket.emit("message", message, "default-room");
     console.log("Message '" + message + "' has been sent.");
+    setMessage("");
   }
 
   return (
@@ -35,6 +39,7 @@ export default function MessageInput({ isMobile }: Props) {
             multiline={true}
             onChange={handleTyping}
             variant="standard"
+            value={message}
             placeholder="Write your message here"
             sx={styledTextField}
           />

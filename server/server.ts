@@ -16,6 +16,18 @@ const io = new Server<
 io.on("connection", (socket) => {
   console.log("A user has connected");
 
+  // Joins room
+  socket.on("join", (room) => {
+    socket.join(room);
+  });
+
+  // Sends message to everyone in same room
+  socket.on("message", (message, room) => {
+    socket.broadcast.to(room).emit("message", message);
+    // io.to(room).emit("message", message);
+  });
+
+  // Disconnecting and leaving all rooms
   socket.on("disconnect", () => {
     console.log("A user has disconnected");
   });
