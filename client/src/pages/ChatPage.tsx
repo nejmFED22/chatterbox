@@ -9,42 +9,21 @@ export default function ChatPage() {
   const [inputHeight, setInputHeight] = useState(0);
 
   const inputRef = useRef<HTMLDivElement>(null);
-  const stackBoxRef = useRef<HTMLDivElement>(null);
-  const stackContainerRef = useRef<HTMLDivElement>(null);
-
-  const prevBoxHeight = useRef(null);
 
   useEffect(() => {
     inputRef.current && setInputHeight(inputRef.current.clientHeight);
   }, [inputRef]);
 
-  // useEffect(() => {
-  //   const containerHeight = stackContainerRef.current?.clientHeight;
-  //   const boxHeight = stackBoxRef.current?.clientHeight;
-  //   const containerScrollTop = stackContainerRef.current?.scrollTop;
-
-  //   if (!prevBoxHeight.current || containerScrollTop === prevBoxHeight.current - containerHeight) {
-  //     stackContainerRef.current!.scrollTo({
-  //       top: boxHeight! - containerHeight!,
-  //       left: 0,
-  //       behaviour: prevBoxHeight ? "smooth" : "auto",
-  //     })
-  //   }
-  // });
+  // Not working, fix later
+  useEffect(() => {
+    window.scrollTo(0, document.body.scrollHeight);
+  }, []);
 
   return (
     <Fragment>
       <Box sx={styledBox} component={"main"}>
         <Header />
-        <Container
-          component={"div"}
-          ref={stackContainerRef}
-          sx={{ marginBottom: `${inputHeight}px` }}
-        >
-          <Box component={"div"} ref={stackBoxRef}>
-            <MessageStack />
-          </Box>
-        </Container>
+        <MessageStack marginBottom={`${inputHeight}px`} />
         <Container ref={inputRef} sx={styledInputContainer}>
           <MessageInput />
         </Container>
