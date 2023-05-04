@@ -1,17 +1,20 @@
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+// import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CloseIcon from "@mui/icons-material/Close";
 import {
   Accordion,
+  AccordionDetails,
+  AccordionSummary,
   IconButton,
   Link,
   Typography,
   useMediaQuery,
 } from "@mui/material";
 import Box from "@mui/material/Box";
-import Divider from "@mui/material/Divider";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
+import { theme } from "../theme";
 
 const drawerWidth = 240;
 
@@ -58,16 +61,27 @@ export default function Sidebar({
               </IconButton>
             )}
           </Box>
-          <Divider />
           <List sx={styledList}>
-            {rooms.map((text) => (
-              <ListItem key={text} sx={styledListItem}>
+            {rooms.map((room) => (
+              <ListItem key={room} sx={styledListItem}>
                 <Accordion sx={styledAccordion}>
-                  <Box sx={styledAccordionInner}>
-                    <Typography variant="h4">{text}</Typography>
-                    <ArrowForwardIosIcon sx={styledArrowIcon} />
-                  </Box>
-                  <Typography variant="body1">lite text</Typography>
+                  <AccordionSummary
+                    expandIcon={<ArrowForwardIosIcon sx={styledArrowIcon} />}
+                    aria-controls="panel1a-content"
+                    id="panel1a-header"
+                    sx={styledAccordionSummary}
+                  >
+                    <Typography variant="h4">{room}</Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <List>
+                      {users.map((user) => (
+                        <ListItem key={user}>
+                          <Typography variant="body2">{user}</Typography>
+                        </ListItem>
+                      ))}
+                    </List>
+                  </AccordionDetails>
                 </Accordion>
               </ListItem>
             ))}
@@ -92,7 +106,7 @@ const styledBox = {
 };
 
 const styledLink = {
-  color: "#000",
+  color: theme.palette.primary.dark,
   textDecoration: "none",
   cursor: "pointer",
   fontFamily: "Inter",
@@ -104,25 +118,26 @@ const styledLink = {
 
 const hoverStyles = {
   "&:hover": {
-    background: "#000",
-    color: "#fff",
+    background: theme.palette.primary.dark,
+    color: theme.palette.primary.light,
   },
 };
 
 const activeStyles = {
   "&:active": {
-    background: "#C1FF10",
-    color: "#000",
+    background: theme.palette.primary.main,
+    color: theme.palette.primary.dark,
   },
 };
 
 const styledArrowIcon = {
-  color: "#000",
+  color: theme.palette.primary.dark,
   cursor: "pointer",
   zIndex: 2,
-  background: "#fff",
+  background: theme.palette.primary.light,
   height: "62.4px",
   padding: "1rem",
+  // ...activeStyles,
 };
 
 const styledList = {
@@ -133,11 +148,11 @@ const styledList = {
 };
 
 const styledListItem = {
-  padding: "0",
-  color: "#fff",
+  padding: "0px",
+  color: theme.palette.primary.light,
   textDecoration: "none",
   cursor: "pointer",
-  ...hoverStyles,
+  // ...hoverStyles,
   ...activeStyles,
 };
 
@@ -146,7 +161,13 @@ const styledAccordion = {
   background: "none",
   paddingLeft: "1rem",
   fontSize: "35px",
-  ...hoverStyles,
+
+  // ...hoverStyles,
+};
+
+const styledAccordionSummary = {
+  minHeight: "0px",
+  paddingLeft: "0px",
   ...activeStyles,
 };
 
@@ -159,10 +180,13 @@ const styledAccordionInner = {
 
 const drawerPaperStyles = {
   width: drawerWidth,
+  borderLeft: "1px solid",
+  borderColor: theme.palette.primary.dark,
 };
 
 const styledCloseIcon = {
-  color: "#000",
+  color: theme.palette.primary.dark,
   cursor: "pointer",
+  padding: 0,
   zIndex: 2,
 };
