@@ -4,7 +4,7 @@ import {
   InterServerEvents,
   ServerToClientEvents,
   SocketData,
-} from "./communication";
+} from "../communications";
 
 const io = new Server<
   ClientToServerEvents,
@@ -15,11 +15,20 @@ const io = new Server<
 
 io.on("connection", (socket) => {
   console.log("A user has connected");
-  socket.emit("message", "Message from server")
+
+  //socket.emit("message", "Message from server")
+
+  socket.on("message", (message) => {
+    console.log(`Message received: ${message.content} from ${message.author}`);
+    io.emit("message", message);
+  });
+
   socket.on("disconnect", (socket) => {
     console.log("A user has disconnected");
   })
 });
 
+
 io.listen(3000);
 console.log("listening on port 3000");
+

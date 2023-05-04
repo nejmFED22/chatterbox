@@ -3,6 +3,7 @@ import { CSSProperties, Fragment, useEffect, useRef, useState } from "react";
 import MessageInput from "../components/MessageInput";
 import MessageStack from "../components/MessageStack";
 import Sidebar from "../components/Sidebar";
+import ChatWindow from "../components/TestChatWindow";
 import Header from "../components/header";
 
 export default function ChatPage() {
@@ -26,6 +27,7 @@ export default function ChatPage() {
           <MessageStack />
         </Container>
         <Container component={"div"} sx={styledInputContainer} ref={inputRef}>
+        <ChatWindow/>
           <MessageInput />
         </Container>
       </Box>
