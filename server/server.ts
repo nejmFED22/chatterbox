@@ -19,6 +19,7 @@ io.on("connection", (socket) => {
   // Joins room
   socket.on("join", (room) => {
     socket.join(room);
+    console.log(socket.rooms)
   });
 
   // Sends message to everyone in same room

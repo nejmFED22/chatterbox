@@ -22,7 +22,8 @@ function HideOnScroll({ children }: HideOnScrollProps) {
 }
 
 function handleClearLocalStorage() {
-  localStorage.clear()
+  localStorage.clear();
+  location.reload();
 }
 interface HeaderProps {
   toggleSidebar: () => void;
