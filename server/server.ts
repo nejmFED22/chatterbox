@@ -3,34 +3,32 @@ import {
   ClientToServerEvents,
   InterServerEvents,
   ServerToClientEvents,
-  SocketData,
+  Room,
 } from "../communications";
 
 const io = new Server<
   ClientToServerEvents,
   ServerToClientEvents,
   InterServerEvents,
-  SocketData
+  Room
 >();
 
 io.on("connection", (socket) => {
+  // Setup for client
   console.log("A user has connected");
+  socket.emit("rooms", getRooms());
 
   // Joins room
   socket.on("join", (room) => {
     socket.join(room);
-    console.log(socket.rooms)
     io.emit("rooms", getRooms());
   });
 
   // Leaves room
   socket.on("leave", (room) => {
     socket.leave(room);
-    console.log(socket.rooms)
     io.emit("rooms", getRooms());
   });
-
-  socket.emit("rooms", getRooms());
 
   // Sends message to everyone in same room
   socket.on("message", (room, message) => {
@@ -40,20 +38,24 @@ io.on("connection", (socket) => {
 
   // Disconnecting and leaving all rooms
   socket.on("disconnect", () => {
+    io.emit("rooms", getRooms());
     console.log("A user has disconnected");
   });
 });
 
+// Updates list of rooms
 function getRooms() {
   const { rooms } = io.sockets.adapter;
-  const roomsFound: string[] = [];
+  const roomsFound: Room[] = [];
 
   for (const [name, setOfSocketIds] of rooms) {
     if (!setOfSocketIds.has(name)) {
-      roomsFound.push(name);
+      roomsFound.push({
+        name: name,
+        onlineUsers: setOfSocketIds.size,
+      });
     }
   }
-  console.log(roomsFound);
   return roomsFound;
 }
 

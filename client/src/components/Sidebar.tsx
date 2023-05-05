@@ -17,10 +17,10 @@ import { useSocket } from "../context/SocketContext";
 import { theme } from "../theme";
 import AddRoomButtom from "./AddRoomButton";
 
-const users = ["Jenny", "Nat", "Marcus", "Ellen"];
 const drawerWidth = 340;
 
 export default function Sidebar({
+  // Decides whether sidebar is permanent or toggleable
   toggleSidebar,
   sidebarOpen,
   isMobile,
@@ -33,8 +33,11 @@ export default function Sidebar({
     toggleSidebar();
   };
 
+  // States and variables
   const { roomList, joinRoom } = useSocket();
+  const users = ["Jenny", "Nat", "Marcus", "Ellen"];
 
+  // Sidebar component
   return (
     <Box sx={sidebarStyles}>
       {!isMobile || sidebarOpen ? (
@@ -65,11 +68,15 @@ export default function Sidebar({
               </IconButton>
             )}
           </Box>
+
+          {/* TODO: Break up room list, DM list and User list into their own components */}
+          {/* Renders list of rooms if there are any open */}
           {roomList && roomList.length > 0 ? (
             <List sx={styledList}>
               {roomList.map((room) => (
-                <ListItem key={room} sx={styledListItem}>
+                <ListItem key={room.name} sx={styledListItem}>
                   <Accordion sx={styledAccordion}>
+                    {/* Room information */}
                     <AccordionSummary
                       expandIcon={<ArrowForwardIosIcon sx={styledArrowIcon} />}
                       aria-controls="panel1a-content"
@@ -80,12 +87,16 @@ export default function Sidebar({
                         sx={styledLink}
                         onClick={(e) => {
                           e.stopPropagation();
-                          joinRoom(room)
+                          joinRoom(room.name);
                         }}
                       >
-                        <Typography variant="h4">{room}</Typography>
+                        <Typography variant="h4">
+                          ({room.onlineUsers}) {room.name}
+                        </Typography>
                       </Link>
                     </AccordionSummary>
+
+                    {/* List of online users in the room */}
                     <AccordionDetails>
                       <List>
                         {users.map((user) => (
@@ -116,6 +127,7 @@ export default function Sidebar({
   );
 }
 
+// CSS styling
 const sidebarStyles = {
   display: "flex",
   width: "100vw",

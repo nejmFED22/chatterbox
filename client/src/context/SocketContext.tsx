@@ -9,15 +9,17 @@ import { Socket, io } from "socket.io-client";
 import {
   ClientToServerEvents,
   ServerToClientEvents,
+  Room,
 } from "../../../communications";
 
+// Context setup
 interface ContextValues {
   socket: Socket;
   loggedInUser: string | null;
   setLoggedInUser: React.Dispatch<React.SetStateAction<string | null>>;
   joinRoom: (room: string) => void;
   currentRoom?: string;
-  roomList?: string[];
+  roomList?: Room[];
   sendMessageToServer: (message: string) => void;
 }
 
@@ -25,17 +27,26 @@ const SocketContext = createContext<ContextValues>(null as any);
 export const useSocket = () => useContext(SocketContext);
 
 function SocketProvider({ children }: PropsWithChildren) {
+  // States and variables
   const [socket] =
     useState<Socket<ServerToClientEvents, ClientToServerEvents>>(io);
+
+  // TODO: Create a localStorage-hook
+  // TODO: Change from localStorage to sessionStorage
   const [loggedInUser, setLoggedInUser] = useState(
     localStorage.getItem("username")
   );
   const [currentRoom, setCurrentRoom] = useState<string>();
-  const [roomList, setRoomList] = useState<string[]>();
+  const [roomList, setRoomList] = useState<Room[]>();
 
+  // Trigger event listeners on server
   function joinRoom(room: string) {
-    socket.emit("leave", currentRoom as string)
+    if (currentRoom) {
+      console.log(`Left room: ${currentRoom}`);
+      socket.emit("leave", currentRoom as string);
+    }
     socket.emit("join", room);
+    console.log(`Joined room: ${room}`);
     setCurrentRoom(room);
   }
 
@@ -44,6 +55,7 @@ function SocketProvider({ children }: PropsWithChildren) {
     socket.emit("message", currentRoom, message);
   };
 
+  // Listening from server
   useEffect(() => {
     function connect() {
       console.log("Connected to server");
@@ -54,19 +66,19 @@ function SocketProvider({ children }: PropsWithChildren) {
     function message(message: string) {
       console.log(message);
     }
-    function rooms(rooms: string[]) {
-      setRoomList(rooms)
+    function rooms(rooms: Room[]) {
+      setRoomList(rooms);
     }
 
     socket.on("connect", connect);
-    socket.on("message", message);
     socket.on("disconnect", disconnect);
+    socket.on("message", message);
     socket.on("rooms", rooms);
 
     return () => {
       socket.off("connect", connect);
-      socket.off("message", message);
       socket.off("disconnect", disconnect);
+      socket.off("message", message);
       socket.off("rooms", rooms);
     };
   }, []);
@@ -79,8 +91,8 @@ function SocketProvider({ children }: PropsWithChildren) {
         setLoggedInUser,
         joinRoom,
         currentRoom,
+        roomList,
         sendMessageToServer,
-        roomList
       }}
     >
       {children}

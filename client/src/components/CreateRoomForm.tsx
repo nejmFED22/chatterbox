@@ -18,11 +18,10 @@ export default function CreateRoomForm({ onClose }: CreateRoomFormProps) {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log("Created room: ", roomName)
+    console.log(`Created room: ${roomName}`)
     joinRoom(roomName);
     // TODO: switch to room on client side
     setRoomName("");
-    
     onClose();
   };
 

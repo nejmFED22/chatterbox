@@ -1,7 +1,7 @@
 // Servern skickar
 export interface ServerToClientEvents {
   message: (message: string) => void;
-  rooms: (rooms: string[]) => void;
+  rooms: (rooms: Room[]) => void;
 }
 
 // Klienten skickar
@@ -15,7 +15,7 @@ export interface InterServerEvents {
   ping: () => void;
 }
 
-export interface SocketData {
+export interface Room {
   name: string;
-  age: number;
+  onlineUsers: number;
 }
