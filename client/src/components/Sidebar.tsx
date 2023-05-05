@@ -112,7 +112,7 @@ export default function Sidebar({
             </List>
           ) : (
             <>
-              <Typography gutterBottom sx={{ ml: 2 }}>
+              <Typography gutterBottom variant="h3" sx={{ ml: 2 }}>
                 No rooms available :-(
               </Typography>
               <Typography variant="h5" sx={{ ml: 2 }}>
