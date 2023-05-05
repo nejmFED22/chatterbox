@@ -1,41 +1,32 @@
-# Chatt-app
+# Chat App
 
-I den här inlämningen skall ni skapa en chatt-baserad app som låter användare chatta med varandra i realtid. Kommunikationen skall sättas upp och göras med socket.io. En användare skall kunna skapa ett nytt rum. Skapade rum skall visas i en lista som användare kan klicka på för att gå med i önskat rum. Väl inne i ett rum ska det vara möjligt att chatta med varandra.
+This is a real-time chat application that allows users to communicate with each other via chat rooms. The communication is set up and implemented using socket.io. Users can create new rooms and join existing ones. Once inside a room, they can chat with other participants in real time.
 
-Utöver koden ska en muntligt presentation skall genomföras per grupp där ni demar applikationen ni har skapat. Ni ska även ta upp reflektioner om projektet
+### Link to project
 
-**Krav för godkänt:**
+Check out our project [here](link to project)
 
-[ ] Användaren får börja med att välja ett eget visningsnamn när den besöker sidan.
+## Getting Started
 
-[ ] Det ska gå att skapa ett rum (och samtidigt gå med i rummet).
+To get started with the Chat App follow the steps below:
 
-[ ] Det ska gå att lämna ett rum (tomma rum ska automatiskt försvinna).
+### Open terminal 1
 
-[ ] Samtliga rum skall vara synligt i en lista.
+- cd server
+- npm install
+  npm run dev
 
-[ ] De går att gå med i ett rum genom att klicka på det i listan.
+### Open temerminal 2
 
-[ ] När en användare går med i ett nytt rum ska befintligt rum lämnas automatiskt.
+- cd client
+- npm install
+- npm run dev
 
-[ ] Användare ska kunna skicka och läsa nya meddelanden i rummet de har gått med i.
+## Created by
 
-[ ] När en användare håller på att skriva ett meddelande skall det synas för alla andra i rummet.
+The Chat App project was created by:
 
-[ ] Git & GitHub har använts.
-
-[ ] Projektmappen innehåller en README.md fil (läs ovan för mer info).
-
-[ ] Uppgiften lämnas in i tid!
-
-**Krav för väl godkänt:**
-
-[ ] Alla punkter för godkänt är uppfyllda.
-
-[ ] Varje rum i listan skall även visa vilka användare som finns i rummet.
-
-[ ] Det ska gå att ha privata konversationer med enskilda användare (DM’s).
-
-[ ] Historik ska sparas för skickade meddelanden och visas när en konversation öppnas (gäller både för Rum och för DM’s).
-
-[ ] När sidan laddas om ska användaren behålla sitt användarnamn, läggas tillbaka i konversationen som den befann sig i (Rum eller DM) och kunna sina läsa tidigare DM’s.
+- [Jenny Pettersson](https://github.com/jesnagbg)
+- [Nathanael Blackbourn](https://github.com/NathanaelBlackbourn)
+- [Marcus Rosin Lindberg](https://github.com/stenbumling)
+- [Ellen Dahlgren](https://github.com/ellensofia)
