@@ -1,7 +1,12 @@
-import { FormControl, Paper, TextField, Typography } from "@mui/material";
+import {
+  Button,
+  FormControl,
+  Paper,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useState } from "react";
 import { useSocket } from "../context/SocketContext";
-import TextButton from "./TextButton";
 
 interface Props {
   isMobile: boolean;
@@ -43,12 +48,19 @@ export default function MessageInput({ isMobile }: Props) {
             placeholder="Write your message here"
             sx={styledTextField}
           />
-          <TextButton>Send</TextButton>
+          <Button type="submit" variant="contained">
+            Send
+          </Button>
         </FormControl>
       </form>
     </Paper>
   );
 }
+
+const styledPaper = {
+  padding: "0.5rem",
+  border: "1px solid black",
+};
 
 const styledType = {
   height: "1.5rem",
@@ -57,14 +69,10 @@ const styledType = {
 const styledFormControl = {
   display: "flex",
   gap: "0.5rem",
+  alignItems: "flex-end",
 };
 
 const styledTextField = {
   flex: 1,
-};
-
-const styledPaper = {
-  padding: "0.5rem",
-  marginBottom: "0.5rem",
-  border: "1px solid black",
+  width: "100%",
 };

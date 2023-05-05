@@ -8,6 +8,7 @@ import {
   IconButton,
   Link,
   Typography,
+  useMediaQuery,
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
@@ -23,15 +24,14 @@ export default function Sidebar({
   // Decides whether sidebar is permanent or toggleable
   toggleSidebar,
   sidebarOpen,
-  isMobile,
 }: {
   toggleSidebar: () => void;
   sidebarOpen: boolean;
-  isMobile: boolean;
 }) {
   const handleSidebarToggle = () => {
     toggleSidebar();
   };
+  const isMobile = useMediaQuery("(max-width: 600px)");
 
   // States and variables
   const { roomList, joinRoom } = useSocket();

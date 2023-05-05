@@ -22,7 +22,7 @@ function HideOnScroll({ children }: HideOnScrollProps) {
   const trigger = useScrollTrigger();
 
   return (
-    <Slide appear={false} direction="down" in={trigger}>
+    <Slide appear={true} direction="down" in={!trigger}>
       {children}
     </Slide>
   );
@@ -71,7 +71,7 @@ export default function Header({ toggleSidebar, sidebarOpen }: HeaderProps) {
               <IconButton aria-label="exit-room" sx={styledLeft}>
                 <CloseOutlined sx={styledLeft} />
               </IconButton>
-              <Typography variant="body1" component="div" sx={styledLeft}>
+              <Typography variant="body2" component="div" sx={styledLeft}>
                 Room: 1337
               </Typography>
             </Box>

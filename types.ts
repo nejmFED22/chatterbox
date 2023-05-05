@@ -1,7 +1,8 @@
-export interface Room {
-  roomName: string;
-  messages: Message[];
-}
+// export interface Room {
+//   roomName: string;
+//   users: string[];
+//   messages: Message[];
+// }
 
 export interface User {
   //SessionID: socket.sessionID
@@ -11,6 +12,6 @@ export interface User {
 }
 
 export interface Message {
-    content: string;
-    author: string;
+  content: string;
+  author: string;
 }

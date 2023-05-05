@@ -13,6 +13,8 @@ const io = new Server<
   Room
 >();
 
+const rooms: Room[] = [];
+
 io.on("connection", (socket) => {
   // Setup for client
   console.log("A user has connected");
