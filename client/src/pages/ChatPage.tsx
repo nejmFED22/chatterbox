@@ -3,14 +3,14 @@ import { CSSProperties, Fragment, useEffect, useRef, useState } from "react";
 import MessageInput from "../components/MessageInput";
 import MessageStack from "../components/MessageStack";
 import Sidebar from "../components/Sidebar";
-import Header from "../components/header";
 import { useSocket } from "../context/SocketContext";
 import { theme } from "../theme";
+import Header from "../components/Header";
 
 export default function ChatPage() {
   const [inputHeight, setInputHeight] = useState(0);
   const inputRef = useRef<HTMLDivElement>(null);
-  const drawerWidth = 240;
+  const drawerWidth = 340;
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [windowWidth, setWindowWidth] = useState<string>("100%");
   const { joinRoom } = useSocket();
@@ -32,10 +32,7 @@ export default function ChatPage() {
     <Fragment>
       <Header
         toggleSidebar={toggleSidebar}
-        drawerWidth={drawerWidth}
         sidebarOpen={sidebarOpen}
-        isMobile={isMobile}
-        width={windowWidth}
       />
       <Box sx={{ width: windowWidth, ...styledBox }} component={"main"}>
         <MessageStack marginBottom={`${inputHeight}px`} />
