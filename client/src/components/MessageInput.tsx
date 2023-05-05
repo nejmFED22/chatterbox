@@ -10,7 +10,7 @@ interface Props {
 export default function MessageInput({ isMobile }: Props) {
   const [userTyping, setUserTyping] = useState(false);
   const [message, setMessage] = useState("");
-  const { socket } = useSocket();
+  const { sendMessageToServer } = useSocket();
 
   function handleTyping(e: React.ChangeEvent<HTMLInputElement>) {
     setUserTyping(true);
@@ -20,7 +20,7 @@ export default function MessageInput({ isMobile }: Props) {
 
   function sendMessage(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    socket.emit("message", message, "default-room");
+    sendMessageToServer(message);
     console.log("Message '" + message + "' has been sent.");
     setMessage("");
   }

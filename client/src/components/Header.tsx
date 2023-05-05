@@ -2,6 +2,7 @@ import { CloseOutlined } from "@mui/icons-material";
 import MenuIcon from "@mui/icons-material/Menu";
 import {
   Box,
+  Button,
   Container,
   IconButton,
   useMediaQuery,
@@ -55,6 +56,12 @@ export default function Header({ toggleSidebar, sidebarOpen }: HeaderProps) {
     };
   };
 
+  function handleClearLocalStorage() {
+    localStorage.clear();
+    localStorage.clear();
+    location.reload();
+  }
+
   return (
     <>
       <HideOnScroll>
@@ -79,6 +86,7 @@ export default function Header({ toggleSidebar, sidebarOpen }: HeaderProps) {
                 {!sidebarOpen ? <MenuIcon sx={styledMenuIcon} /> : null}
               </IconButton>
             )}
+            <Button onClick={handleClearLocalStorage}>Logout</Button>
           </Container>
         </AppBar>
       </HideOnScroll>
