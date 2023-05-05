@@ -1,7 +1,11 @@
-import { FormControl, Paper, TextField, Typography } from "@mui/material";
+import {
+  Button,
+  FormControl,
+  Paper,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useState } from "react";
-import { useSocket } from "../context/SocketContext";
-import TextButton from "./TextButton";
 
 interface Props {
   isMobile: boolean;
@@ -10,7 +14,6 @@ interface Props {
 export default function MessageInput({ isMobile }: Props) {
   const [userTyping, setUserTyping] = useState(false);
   const [message, setMessage] = useState("");
-  const { socket } = useSocket();
 
   function handleTyping(e: React.ChangeEvent<HTMLInputElement>) {
     setUserTyping(true);
@@ -20,7 +23,6 @@ export default function MessageInput({ isMobile }: Props) {
 
   function handleSendMessage(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    socket.emit("message", message, "default-room");
     console.log("Message '" + message + "' has been sent.");
     setMessage("");
   }
@@ -41,9 +43,12 @@ export default function MessageInput({ isMobile }: Props) {
             variant="standard"
             value={message}
             placeholder="Write your message here"
+            size="small"
             sx={styledTextField}
           />
-          <TextButton>Send</TextButton>
+          <Button type="submit" variant="contained">
+            Send
+          </Button>
         </FormControl>
       </form>
     </Paper>

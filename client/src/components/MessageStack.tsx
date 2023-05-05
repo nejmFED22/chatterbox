@@ -10,7 +10,13 @@ import {
 import { CSSProperties, useState } from "react";
 import { theme } from "../theme";
 
-export default function MessageStack() {
+interface Props {
+  isMobile: boolean;
+}
+
+export default function MessageStack(
+  { isMobile }: Props = { isMobile: false }
+) {
   // We'll fetch this from the context eventually
   const [username] = useState("John Doe");
 
@@ -80,12 +86,19 @@ export default function MessageStack() {
   ];
 
   return (
-    <Stack divider={<Divider sx={styledDivider} />} sx={styledStack}>
+    <Stack
+      divider={
+        <Divider
+          sx={{ margin: isMobile ? "2rem 0" : "2.5rem 0", ...styledDivider }}
+        />
+      }
+      sx={styledStack}
+    >
       {mockMessages.map((message) => (
         <Card key={message.id}>
           <Container>
             <CardContent sx={styledCardContent(username === message.user)}>
-              <Typography variant="body2">{message.user}</Typography>
+              <Typography variant="body1">{message.user}</Typography>
               <Typography variant={largeScreen ? "h3" : "h4"}>
                 {message.content}
               </Typography>
@@ -114,6 +127,5 @@ const styledStack: CSSProperties = {
 };
 
 const styledDivider: CSSProperties = {
-  margin: "1.2rem 0",
   borderColor: "black",
 };

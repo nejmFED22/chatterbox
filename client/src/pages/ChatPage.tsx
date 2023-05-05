@@ -1,14 +1,14 @@
 import { Box, Container, useMediaQuery } from "@mui/material";
 import { CSSProperties, Fragment, useEffect, useState } from "react";
+import Header from "../components/Header";
 import MessageInput from "../components/MessageInput";
 import MessageStack from "../components/MessageStack";
 import Sidebar from "../components/Sidebar";
-import Header from "../components/header";
 import { useSocket } from "../context/SocketContext";
 import { theme } from "../theme";
 
 export default function ChatPage() {
-  const drawerWidth = 240;
+  const drawerWidth = 340;
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [windowWidth, setWindowWidth] = useState<string>("100%");
   const { joinRoom } = useSocket();
@@ -26,7 +26,7 @@ export default function ChatPage() {
     <Fragment>
       <Header toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
       <Box sx={{ width: windowWidth, ...styledBox }} component={"main"}>
-        <MessageStack />
+        <MessageStack isMobile={isMobile} />
         <Container component={"div"} sx={styledInputContainer}>
           <MessageInput isMobile={isMobile} />
         </Container>

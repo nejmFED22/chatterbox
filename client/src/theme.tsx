@@ -50,15 +50,15 @@ export let theme: Theme = createTheme({
       fontSize: "1rem", // 16px
     },
     body1: {
-      fontSize: "1.875rem", // 30px
-      "@media (max-width: 600px)": {
-        fontSize: "1.25rem", // 20px
-      },
-    },
-    body2: {
       fontSize: "1.125rem", // 18px
       "@media (max-width: 600px)": {
         fontSize: "1rem", // 16px
+      },
+    },
+    body2: {
+      fontSize: "1.875rem", // 30px
+      "@media (max-width: 600px)": {
+        fontSize: "1.25rem", // 20px
       },
     },
   },
@@ -67,6 +67,27 @@ export let theme: Theme = createTheme({
       main: "#C1FF10",
       light: "#fff",
       dark: "#000",
+    },
+  },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          padding: "0 1rem",
+          textTransform: "none",
+          fontWeight: 400,
+          lineHeight: 1,
+        },
+        containedPrimary: {
+          border: "1px solid #000",
+          color: "#000",
+          backgroundColor: "#C1FF10",
+          "&:hover": {
+            color: "#fff",
+            backgroundColor: "#000",
+          },
+        },
+      },
     },
   },
   shadows: Array(25).fill("none") as Shadows,
