@@ -3,7 +3,6 @@ import { CSSProperties, Fragment, useEffect, useRef, useState } from "react";
 import MessageInput from "../components/MessageInput";
 import MessageStack from "../components/MessageStack";
 import Sidebar from "../components/Sidebar";
-import { useSocket } from "../context/SocketContext";
 import { theme } from "../theme";
 import Header from "../components/Header";
 
@@ -13,12 +12,10 @@ export default function ChatPage() {
   const drawerWidth = 340;
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [windowWidth, setWindowWidth] = useState<string>("100%");
-  const { joinRoom } = useSocket();
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  joinRoom("default-room");
 
   useEffect(() => {
     setWindowWidth(isMobile ? "100%" : `calc(100% - ${drawerWidth}px)`);
