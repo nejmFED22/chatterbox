@@ -19,6 +19,14 @@ io.on("connection", (socket) => {
   // Joins room
   socket.on("join", (room) => {
     socket.join(room);
+    console.log(socket.rooms)
+    io.emit("rooms", getRooms());
+  });
+
+  // Leaves room
+  socket.on("leave", (room) => {
+    socket.leave(room);
+    console.log(socket.rooms)
     io.emit("rooms", getRooms());
   });
 
@@ -45,7 +53,7 @@ function getRooms() {
       roomsFound.push(name);
     }
   }
-  console.log(roomsFound)
+  console.log(roomsFound);
   return roomsFound;
 }
 

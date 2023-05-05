@@ -34,6 +34,7 @@ function SocketProvider({ children }: PropsWithChildren) {
   const [roomList, setRoomList] = useState<string[]>();
 
   function joinRoom(room: string) {
+    socket.emit("leave", currentRoom as string)
     socket.emit("join", room);
     setCurrentRoom(room);
   }
