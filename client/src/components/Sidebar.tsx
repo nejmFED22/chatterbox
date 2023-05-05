@@ -5,7 +5,6 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  Button,
   IconButton,
   Link,
   Typography,
@@ -14,10 +13,10 @@ import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
+import { useSocket } from "../context/SocketContext";
 import { theme } from "../theme";
 import AddRoomButtom from "./AddRoomButton";
 
-const rooms = ["FED22", "Another room", "Fun", "HKHNJ"];
 const users = ["Jenny", "Nat", "Marcus", "Ellen"];
 const drawerWidth = 340;
 
@@ -33,6 +32,8 @@ export default function Sidebar({
   const handleSidebarToggle = () => {
     toggleSidebar();
   };
+
+  const { roomList, joinRoom } = useSocket();
 
   return (
     <Box sx={sidebarStyles}>
@@ -64,38 +65,50 @@ export default function Sidebar({
               </IconButton>
             )}
           </Box>
-          <List sx={styledList}>
-            {rooms.map((room) => (
-              <ListItem key={room} sx={styledListItem}>
-                <Accordion sx={styledAccordion}>
-                  <AccordionSummary
-                    expandIcon={<ArrowForwardIosIcon sx={styledArrowIcon} />}
-                    aria-controls="panel1a-content"
-                    id="panel1a-header"
-                    sx={styledAccordionSummary}
-                  >
-                    <Link
-                      sx={styledLink}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                      }}
+          {roomList && roomList.length > 0 ? (
+            <List sx={styledList}>
+              {roomList.map((room) => (
+                <ListItem key={room} sx={styledListItem}>
+                  <Accordion sx={styledAccordion}>
+                    <AccordionSummary
+                      expandIcon={<ArrowForwardIosIcon sx={styledArrowIcon} />}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
+                      sx={styledAccordionSummary}
                     >
-                      <Typography variant="h4">{room}</Typography>
-                    </Link>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    <List>
-                      {users.map((user) => (
-                        <ListItem key={user}>
-                          <Typography variant="body2">{user}</Typography>
-                        </ListItem>
-                      ))}
-                    </List>
-                  </AccordionDetails>
-                </Accordion>
-              </ListItem>
-            ))}
-          </List>
+                      <Link
+                        sx={styledLink}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          joinRoom(room)
+                        }}
+                      >
+                        <Typography variant="h4">{room}</Typography>
+                      </Link>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      <List>
+                        {users.map((user) => (
+                          <ListItem key={user}>
+                            <Typography variant="body2">{user}</Typography>
+                          </ListItem>
+                        ))}
+                      </List>
+                    </AccordionDetails>
+                  </Accordion>
+                </ListItem>
+              ))}
+            </List>
+          ) : (
+            <>
+              <Typography gutterBottom sx={{ ml: 2 }}>
+                No rooms available :-(
+              </Typography>
+              <Typography variant="h5" sx={{ ml: 2 }}>
+                Why not create one with the button below?{" "}
+              </Typography>
+            </>
+          )}
           <AddRoomButtom />
         </Drawer>
       ) : null}

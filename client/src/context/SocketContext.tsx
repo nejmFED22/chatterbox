@@ -16,13 +16,13 @@ interface ContextValues {
   loggedInUser: string | null;
   setLoggedInUser: React.Dispatch<React.SetStateAction<string | null>>;
   joinRoom: (room: string) => void;
-  room?: string;
+  currentRoom?: string;
+  roomList?: string[];
   sendMessageToServer: (message: string) => void;
 }
 
 const SocketContext = createContext<ContextValues>(null as any);
 export const useSocket = () => useContext(SocketContext);
-// export const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io();
 
 function SocketProvider({ children }: PropsWithChildren) {
   const [socket] =
@@ -30,16 +30,17 @@ function SocketProvider({ children }: PropsWithChildren) {
   const [loggedInUser, setLoggedInUser] = useState(
     localStorage.getItem("username")
   );
-  const [room, setRoom] = useState<string>();
+  const [currentRoom, setCurrentRoom] = useState<string>();
+  const [roomList, setRoomList] = useState<string[]>();
 
   function joinRoom(room: string) {
     socket.emit("join", room);
-    setRoom(room);
+    setCurrentRoom(room);
   }
 
   const sendMessageToServer = (message: string) => {
-    if (!room) throw Error("Can't send message without a room");
-    socket.emit("message", room, message);
+    if (!currentRoom) throw Error("Can't send message without a room");
+    socket.emit("message", currentRoom, message);
   };
 
   useEffect(() => {
@@ -53,7 +54,7 @@ function SocketProvider({ children }: PropsWithChildren) {
       console.log(message);
     }
     function rooms(rooms: string[]) {
-      console.log(rooms);
+      setRoomList(rooms)
     }
 
     socket.on("connect", connect);
@@ -76,8 +77,9 @@ function SocketProvider({ children }: PropsWithChildren) {
         loggedInUser,
         setLoggedInUser,
         joinRoom,
-        room,
+        currentRoom,
         sendMessageToServer,
+        roomList
       }}
     >
       {children}
