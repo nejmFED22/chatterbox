@@ -1,6 +1,7 @@
 // Servern skickar
 export interface ServerToClientEvents {
   message: (message: string) => void;
+  roomCreated: (roomId: string) => void;
 }
 
 // Klienten skickar

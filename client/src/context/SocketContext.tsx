@@ -37,16 +37,18 @@ function SocketProvider({ children }: PropsWithChildren) {
     function disconnect() {
       console.log("Disconnected from server");
     }
+
+    function roomConfirmation(roomName: string) {
+      console.log("Joined room " + roomName);
+    }
+
     function message(message: string) {
       console.log(message);
     }
 
     socket.on("connect", connect);
     socket.on("message", message);
-    socket.on("roomCreated", (roomName: string) => {
-      // socket.join(roomName); Invalid code but I want to do something like this.
-      console.log(`Joined room ${roomName}`);
-    });
+    socket.on("roomCreated", roomConfirmation);
     socket.on("disconnect", disconnect);
 
     return () => {

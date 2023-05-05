@@ -1,5 +1,6 @@
 import { FormControl, Paper, TextField, Typography } from "@mui/material";
 import { useState } from "react";
+import { useSocket } from "../context/SocketContext";
 import TextButton from "./TextButton";
 
 interface Props {
@@ -10,21 +11,24 @@ export default function MessageInput({ isMobile }: Props) {
   const [userTyping, setUserTyping] = useState(false);
   const [message, setMessage] = useState("");
 
+  const {sendMessage} = useSocket();
+
   function handleTyping(e: React.ChangeEvent<HTMLInputElement>) {
     setUserTyping(true);
     setMessage(e.target.value);
     setTimeout(() => setUserTyping(false), 5000);
   }
 
-  function sendMessage(e: React.FormEvent<HTMLFormElement>) {
+  function handleSendMessage(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    sendMessage(message);
     console.log("Message '" + message + "' has been sent.");
   }
 
   return (
     <Paper sx={styledPaper}>
       <Typography variant="body2" sx={styledType}></Typography>
-      <form onSubmit={sendMessage}>
+      <form onSubmit={handleSendMessage}>
         <FormControl
           sx={{
             ...styledFormControl,

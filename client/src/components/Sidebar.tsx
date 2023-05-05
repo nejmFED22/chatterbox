@@ -31,14 +31,14 @@ export default function Sidebar({
   sidebarOpen: boolean;
   isMobile: boolean;
 }) {
-  const socket = useSocket();
+  const { createRoom } = useSocket();
 
   const handleSidebarToggle = () => {
     toggleSidebar();
   };
 
-  const createRoom = () => {
-    socket.createRoom("New Room", "Jenny");
+  const handleCreateRoom = () => {
+    createRoom("New Room", "Jenny");
   };
 
   return (
@@ -94,7 +94,7 @@ export default function Sidebar({
               </ListItem>
             ))}
           </List>
-          <Button onClick={createRoom}>+</Button>
+          <Button onClick={handleCreateRoom}>+</Button>
         </Drawer>
       ) : null}
     </Box>

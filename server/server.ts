@@ -23,6 +23,7 @@ io.on("connection", (socket) => {
     console.log("A user has disconnected");
   });
   socket.on("createRoom", (roomName, firstUser) => {
+    socket.join(roomName);
     const newRoom: Room = {
       roomName,
       users: [firstUser],
@@ -31,7 +32,7 @@ io.on("connection", (socket) => {
     rooms.push(newRoom);
     console.log(rooms);
     socket.emit("roomCreated", newRoom.roomName);
-    console.log(socket.id);
+    console.log(socket.id, "created room", roomName);
   });
 });
 
