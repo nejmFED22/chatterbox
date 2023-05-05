@@ -3,7 +3,7 @@ import { CSSProperties, Fragment, useEffect, useRef, useState } from "react";
 import MessageInput from "../components/MessageInput";
 import MessageStack from "../components/MessageStack";
 import Sidebar from "../components/Sidebar";
-import Header from "../components/header";
+import Header from "../components/Header";
 
 export default function ChatPage() {
   const [inputHeight, setInputHeight] = useState(0);
