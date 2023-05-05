@@ -5,6 +5,7 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  Button,
   IconButton,
   Link,
   Typography,
@@ -73,7 +74,14 @@ export default function Sidebar({
                     id="panel1a-header"
                     sx={styledAccordionSummary}
                   >
-                    <Typography variant="h4">{room}</Typography>
+                    <Link
+                      sx={styledLink}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                      }}
+                    >
+                      <Typography variant="h4">{room}</Typography>
+                    </Link>
                   </AccordionSummary>
                   <AccordionDetails>
                     <List>

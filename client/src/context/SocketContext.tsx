@@ -53,7 +53,7 @@ function SocketProvider({ children }: PropsWithChildren) {
       socket.off("message", message);
       socket.off("disconnect", disconnect);
     };
-  }, [socket]);
+  }, []);
 
   return (
     <SocketContext.Provider
