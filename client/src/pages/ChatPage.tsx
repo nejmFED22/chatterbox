@@ -1,35 +1,34 @@
-import { Box, Container } from "@mui/material";
-import { CSSProperties, Fragment, useEffect, useRef, useState } from "react";
+import { Box, Container, useMediaQuery } from "@mui/material";
+import { CSSProperties, Fragment, useEffect, useState } from "react";
+import Header from "../components/Header";
 import MessageInput from "../components/MessageInput";
 import MessageStack from "../components/MessageStack";
 import Sidebar from "../components/Sidebar";
-import Header from "../components/Header";
+import { useSocket } from "../context/SocketContext";
+import { theme } from "../theme";
 
 export default function ChatPage() {
-  const [inputHeight, setInputHeight] = useState(0);
-  const inputRef = useRef<HTMLDivElement>(null);
-  const drawerWidth = 240;
+  const drawerWidth = 340;
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [windowWidth, setWindowWidth] = useState<string>("100%");
+  const { joinRoom } = useSocket();
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  joinRoom("default-room");
 
   useEffect(() => {
-    inputRef.current && setInputHeight(inputRef.current.clientHeight);
-  }, [inputRef]);
-
-  // Not working, fix later
-  useEffect(() => {
-    window.scrollTo(0, document.body.scrollHeight);
-  }, []);
+    setWindowWidth(isMobile ? "100%" : `calc(100% - ${drawerWidth}px)`);
+  }, [isMobile]);
 
   return (
     <Fragment>
       <Header toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
-      <Box sx={styledBox} component={"main"}>
-        <MessageStack marginBottom={`${inputHeight}px`} />
-        <Container ref={inputRef} sx={styledInputContainer}>
-          <MessageInput />
+      <Box sx={{ width: windowWidth, ...styledBox }} component={"main"}>
+        <MessageStack isMobile={isMobile} />
+        <Container component={"div"} sx={styledInputContainer}>
+          <MessageInput isMobile={isMobile} />
         </Container>
       </Box>
       <Sidebar toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
@@ -40,9 +39,9 @@ export default function ChatPage() {
 const styledBox: CSSProperties = {
   position: "relative",
 };
+
 const styledInputContainer: CSSProperties = {
-  position: "fixed",
+  position: "sticky",
   bottom: 0,
-  left: 0,
-  right: 0,
+  paddingBottom: "0.5rem",
 };
