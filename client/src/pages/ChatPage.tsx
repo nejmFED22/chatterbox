@@ -8,7 +8,6 @@ import { useSocket } from "../context/SocketContext";
 import { theme } from "../theme";
 
 export default function ChatPage() {
-  const [inputHeight, setInputHeight] = useState(0);
   const drawerWidth = 240;
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [windowWidth, setWindowWidth] = useState<string>("100%");
@@ -25,24 +24,14 @@ export default function ChatPage() {
 
   return (
     <Fragment>
-      <Header
-        toggleSidebar={toggleSidebar}
-        drawerWidth={drawerWidth}
-        sidebarOpen={sidebarOpen}
-        isMobile={isMobile}
-        width={windowWidth}
-      />
+      <Header toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
       <Box sx={{ width: windowWidth, ...styledBox }} component={"main"}>
         <MessageStack />
         <Container component={"div"} sx={styledInputContainer}>
           <MessageInput isMobile={isMobile} />
         </Container>
       </Box>
-      <Sidebar
-        toggleSidebar={toggleSidebar}
-        sidebarOpen={sidebarOpen}
-        isMobile={isMobile}
-      />
+      <Sidebar toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
     </Fragment>
   );
 }

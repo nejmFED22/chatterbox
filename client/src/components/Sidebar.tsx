@@ -8,32 +8,30 @@ import {
   IconButton,
   Link,
   Typography,
+  useMediaQuery,
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import { theme } from "../theme";
-
-const drawerWidth = 240;
+import AddRoomButtom from "./AddRoomButton";
 
 const rooms = ["FED22", "Another room", "Fun", "HKHNJ"];
 const users = ["Jenny", "Nat", "Marcus", "Ellen"];
+const drawerWidth = 340;
 
 export default function Sidebar({
   toggleSidebar,
   sidebarOpen,
-  isMobile,
 }: {
   toggleSidebar: () => void;
   sidebarOpen: boolean;
-  isMobile: boolean;
 }) {
-  // const { createRoom } = useSocket();
-
   const handleSidebarToggle = () => {
     toggleSidebar();
   };
+  const isMobile = useMediaQuery("(max-width: 600px)");
 
   return (
     <Box sx={sidebarStyles}>
@@ -49,9 +47,11 @@ export default function Sidebar({
           open={sidebarOpen}
         >
           <Box sx={styledBox}>
-            <Link sx={styledLink}>Rooms</Link>
-            <Link sx={styledLink}>DMs</Link>
-            <Link sx={styledLink}>Users</Link>
+            <List>
+              <Link sx={styledLink}>Rooms</Link>
+              <Link sx={styledLink}>DMs</Link>
+              <Link sx={styledLink}>Users</Link>
+            </List>
 
             {isMobile && sidebarOpen && (
               <IconButton
@@ -88,6 +88,7 @@ export default function Sidebar({
               </ListItem>
             ))}
           </List>
+          <AddRoomButtom />
         </Drawer>
       ) : null}
     </Box>
@@ -97,15 +98,15 @@ export default function Sidebar({
 const sidebarStyles = {
   display: "flex",
   width: "100vw",
-  "&>.MuiDrawer-root": {
-    zIndex: 1300,
-  },
+  zIndex: 10,
+  position: "relative",
 };
 
 const styledBox = {
   display: "flex",
   alignItems: "center",
   gap: "1rem",
+  justifyContent: "space-between",
   padding: "1rem",
 };
 
@@ -114,6 +115,7 @@ const styledLink = {
   textDecoration: "none",
   cursor: "pointer",
   fontFamily: "Inter",
+  paddingRight: "2rem",
 
   "&:hover": {
     textDecoration: "underline",
@@ -139,8 +141,7 @@ const styledArrowIcon = {
   cursor: "pointer",
   zIndex: 2,
   background: theme.palette.primary.light,
-  height: "62.4px",
-  padding: "1rem",
+  paddingRight: "1rem",
   // ...activeStyles,
 };
 
