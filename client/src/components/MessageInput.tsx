@@ -6,6 +6,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useState } from "react";
+import { useSocket } from "../context/SocketContext";
 
 interface Props {
   isMobile: boolean;
@@ -14,6 +15,7 @@ interface Props {
 export default function MessageInput({ isMobile }: Props) {
   const [userTyping, setUserTyping] = useState(false);
   const [message, setMessage] = useState("");
+  const { sendMessage, loggedInUser } = useSocket();
 
   function handleTyping(e: React.ChangeEvent<HTMLInputElement>) {
     setUserTyping(true);
@@ -23,8 +25,11 @@ export default function MessageInput({ isMobile }: Props) {
 
   function handleSendMessage(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    console.log("Message '" + message + "' has been sent.");
-    setMessage("");
+    if (message.trim() && loggedInUser) {
+      sendMessage({ content: message, author: loggedInUser });
+      console.log("Message '" + message + "' has been sent.");
+      setMessage("");
+    }
   }
 
   return (

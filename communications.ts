@@ -2,13 +2,13 @@ import { Message } from "./types";
 
 // Servern skickar
 export interface ServerToClientEvents {
-  message: (message: string) => void;
+  message: (message: Message) => void;
   roomCreated: (roomId: string) => void;
 }
 
 // Klienten skickar
 export interface ClientToServerEvents {
-  message: (message: Message, room: string) => void;
+  message: (message: Message) => void;
   join: (room: string) => void;
   leave: (room: string) => void;
   createRoom: (roomName: string, firstUser: string) => void;

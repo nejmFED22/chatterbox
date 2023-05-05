@@ -5,7 +5,7 @@ import {
   ServerToClientEvents,
   SocketData,
 } from "../communications";
-import { Room } from "../types";
+import { Message, Room } from "../types";
 
 const io = new Server<
   ClientToServerEvents,
@@ -30,9 +30,9 @@ io.on("connection", (socket) => {
   //   // io.to(room).emit("message", message);
   // });
 
-  socket.on("message", (message) => {
+  socket.on("message", (message: Message) => {
     console.log(`Message received: ${message.content} from ${message.author}`);
-    io.emit("message", message);
+    io.emit("message", { content: message.content, author: message.author });
   });
 
   // Disconnecting and leaving all rooms
@@ -53,7 +53,6 @@ io.on("connection", (socket) => {
     console.log(socket.id, "created room", roomName);
   });
 });
-
 
 io.listen(3000);
 console.log("listening on port 3000");
