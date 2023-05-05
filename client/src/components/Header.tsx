@@ -21,7 +21,7 @@ function HideOnScroll({ children }: HideOnScrollProps) {
   const trigger = useScrollTrigger();
 
   return (
-    <Slide appear={false} direction="down" in={!trigger}>
+    <Slide appear={true} direction="down" in={!trigger}>
       {children}
     </Slide>
   );
@@ -30,6 +30,8 @@ interface HeaderProps {
   toggleSidebar: () => void;
   sidebarOpen: boolean;
 }
+
+const drawerWidth = 340;
 
 export default function Header({ toggleSidebar, sidebarOpen }: HeaderProps) {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -62,7 +64,7 @@ export default function Header({ toggleSidebar, sidebarOpen }: HeaderProps) {
               <IconButton aria-label="exit-room" sx={styledLeft}>
                 <CloseOutlined sx={styledLeft} />
               </IconButton>
-              <Typography variant="body1" component="div" sx={styledLeft}>
+              <Typography variant="body2" component="div" sx={styledLeft}>
                 Room: 1337
               </Typography>
             </Box>
@@ -84,13 +86,11 @@ export default function Header({ toggleSidebar, sidebarOpen }: HeaderProps) {
   );
 }
 
-const drawerWidth = 240;
-
 const styledContainer = {
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
-  height: "62.4px",
+  height: "3.4rem",
 };
 
 const styledLeft = {
@@ -98,13 +98,9 @@ const styledLeft = {
   justifyContent: "space-between",
   alignItems: "center",
   color: "#fff",
-  // fontSize: "1.875rem",
   paddingLeft: 0,
   fontWeight: "400",
-
-  // "@media (max-width: 600px)": {
-  //   fontSize: "1.25rem",
-  // },
+  whiteSpace: "nowrap",
 };
 
 const styledMenuIcon = {

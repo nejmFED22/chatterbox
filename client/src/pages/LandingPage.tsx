@@ -12,7 +12,7 @@ const schema = z.object({
 type FormValues = z.infer<typeof schema>;
 
 export default function LandingPage() {
-  const { loggedInUser, setLoggedInUser} = useSocket();  
+  const { loggedInUser, setLoggedInUser } = useSocket();  
 
   const { register, handleSubmit, watch, formState: { errors } } = useForm<FormValues>({
     mode: "onChange",
