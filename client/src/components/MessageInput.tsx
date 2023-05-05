@@ -43,7 +43,6 @@ export default function MessageInput({ isMobile }: Props) {
             variant="standard"
             value={message}
             placeholder="Write your message here"
-            size="small"
             sx={styledTextField}
           />
           <Button type="submit" variant="contained">
@@ -55,6 +54,11 @@ export default function MessageInput({ isMobile }: Props) {
   );
 }
 
+const styledPaper = {
+  padding: "0.5rem",
+  border: "1px solid black",
+};
+
 const styledType = {
   height: "1.5rem",
 };
@@ -62,13 +66,10 @@ const styledType = {
 const styledFormControl = {
   display: "flex",
   gap: "0.5rem",
+  alignItems: "flex-end",
 };
 
 const styledTextField = {
   flex: 1,
-};
-
-const styledPaper = {
-  padding: "0.5rem",
-  border: "1px solid black",
+  width: "100%",
 };

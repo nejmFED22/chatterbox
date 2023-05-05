@@ -73,7 +73,7 @@ export let theme: Theme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
-          padding: "0 1rem",
+          padding: "0.7rem 1rem",
           textTransform: "none",
           fontWeight: 400,
           lineHeight: 1,
