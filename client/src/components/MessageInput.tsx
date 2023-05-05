@@ -1,3 +1,4 @@
+import { keyframes } from "@emotion/react";
 import {
   Button,
   FormControl,
@@ -39,14 +40,15 @@ export default function MessageInput({ isMobile }: Props) {
   }
 
   const renderTypingUsers = () => {
-    return typingUsers.map((user) => `${user}, `) + "is typing...";
+    return typingUsers.map((user) => `${user}, `) + "is typing";
   };
 
   return (
     <Paper sx={styledPaper}>
-      <Typography variant="body2" sx={styledType}>
+      <Typography variant="body1" sx={styledType}>
         {typingUsers.length > 0 && renderTypingUsers()}
       </Typography>
+      <span style={ellipsisAnimation}>...</span>
       <form onSubmit={handleSendMessage}>
         <FormControl
           sx={{
@@ -78,6 +80,24 @@ const styledPaper = {
 
 const styledType = {
   height: "1.5rem",
+};
+
+const ellipsisKeyframes = keyframes`
+    0% {
+      width: 0px;
+    }
+
+    100% {
+      width: 40px;
+    }
+  `;
+
+const ellipsisAnimation = {
+  overflow: "hidden",
+  display: "inline-block",
+  verticalAlign: "bottom",
+  animation: `${ellipsisKeyframes} 900ms infinite`,
+  width: "0px",
 };
 
 const styledFormControl = {

@@ -28,7 +28,7 @@ function SocketProvider({ children }: PropsWithChildren) {
   const [socket] =
     useState<Socket<ServerToClientEvents, ClientToServerEvents>>(io);
   const [loggedInUser, setLoggedInUser] = useState(
-    localStorage.getItem("username") || ""
+    sessionStorage.getItem("username") || ""
   );
   const [room, setRoom] = useState("");
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
@@ -47,6 +47,8 @@ function SocketProvider({ children }: PropsWithChildren) {
   }
 
   useEffect(() => {
+    joinRoom("default");
+
     function connect() {
       console.log("Connected to server");
     }
@@ -68,6 +70,7 @@ function SocketProvider({ children }: PropsWithChildren) {
 
     function typingStop(user: string) {
       setTypingUsers((users) => users.filter((u) => u !== user));
+      console.log(typingUsers);
     }
 
     socket.on("connect", connect);
