@@ -20,7 +20,7 @@ interface ContextValues {
   joinRoom: (room: string) => void;
   currentRoom?: string;
   roomList?: Room[];
-  sendMessageToServer: (message: string) => void;
+  sendMessage: (message: string) => void;
 }
 
 const SocketContext = createContext<ContextValues>(null as any);
@@ -50,7 +50,7 @@ function SocketProvider({ children }: PropsWithChildren) {
     setCurrentRoom(room);
   }
 
-  const sendMessageToServer = (message: string) => {
+  const sendMessage = (message: string) => {
     if (!currentRoom) throw Error("Can't send message without a room");
     socket.emit("message", currentRoom, message);
   };
@@ -92,7 +92,7 @@ function SocketProvider({ children }: PropsWithChildren) {
         joinRoom,
         currentRoom,
         roomList,
-        sendMessageToServer,
+        sendMessage,
       }}
     >
       {children}

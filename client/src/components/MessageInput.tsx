@@ -10,7 +10,7 @@ interface Props {
 export default function MessageInput({ isMobile }: Props) {
   const [userTyping, setUserTyping] = useState(false);
   const [message, setMessage] = useState("");
-  const { sendMessageToServer } = useSocket();
+  const { sendMessage } = useSocket();
 
   function handleTyping(e: React.ChangeEvent<HTMLInputElement>) {
     setUserTyping(true);
@@ -18,9 +18,9 @@ export default function MessageInput({ isMobile }: Props) {
     setTimeout(() => setUserTyping(false), 5000);
   }
 
-  function sendMessage(e: React.FormEvent<HTMLFormElement>) {
+  function handleSendMessage(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    sendMessageToServer(message);
+    sendMessage(message);
     console.log("Message '" + message + "' has been sent.");
     setMessage("");
   }
@@ -28,7 +28,7 @@ export default function MessageInput({ isMobile }: Props) {
   return (
     <Paper sx={styledPaper}>
       <Typography variant="body2" sx={styledType}></Typography>
-      <form onSubmit={sendMessage}>
+      <form onSubmit={handleSendMessage}>
         <FormControl
           sx={{
             ...styledFormControl,

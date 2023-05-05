@@ -46,17 +46,17 @@ io.on("connection", (socket) => {
 // Updates list of rooms
 function getRooms() {
   const { rooms } = io.sockets.adapter;
-  const roomsFound: Room[] = [];
+  const roomList: Room[] = [];
 
   for (const [name, setOfSocketIds] of rooms) {
     if (!setOfSocketIds.has(name)) {
-      roomsFound.push({
+      roomList.push({
         name: name,
         onlineUsers: setOfSocketIds.size,
       });
     }
   }
-  return roomsFound;
+  return roomList;
 }
 
 io.listen(3000);
