@@ -5,7 +5,6 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  Button,
   IconButton,
   Link,
   Typography,
@@ -14,7 +13,6 @@ import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
-import { useSocket } from "../context/SocketContext";
 import { theme } from "../theme";
 
 const drawerWidth = 240;
@@ -31,14 +29,10 @@ export default function Sidebar({
   sidebarOpen: boolean;
   isMobile: boolean;
 }) {
-  const { createRoom } = useSocket();
+  // const { createRoom } = useSocket();
 
   const handleSidebarToggle = () => {
     toggleSidebar();
-  };
-
-  const handleCreateRoom = () => {
-    createRoom("New Room", "Jenny");
   };
 
   return (
@@ -94,7 +88,6 @@ export default function Sidebar({
               </ListItem>
             ))}
           </List>
-          <Button onClick={handleCreateRoom}>+</Button>
         </Drawer>
       ) : null}
     </Box>

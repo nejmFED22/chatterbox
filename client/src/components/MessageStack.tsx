@@ -10,11 +10,7 @@ import {
 import { CSSProperties, useState } from "react";
 import { theme } from "../theme";
 
-interface Props {
-  marginBottom: string;
-}
-
-export default function MessageStack({ marginBottom }: Props) {
+export default function MessageStack() {
   // We'll fetch this from the context eventually
   const [username] = useState("John Doe");
 
@@ -84,10 +80,7 @@ export default function MessageStack({ marginBottom }: Props) {
   ];
 
   return (
-    <Stack
-      divider={<Divider sx={styledDivider} />}
-      sx={{ marginBottom, ...styledStack }}
-    >
+    <Stack divider={<Divider sx={styledDivider} />} sx={styledStack}>
       {mockMessages.map((message) => (
         <Card key={message.id}>
           <Container>
@@ -117,6 +110,7 @@ function styledCardContent(isItMe: boolean) {
 
 const styledStack: CSSProperties = {
   width: "100%",
+  marginBottom: "1rem",
 };
 
 const styledDivider: CSSProperties = {

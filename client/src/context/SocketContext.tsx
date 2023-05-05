@@ -15,8 +15,7 @@ interface ContextValues {
   socket: Socket;
   loggedInUser: string | null;
   setLoggedInUser: React.Dispatch<React.SetStateAction<string | null>>;
-  sendMessage: (message: string) => void;
-  createRoom: (roomName: string, firstUser: string) => void;
+  joinRoom: (room: string) => void;
 }
 
 const SocketContext = createContext<ContextValues>(null as any);
@@ -29,6 +28,10 @@ function SocketProvider({ children }: PropsWithChildren) {
   const [loggedInUser, setLoggedInUser] = useState(
     localStorage.getItem("username")
   );
+
+  function joinRoom(room: string) {
+    socket.emit("join", room);
+  }
 
   useEffect(() => {
     function connect() {
@@ -58,18 +61,18 @@ function SocketProvider({ children }: PropsWithChildren) {
     };
   }, [socket]);
 
-  function sendMessage(message: string) {
-    socket.emit("message", message);
-  }
+  // function sendMessage(message: string) {
+  //   socket.emit("message", message);
+  // }
 
-  function createRoom(roomName: string, firstUser: string) {
-    socket.emit("createRoom", roomName, firstUser);
-    console.log(socket.id);
-  }
+  // function createRoom(roomName: string, firstUser: string) {
+  //   socket.emit("createRoom", roomName, firstUser);
+  //   console.log(socket.id);
+  // }
 
   return (
     <SocketContext.Provider
-      value={{ socket, loggedInUser, setLoggedInUser, sendMessage, createRoom }}
+      value={{ socket, loggedInUser, setLoggedInUser, joinRoom }}
     >
       {children}
     </SocketContext.Provider>

@@ -1,6 +1,6 @@
 import { CloseOutlined } from "@mui/icons-material";
 import MenuIcon from "@mui/icons-material/Menu";
-import { Box, Container, IconButton, useScrollTrigger } from "@mui/material";
+import { Box, Button, Container, IconButton, useScrollTrigger } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Slide from "@mui/material/Slide";
 import Typography from "@mui/material/Typography";
@@ -19,6 +19,10 @@ function HideOnScroll({ children }: HideOnScrollProps) {
       {children}
     </Slide>
   );
+}
+
+function handleClearLocalStorage() {
+  localStorage.clear()
 }
 interface HeaderProps {
   toggleSidebar: () => void;
@@ -62,6 +66,7 @@ export default function Header({
                 {!sidebarOpen ? <MenuIcon sx={styledMenuIcon} /> : null}
               </IconButton>
             )}
+            <Button onClick={handleClearLocalStorage}>Logout</Button>
           </Container>
         </AppBar>
       </HideOnScroll>

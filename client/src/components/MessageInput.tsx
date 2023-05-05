@@ -10,8 +10,7 @@ interface Props {
 export default function MessageInput({ isMobile }: Props) {
   const [userTyping, setUserTyping] = useState(false);
   const [message, setMessage] = useState("");
-
-  const {sendMessage} = useSocket();
+  const { socket } = useSocket();
 
   function handleTyping(e: React.ChangeEvent<HTMLInputElement>) {
     setUserTyping(true);
@@ -21,8 +20,9 @@ export default function MessageInput({ isMobile }: Props) {
 
   function handleSendMessage(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    sendMessage(message);
+    socket.emit("message", message, "default-room");
     console.log("Message '" + message + "' has been sent.");
+    setMessage("");
   }
 
   return (
@@ -39,6 +39,7 @@ export default function MessageInput({ isMobile }: Props) {
             multiline={true}
             onChange={handleTyping}
             variant="standard"
+            value={message}
             placeholder="Write your message here"
             sx={styledTextField}
           />
@@ -64,6 +65,5 @@ const styledTextField = {
 
 const styledPaper = {
   padding: "0.5rem",
-  marginBottom: "0.5rem",
   border: "1px solid black",
 };
