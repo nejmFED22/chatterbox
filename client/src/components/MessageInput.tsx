@@ -5,20 +5,31 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { useSocket } from "../context/SocketContext";
 
 interface Props {
   isMobile: boolean;
 }
 
 export default function MessageInput({ isMobile }: Props) {
-  const [userTyping, setUserTyping] = useState(false);
   const [message, setMessage] = useState("");
+  const [typing, setTyping] = useState(false);
+  const timerRef = useRef<number | null>(null);
+
+  const { typingStart, typingStop, typingUsers } = useSocket();
 
   function handleTyping(e: React.ChangeEvent<HTMLInputElement>) {
-    setUserTyping(true);
+    if (!typing) {
+      typingStart();
+      setTyping(true);
+    }
     setMessage(e.target.value);
-    setTimeout(() => setUserTyping(false), 5000);
+    clearTimeout(timerRef.current!);
+    timerRef.current = setTimeout(() => {
+      typingStop();
+      setTyping(false);
+    }, 5000);
   }
 
   function handleSendMessage(e: React.FormEvent<HTMLFormElement>) {
@@ -27,9 +38,15 @@ export default function MessageInput({ isMobile }: Props) {
     setMessage("");
   }
 
+  const renderTypingUsers = () => {
+    return typingUsers.map((user) => `${user}, `) + "is typing...";
+  };
+
   return (
     <Paper sx={styledPaper}>
-      <Typography variant="body2" sx={styledType}></Typography>
+      <Typography variant="body2" sx={styledType}>
+        {typingUsers.length > 0 && renderTypingUsers()}
+      </Typography>
       <form onSubmit={handleSendMessage}>
         <FormControl
           sx={{

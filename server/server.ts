@@ -30,6 +30,16 @@ io.on("connection", (socket) => {
     // io.to(room).emit("message", message);
   });
 
+  // Communicate to client that user started typing
+  socket.on("typingStart", (room, user) => {
+    socket.broadcast.to(room).emit("typingStart", user);
+  });
+
+  // Communicate to client that user stopped typing
+  socket.on("typingStop", (room, user) => {
+    socket.broadcast.to(room).emit("typingStop", user);
+  });
+
   // Disconnecting and leaving all rooms
   socket.on("disconnect", () => {
     console.log("A user has disconnected");
