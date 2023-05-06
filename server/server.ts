@@ -3,8 +3,8 @@ import {
   ClientToServerEvents,
   InterServerEvents,
   ServerToClientEvents,
-  Room,
 } from "../communications";
+import { Room } from "../types"
 
 const io = new Server<
   ClientToServerEvents,
