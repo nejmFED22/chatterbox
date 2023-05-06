@@ -9,8 +9,8 @@ import { Socket, io } from "socket.io-client";
 import {
   ClientToServerEvents,
   ServerToClientEvents,
-  Room,
 } from "../../../communications";
+import { Room } from "../../../types";
 
 // Context setup
 interface ContextValues {

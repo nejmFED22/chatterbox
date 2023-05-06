@@ -18,8 +18,6 @@ import { useSocket } from "../context/SocketContext";
 import { theme } from "../theme";
 import AddRoomButtom from "./AddRoomButton";
 
-const drawerWidth = 340;
-
 export default function Sidebar({
   // Decides whether sidebar is permanent or toggleable
   toggleSidebar,
@@ -95,7 +93,6 @@ export default function Sidebar({
                         </Typography>
                       </Link>
                     </AccordionSummary>
-
                     {/* List of online users in the room */}
                     <AccordionDetails>
                       <List>
@@ -116,7 +113,7 @@ export default function Sidebar({
                 No rooms available :-(
               </Typography>
               <Typography variant="h5" sx={{ ml: 2 }}>
-                Why not create one with the button below?{" "}
+                Why not create one with the button below?
               </Typography>
             </>
           )}
@@ -128,6 +125,9 @@ export default function Sidebar({
 }
 
 // CSS styling
+
+const drawerWidth = 340;
+
 const sidebarStyles = {
   display: "flex",
   width: "100vw",
