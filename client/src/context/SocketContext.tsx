@@ -85,8 +85,10 @@ function SocketProvider({ children }: PropsWithChildren) {
 
     //------------------MESSAGE------------------//
 
-    function message(message: Message) {
-      setMessages((messages) => [...messages, message])
+    function message(room: string, message: Message) {
+      if (room === currentRoom) {
+        setMessages((messages) => [...messages, message])
+      }
     }
     
 
@@ -101,7 +103,7 @@ function SocketProvider({ children }: PropsWithChildren) {
       socket.off("rooms", rooms);
       socket.off("message", message);
     };
-  }, []);
+  }, [currentRoom]);
 
   return (
     <SocketContext.Provider

@@ -32,16 +32,10 @@ io.on("connection", (socket) => {
     io.emit("rooms", getRooms());
   });
 
-  // Sends message to everyone in same room
-  // socket.on("message", (message, room) => {
-  //   socket.broadcast.to(room).emit("message", message.content);
-  //   // io.to(room).emit("message", message);
-  // });
-
+  // Recives and sends out messages
   socket.on("message", (room: string, message: Message) => {
-    //console.log('Received message:', room, message);
     console.log(`Message received: ${message.content} from ${message.author} in room ${room}`);
-    io.emit("message", { content: message.content, author: message.author });
+    io.to(room).emit("message", room, { content: message.content, author: message.author });
   });
 
   // Disconnecting and leaving all rooms
