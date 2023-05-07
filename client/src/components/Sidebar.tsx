@@ -14,14 +14,12 @@ import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
+import { useSocket } from "../context/SocketContext";
 import { theme } from "../theme";
 import AddRoomButtom from "./AddRoomButton";
 
-const rooms = ["FED22", "Another room", "Fun", "HKHNJ"];
-const users = ["Jenny", "Nat", "Marcus", "Ellen"];
-const drawerWidth = 340;
-
 export default function Sidebar({
+  // Decides whether sidebar is permanent or toggleable
   toggleSidebar,
   sidebarOpen,
 }: {
@@ -33,6 +31,11 @@ export default function Sidebar({
   };
   const isMobile = useMediaQuery("(max-width: 600px)");
 
+  // States and variables
+  const { roomList, joinRoom } = useSocket();
+  const users = ["Jenny", "Nat", "Marcus", "Ellen"];
+
+  // Sidebar component
   return (
     <Box sx={sidebarStyles}>
       {!isMobile || sidebarOpen ? (
@@ -63,37 +66,67 @@ export default function Sidebar({
               </IconButton>
             )}
           </Box>
-          <List sx={styledList}>
-            {rooms.map((room) => (
-              <ListItem key={room} sx={styledListItem}>
-                <Accordion sx={styledAccordion}>
-                  <AccordionSummary
-                    expandIcon={<ArrowForwardIosIcon sx={styledArrowIcon} />}
-                    aria-controls="panel1a-content"
-                    id="panel1a-header"
-                    sx={styledAccordionSummary}
-                  >
-                    <Typography variant="h4">{room}</Typography>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    <List>
-                      {users.map((user) => (
-                        <ListItem key={user}>
-                          <Typography variant="body2">{user}</Typography>
-                        </ListItem>
-                      ))}
-                    </List>
-                  </AccordionDetails>
-                </Accordion>
-              </ListItem>
-            ))}
-          </List>
+
+          {/* TODO: Break up room list, DM list and User list into their own components */}
+          {/* Renders list of rooms if there are any open */}
+          {roomList && roomList.length > 0 ? (
+            <List sx={styledList}>
+              {roomList.map((room) => (
+                <ListItem key={room.name} sx={styledListItem}>
+                  <Accordion sx={styledAccordion}>
+                    {/* Room information */}
+                    <AccordionSummary
+                      expandIcon={<ArrowForwardIosIcon sx={styledArrowIcon} />}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
+                      sx={styledAccordionSummary}
+                    >
+                      <Link
+                        sx={styledLink}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          joinRoom(room.name);
+                        }}
+                      >
+                        <Typography variant="h4">
+                          ({room.onlineUsers}) {room.name}
+                        </Typography>
+                      </Link>
+                    </AccordionSummary>
+                    {/* List of online users in the room */}
+                    <AccordionDetails>
+                      <List>
+                        {users.map((user) => (
+                          <ListItem key={user}>
+                            <Typography variant="body2">{user}</Typography>
+                          </ListItem>
+                        ))}
+                      </List>
+                    </AccordionDetails>
+                  </Accordion>
+                </ListItem>
+              ))}
+            </List>
+          ) : (
+            <>
+              <Typography gutterBottom variant="h3" sx={{ ml: 2 }}>
+                No rooms available :-(
+              </Typography>
+              <Typography variant="h5" sx={{ ml: 2 }}>
+                Why not create one with the button below?
+              </Typography>
+            </>
+          )}
           <AddRoomButtom />
         </Drawer>
       ) : null}
     </Box>
   );
 }
+
+// CSS styling
+
+const drawerWidth = 340;
 
 const sidebarStyles = {
   display: "flex",
