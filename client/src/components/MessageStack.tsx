@@ -8,6 +8,7 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { CSSProperties, useState } from "react";
+import { useSocket } from "../context/SocketContext";
 import { theme } from "../theme";
 
 interface Props {
@@ -19,6 +20,7 @@ export default function MessageStack(
 ) {
   // We'll fetch this from the context eventually
   const [username] = useState("John Doe");
+  const { messages } = useSocket();
 
   const largeScreen = useMediaQuery(theme.breakpoints.up("md"));
 

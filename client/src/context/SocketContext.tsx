@@ -13,6 +13,7 @@ interface ContextValues {
   loggedInUser: string | null;
   setLoggedInUser: React.Dispatch<React.SetStateAction<string | null>>;
   joinRoom: (room: string) => void;
+  messages: Message[];
   sendMessage: (message: Message) => void;
 }
 
@@ -77,7 +78,7 @@ function SocketProvider({ children }: PropsWithChildren) {
 
   return (
     <SocketContext.Provider
-      value={{ socket, loggedInUser, setLoggedInUser, joinRoom, sendMessage }}
+      value={{ socket, loggedInUser, setLoggedInUser, joinRoom, sendMessage, messages }}
     >
       {children}
     </SocketContext.Provider>
