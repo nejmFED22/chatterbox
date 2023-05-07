@@ -109,7 +109,7 @@ export default function MessageStack(
         </Card>
       ))} */}
       
-      {/* TODO: Ändra index till id */}
+      {/* TODO: Ändra index till id? */}
       {messages.map((message, index) => (
         <Card key={index}>
           <Container>
