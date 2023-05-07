@@ -32,7 +32,7 @@ io.on("connection", (socket) => {
     io.emit("rooms", getRooms());
   });
 
-  // Recives and sends out messages
+  // Receives and sends out messages
   socket.on("message", (room: string, message: Message) => {
     console.log(`Message received: ${message.content} from ${message.author} in room ${room}`);
     io.to(room).emit("message", room, { content: message.content, author: message.author });

@@ -27,7 +27,7 @@ export default function MessageInput({ isMobile }: Props) {
     e.preventDefault();
     if (message.trim() && loggedInUser) {
       sendMessage({ content: message, author: loggedInUser });
-      console.log("Message '" + message + "' has been sent.");
+      //console.log("Message '" + message + "' has been sent.");
       setMessage("");
     }
   }
