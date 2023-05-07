@@ -38,8 +38,9 @@ io.on("connection", (socket) => {
   //   // io.to(room).emit("message", message);
   // });
 
-  socket.on("message", (message: Message) => {
-    console.log(`Message received: ${message.content} from ${message.author}`);
+  socket.on("message", (room: string, message: Message) => {
+    //console.log('Received message:', room, message);
+    console.log(`Message received: ${message.content} from ${message.author} in room ${room}`);
     io.emit("message", { content: message.content, author: message.author });
   });
 
