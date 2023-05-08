@@ -1,13 +1,53 @@
 // import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CloseIcon from "@mui/icons-material/Close";
-import { IconButton, Link, useMediaQuery } from "@mui/material";
+import {
+  IconButton,
+  Tab,
+  Tabs,
+  Typography,
+  useMediaQuery
+} from "@mui/material";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
-import List from "@mui/material/List";
 import { theme } from "../../theme";
 import SidebarRoomList from "./SidebarRoomList";
+import React from "react";
+
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+}
+
+function TabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+}
+
+function a11yProps(index: number) {
+  return {
+    id: `simple-tab-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`,
+  };
+}
 
 export default function Sidebar({
+  
   // Decides whether sidebar is permanent or toggleable
   toggleSidebar,
   sidebarOpen,
@@ -19,7 +59,11 @@ export default function Sidebar({
     toggleSidebar();
   };
   const isMobile = useMediaQuery("(max-width: 600px)");
+  const [value, setValue] = React.useState(0);
 
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setValue(newValue);
+  };
   // Sidebar component
   return (
     <Box sx={sidebarStyles}>
@@ -36,11 +80,15 @@ export default function Sidebar({
         >
           {/* Tabs */}
           <Box sx={styledBox}>
-            <List>
-              <Link sx={styledLink}>Rooms</Link>
-              <Link sx={styledLink}>DMs</Link>
-              <Link sx={styledLink}>Users</Link>
-            </List>
+            <Tabs
+              value={value}
+              onChange={handleChange}
+              aria-label="basic tabs example"
+            >
+              <Tab sx={styledLink} label="Rooms" {...a11yProps(0)} />
+              <Tab sx={styledLink} label="DMs" {...a11yProps(1)} />
+              <Tab sx={styledLink} label="Users" {...a11yProps(2)} />
+            </Tabs>
 
             {isMobile && sidebarOpen && (
               <IconButton
@@ -52,7 +100,15 @@ export default function Sidebar({
               </IconButton>
             )}
           </Box>
+          <TabPanel value={value} index={0}>
           <SidebarRoomList />
+      </TabPanel>
+      <TabPanel value={value} index={1}>
+        Item Two
+      </TabPanel>
+      <TabPanel value={value} index={2}>
+        Item Three
+      </TabPanel>
         </Drawer>
       ) : null}
     </Box>
