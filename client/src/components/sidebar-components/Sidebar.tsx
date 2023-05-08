@@ -4,7 +4,6 @@ import {
   IconButton,
   Tab,
   Tabs,
-  Typography,
   useMediaQuery,
 } from "@mui/material";
 import Box from "@mui/material/Box";
@@ -139,8 +138,8 @@ const drawerWidth = 340;
 const sidebarStyles = {
   display: "flex",
   width: "100vw",
-  zIndex: 10,
-  position: "relative",
+  zIndex: 100,
+  position: "fixed",
 };
 
 const styledBox = {

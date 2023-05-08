@@ -47,7 +47,7 @@ export default function Header({ toggleSidebar, sidebarOpen }: HeaderProps) {
       height: "3.26rem",
 
       width:
-        sidebarOpen || !isMobile ? `calc(100% - ${drawerWidth}px)` : "100%",
+        sidebarOpen && !isMobile ? `calc(100% - ${drawerWidth}px)` : "100%",
       mr: { sm: `${drawerWidth}px` },
       left: 0,
       "@media (max-width: 600px)": {
@@ -65,7 +65,7 @@ export default function Header({ toggleSidebar, sidebarOpen }: HeaderProps) {
   return (
     <>
       <HideOnScroll>
-        <AppBar sx={getStyleAppBar()}>
+        <AppBar sx={getStyleAppBar()} position={"relative"}>
           <Container maxWidth="lg" sx={styledContainer}>
             <Box sx={styledLeft}>
               <IconButton aria-label="exit-room" sx={styledLeft}>
