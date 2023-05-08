@@ -48,11 +48,9 @@ export default function Sidebar({
   // Decides whether sidebar is permanent or toggleable
   toggleSidebar,
   sidebarOpen,
-  setActiveRoom,
 }: {
   toggleSidebar: () => void;
   sidebarOpen: boolean;
-  setActiveRoom: React.Dispatch<React.SetStateAction<boolean>>
 }) {
   const handleSidebarToggle = () => {
     toggleSidebar();
@@ -106,7 +104,7 @@ export default function Sidebar({
             {/* Tab content */}
             <TabPanel value={tab} index={0}>
               <Box sx={{ p: 3 }}>
-                <SidebarRoomList setActiveRoom={setActiveRoom}/>
+                <SidebarRoomList />
               </Box>
               <AddRoomButtom />
             </TabPanel>

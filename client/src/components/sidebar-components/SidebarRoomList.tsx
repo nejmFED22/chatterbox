@@ -11,7 +11,7 @@ import {
 import { useSocket } from "../../context/SocketContext";
 import { theme } from "../../theme";
 
-export default function SidebarRoomList({ setActiveRoom }: { setActiveRoom: React.Dispatch<React.SetStateAction<boolean>> }) {
+export default function SidebarRoomList() {
   // States and variables
   const { roomList, joinRoom } = useSocket();
   const users = ["Jenny", "Nat", "Marcus", "Ellen"];
@@ -33,7 +33,6 @@ export default function SidebarRoomList({ setActiveRoom }: { setActiveRoom: Reac
                   <Link
                     sx={styledLink}
                     onClick={(e) => {
-                      setActiveRoom(true);
                       e.stopPropagation();
                       joinRoom(room.name);
                     }}

@@ -5,16 +5,17 @@ import MessageInput from "../components/MessageInput";
 import MessageStack from "../components/MessageStack";
 import Sidebar from "../components/sidebar-components/Sidebar";
 import { theme } from "../theme";
+import { useSocket } from "../context/SocketContext";
 
 export default function ChatPage() {
   const drawerWidth = 340;
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [activeRoom, setActiveRoom] = useState<boolean>(false);
   const [windowWidth, setWindowWidth] = useState<string>("100%");
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const { currentRoom } = useSocket();
 
   useEffect(() => {
     setWindowWidth(isMobile ? "100%" : `calc(100% - ${drawerWidth}px)`);
@@ -22,9 +23,9 @@ export default function ChatPage() {
 
   return (
     <Fragment>
-      {activeRoom ? (
+      <Header toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen}/>
+      {currentRoom ? (
         <>
-          <Header toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} setActiveRoom={setActiveRoom} />
           <Box sx={{ width: windowWidth, ...styledBox }} component={"main"}>
             <MessageStack isMobile={isMobile} />
             <Container component={"div"} sx={styledInputContainer}>
@@ -35,7 +36,7 @@ export default function ChatPage() {
       ) : (
         <div>No Active Room</div>
       )}
-      <Sidebar toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} setActiveRoom={setActiveRoom}/>
+      <Sidebar toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen}/>
     </Fragment>
   );
 }
