@@ -14,6 +14,7 @@ import { theme } from "../../theme";
 import SidebarDMList from "./SidebarDMList";
 import SidebarRoomList from "./SidebarRoomList";
 import SidebarUserList from "./SidebarUserList";
+import AddRoomButtom from "./../AddRoomButton";
 
 // Tab panel logic
 interface TabPanelProps {
@@ -34,7 +35,7 @@ function TabPanel(props: TabPanelProps) {
       {...other}
     >
       {value === index && (
-        <Box sx={{ p: 3 }}>
+        <Box>
           <Typography>{children}</Typography>
         </Box>
       )}
@@ -42,6 +43,7 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
+// Accessability props for tabs
 function a11yProps(index: number) {
   return {
     id: `simple-tab-${index}`,
@@ -64,10 +66,10 @@ export default function Sidebar({
   };
 
   const isMobile = useMediaQuery("(max-width: 600px)");
-  const [value, setValue] = React.useState(0);
+  const [tab, setTab] = React.useState(0);
 
-  const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
-    setValue(newValue);
+  const handleTabChange = (_event: React.SyntheticEvent, newTab: number) => {
+    setTab(newTab);
   };
 
   return (
@@ -86,8 +88,8 @@ export default function Sidebar({
           {/* Tabs */}
           <Box sx={styledBox}>
             <Tabs
-              value={value}
-              onChange={handleChange}
+              value={tab}
+              onChange={handleTabChange}
               aria-label="basic tabs example"
             >
               <Tab sx={styledLink} label="Rooms" {...a11yProps(0)} />
@@ -108,14 +110,21 @@ export default function Sidebar({
           </Box>
 
           {/* Tab content */}
-          <TabPanel value={value} index={0}>
-            <SidebarRoomList />
+          <TabPanel value={tab} index={0}>
+            <Box sx={{ p: 3 }}>
+              <SidebarRoomList />
+            </Box>
+            <AddRoomButtom />
           </TabPanel>
-          <TabPanel value={value} index={1}>
-            <SidebarDMList />
+          <TabPanel value={tab} index={1}>
+            <Box sx={{ p: 3 }}>
+              <SidebarDMList />
+            </Box>
           </TabPanel>
-          <TabPanel value={value} index={2}>
-            <SidebarUserList />
+          <TabPanel value={tab} index={2}>
+            <Box sx={{ p: 3 }}>
+              <SidebarUserList />
+            </Box>
           </TabPanel>
         </Drawer>
       ) : null}

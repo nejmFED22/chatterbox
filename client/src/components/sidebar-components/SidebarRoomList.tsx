@@ -10,7 +10,6 @@ import {
 } from "@mui/material";
 import { useSocket } from "../../context/SocketContext";
 import { theme } from "../../theme";
-import AddRoomButtom from "../AddRoomButton";
 
 export default function SidebarRoomList() {
   // States and variables
@@ -67,7 +66,6 @@ export default function SidebarRoomList() {
           </Typography>
         </>
       )}
-      <AddRoomButtom />
     </>
   );
 }
