@@ -58,19 +58,6 @@ io.on("connection", (socket) => {
     io.emit("rooms", getRooms());
     console.log("A user has disconnected");
   });
-
-  // socket.on("createRoom", (roomName, firstUser) => {
-  //   socket.join(roomName);
-  //   const newRoom: Room = {
-  //     roomName,
-  //     users: [firstUser],
-  //     messages: [],
-  //   };
-  //   rooms.push(newRoom);
-  //   console.log(rooms);
-  //   socket.emit("roomCreated", newRoom.roomName);
-  //   console.log(socket.id, "created room", roomName);
-  // });
 });
 
 // Updates list of rooms

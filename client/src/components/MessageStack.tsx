@@ -27,69 +27,6 @@ export default function MessageStack(
     console.log(messages);
   }, [messages]);
 
-  const mockMessages = [
-    {
-      id: 1,
-      user: "John Doe",
-      content: "Hello World!",
-    },
-    {
-      id: 2,
-      user: "Jane Doe",
-      content: "Hello World again!",
-    },
-    {
-      id: 3,
-      user: "Doe Doe",
-      content: "Hello World again again!",
-    },
-    {
-      id: 4,
-      user: "John Doe",
-      content: "Hello World!",
-    },
-    {
-      id: 5,
-      user: "Jane Doe",
-      content: "Hello World again!",
-    },
-    {
-      id: 6,
-      user: "Doe Doe",
-      content: "Hello World again again!",
-    },
-    {
-      id: 7,
-      user: "John Doe",
-      content: "Hello World!",
-    },
-    {
-      id: 8,
-      user: "Jane Doe",
-      content: "Hello World again!",
-    },
-    {
-      id: 9,
-      user: "Doe Doe",
-      content: "Hello World again again!",
-    },
-    {
-      id: 10,
-      user: "Doe Doe",
-      content: "Hello World again again!",
-    },
-    {
-      id: 11,
-      user: "Doe Doe",
-      content: "Hello World again again!",
-    },
-    {
-      id: 12,
-      user: "Doe Doe",
-      content: "Hello World again again!",
-    },
-  ];
-
   return (
     <Stack
       divider={
