@@ -59,10 +59,10 @@ export default function SidebarRoomList() {
         </List>
       ) : (
         <>
-          <Typography gutterBottom variant="h3" sx={{ ml: 2 }}>
+          <Typography gutterBottom variant="h3">
             No rooms available :-(
           </Typography>
-          <Typography variant="h5" sx={{ ml: 2 }}>
+          <Typography variant="h5">
             Why not create one with the button below?
           </Typography>
         </>

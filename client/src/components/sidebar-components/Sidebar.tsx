@@ -5,14 +5,17 @@ import {
   Tab,
   Tabs,
   Typography,
-  useMediaQuery
+  useMediaQuery,
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
-import { theme } from "../../theme";
-import SidebarRoomList from "./SidebarRoomList";
 import React from "react";
+import { theme } from "../../theme";
+import SidebarDMList from "./SidebarDMList";
+import SidebarRoomList from "./SidebarRoomList";
+import SidebarUserList from "./SidebarUserList";
 
+// Tab panel logic
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -46,8 +49,9 @@ function a11yProps(index: number) {
   };
 }
 
+// Sidebar component
+
 export default function Sidebar({
-  
   // Decides whether sidebar is permanent or toggleable
   toggleSidebar,
   sidebarOpen,
@@ -58,13 +62,14 @@ export default function Sidebar({
   const handleSidebarToggle = () => {
     toggleSidebar();
   };
+
   const isMobile = useMediaQuery("(max-width: 600px)");
   const [value, setValue] = React.useState(0);
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
-  // Sidebar component
+
   return (
     <Box sx={sidebarStyles}>
       {!isMobile || sidebarOpen ? (
@@ -90,6 +95,7 @@ export default function Sidebar({
               <Tab sx={styledLink} label="Users" {...a11yProps(2)} />
             </Tabs>
 
+            {/* Close button on mobile */}
             {isMobile && sidebarOpen && (
               <IconButton
                 size="small"
@@ -100,15 +106,17 @@ export default function Sidebar({
               </IconButton>
             )}
           </Box>
+
+          {/* Tab content */}
           <TabPanel value={value} index={0}>
-          <SidebarRoomList />
-      </TabPanel>
-      <TabPanel value={value} index={1}>
-        Item Two
-      </TabPanel>
-      <TabPanel value={value} index={2}>
-        Item Three
-      </TabPanel>
+            <SidebarRoomList />
+          </TabPanel>
+          <TabPanel value={value} index={1}>
+            <SidebarDMList />
+          </TabPanel>
+          <TabPanel value={value} index={2}>
+            <SidebarUserList />
+          </TabPanel>
         </Drawer>
       ) : null}
     </Box>
@@ -130,7 +138,7 @@ const styledBox = {
   display: "flex",
   alignItems: "center",
   gap: "1rem",
-  justifyContent: "space-between",
+  justifyContent: "center",
   padding: "1rem",
 };
 
@@ -138,11 +146,14 @@ const styledLink = {
   color: theme.palette.primary.dark,
   textDecoration: "none",
   cursor: "pointer",
-  fontFamily: "Inter",
-  paddingRight: "2rem",
+  justifyContent: "center",
+  fontWeight: 700,
 
   "&:hover": {
     textDecoration: "underline",
+  },
+  "&.Mui-selected": {
+    color: "black",
   },
 };
 
