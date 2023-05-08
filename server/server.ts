@@ -34,8 +34,23 @@ io.on("connection", (socket) => {
 
   // Receives and sends out messages
   socket.on("message", (room: string, message: Message) => {
-    console.log(`Message received: ${message.content} from ${message.author} in room ${room}`);
-    io.to(room).emit("message", room, { content: message.content, author: message.author });
+    console.log(
+      `Message received: ${message.content} from ${message.author} in room ${room}`
+    );
+    io.to(room).emit("message", room, {
+      content: message.content,
+      author: message.author,
+    });
+  });
+
+  // Communicate to client that user started typing
+  socket.on("typingStart", (room, user) => {
+    socket.broadcast.to(room).emit("typingStart", user);
+  });
+
+  // Communicate to client that user stopped typing
+  socket.on("typingStop", (room, user) => {
+    socket.broadcast.to(room).emit("typingStop", user);
   });
 
   // Disconnecting and leaving all rooms
@@ -43,19 +58,6 @@ io.on("connection", (socket) => {
     io.emit("rooms", getRooms());
     console.log("A user has disconnected");
   });
-
-  // socket.on("createRoom", (roomName, firstUser) => {
-  //   socket.join(roomName);
-  //   const newRoom: Room = {
-  //     roomName,
-  //     users: [firstUser],
-  //     messages: [],
-  //   };
-  //   rooms.push(newRoom);
-  //   console.log(rooms);
-  //   socket.emit("roomCreated", newRoom.roomName);
-  //   console.log(socket.id, "created room", roomName);
-  // });
 });
 
 // Updates list of rooms
@@ -76,4 +78,3 @@ function getRooms() {
 
 io.listen(3000);
 console.log("listening on port 3000");
-

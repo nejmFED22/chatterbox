@@ -13,16 +13,20 @@ const schema = z.object({
 type FormValues = z.infer<typeof schema>;
 
 export default function LandingPage() {
-  const { loggedInUser, setLoggedInUser } = useSocket();  
+  const { loggedInUser, setLoggedInUser } = useSocket();
 
-  const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormValues>({
     mode: "onBlur",
     resolver: zodResolver(schema),
   });
 
   const onSubmit = (data: FormValues) => {
     if (data.username) {
-      localStorage.setItem("username", data.username);
+      sessionStorage.setItem("username", data.username);
       setLoggedInUser(data.username);
     } else {
       console.log("Empty username is not allowed");
@@ -39,7 +43,7 @@ export default function LandingPage() {
       </Typography>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Box sx={formContainer}>
-        <TextField
+          <TextField
             fullWidth
             id="username"
             variant="standard"
@@ -79,10 +83,10 @@ const formContainer = {
 const textFieldStyles = {
   input: {
     textAlign: "center",
-    typography: theme.typography.body2
+    typography: theme.typography.body2,
   },
 };
 
 const buttonContainer = {
-  padding: {xs: "1rem 0rem", sm: "0.5rem 0.5rem 0rem"},
-}
+  padding: { xs: "1rem 0rem", sm: "0.5rem 0.5rem 0rem" },
+};
