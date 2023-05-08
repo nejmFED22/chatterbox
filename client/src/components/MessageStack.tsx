@@ -8,6 +8,7 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { CSSProperties, useState } from "react";
+import { useSocket } from "../context/SocketContext";
 import { theme } from "../theme";
 
 interface Props {
@@ -19,6 +20,7 @@ export default function MessageStack(
 ) {
   // We'll fetch this from the context eventually
   const [username] = useState("John Doe");
+  const { messages, loggedInUser } = useSocket();
 
   const largeScreen = useMediaQuery(theme.breakpoints.up("md"));
 
@@ -94,11 +96,25 @@ export default function MessageStack(
       }
       sx={styledStack}
     >
-      {mockMessages.map((message) => (
+      {/* {mockMessages.map((message) => (
         <Card key={message.id}>
           <Container>
             <CardContent sx={styledCardContent(username === message.user)}>
               <Typography variant="body1">{message.user}</Typography>
+              <Typography variant={largeScreen ? "h3" : "h4"}>
+                {message.content}
+              </Typography>
+            </CardContent>
+          </Container>
+        </Card>
+      ))} */}
+      
+      {/* TODO: Ändra index till id? */}
+      {messages.map((message, index) => (
+        <Card key={index}>
+          <Container>
+            <CardContent sx={styledCardContent(loggedInUser === message.author)}>
+              <Typography variant="body1">{message.author}</Typography>
               <Typography variant={largeScreen ? "h3" : "h4"}>
                 {message.content}
               </Typography>

@@ -14,7 +14,7 @@ export default function TextButton({
 }: Props) {
   return (
     <Button
-      variant="outlined"
+      variant="contained"
       type="submit"
       sx={styledButton}
       onClick={onClick}
@@ -26,19 +26,9 @@ export default function TextButton({
 }
 
 const styledButton = {
-  lineHeight: 1,
-  fontWeight: 400,
   padding: { xs: "0.3rem 0.6rem", sm: "0.3rem 2rem" },
-  backgroundColor: theme.palette.primary.main,
-  color: theme.palette.primary.dark,
-  borderColor: theme.palette.primary.dark,
   fontSize: { xs: "18px", sm: "24px" },
   textTransform: "none",
-  "&:hover": {
-    backgroundColor: theme.palette.primary.dark,
-    color: theme.palette.primary.light,
-    borderColor: theme.palette.primary.dark,
-  },
   "&:disabled": {
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.primary.dark,

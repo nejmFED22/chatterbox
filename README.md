@@ -18,7 +18,7 @@ Utöver koden ska en muntligt presentation skall genomföras per grupp där ni d
 
 - [x] När en användare går med i ett nytt rum ska befintligt rum lämnas automatiskt.
 
-- [ ] Användare ska kunna skicka och läsa nya meddelanden i rummet de har gått med i.
+- [x] Användare ska kunna skicka och läsa nya meddelanden i rummet de har gått med i.
 
 - [ ] När en användare håller på att skriva ett meddelande skall det synas för alla andra i rummet.
 
