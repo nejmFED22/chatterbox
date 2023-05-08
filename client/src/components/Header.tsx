@@ -82,7 +82,7 @@ export default function Header({
                 component="div"
                 sx={{ ...styledLeft, ml: 1 }}
               >
-                Room: 1337
+               {currentRoom ? currentRoom : "Chatterbox"}
               </Typography>
             </Box>
             {isMobile && (
