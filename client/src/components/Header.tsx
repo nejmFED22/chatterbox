@@ -12,6 +12,7 @@ import Slide from "@mui/material/Slide";
 import Typography from "@mui/material/Typography";
 import { ReactElement } from "react";
 import { theme } from "../theme";
+import { useSocket } from "../context/SocketContext";
 
 interface HideOnScrollProps {
   children: ReactElement;
@@ -29,11 +30,16 @@ function HideOnScroll({ children }: HideOnScrollProps) {
 interface HeaderProps {
   toggleSidebar: () => void;
   sidebarOpen: boolean;
+  setActiveRoom: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const drawerWidth = 340;
 
-export default function Header({ toggleSidebar, sidebarOpen }: HeaderProps) {
+export default function Header({
+  toggleSidebar,
+  sidebarOpen,
+  setActiveRoom,
+}: HeaderProps) {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const handleSidebarToggle = () => {
@@ -55,16 +61,31 @@ export default function Header({ toggleSidebar, sidebarOpen }: HeaderProps) {
     };
   };
 
+  const { leaveAllRooms } = useSocket();
+
+  function handleClick() {
+    setActiveRoom(false);
+    leaveAllRooms();
+  }
+
   return (
     <>
       <HideOnScroll>
         <AppBar sx={getStyleAppBar()} position={"relative"}>
           <Container maxWidth="lg" sx={styledContainer}>
             <Box sx={styledLeft}>
-              <IconButton aria-label="exit-room" size={"large"} sx={{...styledLeft, px:0, mt:0.2}}>
-                <CloseOutlined sx={styledLeft} />
+              <IconButton
+                aria-label="exit-room"
+                size={"large"}
+                sx={{ ...styledLeft, px: 0, mt: 0.2 }}
+              >
+                <CloseOutlined sx={styledLeft} onClick={handleClick} />
               </IconButton>
-              <Typography variant="body2" component="div" sx={{...styledLeft, ml:2.5, mb:0.3}}>
+              <Typography
+                variant="body2"
+                component="div"
+                sx={{ ...styledLeft, ml: 2.5, mb: 0.3 }}
+              >
                 Room: 1337
               </Typography>
             </Box>

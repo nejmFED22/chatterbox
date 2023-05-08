@@ -9,6 +9,7 @@ import { theme } from "../theme";
 export default function ChatPage() {
   const drawerWidth = 340;
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [activeRoom, setActiveRoom] = useState<boolean>(false);
   const [windowWidth, setWindowWidth] = useState<string>("100%");
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -21,14 +22,20 @@ export default function ChatPage() {
 
   return (
     <Fragment>
-      <Header toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
-      <Box sx={{ width: windowWidth, ...styledBox }} component={"main"}>
-        <MessageStack isMobile={isMobile} />
-        <Container component={"div"} sx={styledInputContainer}>
-          <MessageInput isMobile={isMobile} />
-        </Container>
-      </Box>
-      <Sidebar toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
+      {activeRoom ? (
+        <>
+          <Header toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} setActiveRoom={setActiveRoom} />
+          <Box sx={{ width: windowWidth, ...styledBox }} component={"main"}>
+            <MessageStack isMobile={isMobile} />
+            <Container component={"div"} sx={styledInputContainer}>
+              <MessageInput isMobile={isMobile} />
+            </Container>
+          </Box>
+        </>
+      ) : (
+        <div>No Active Room</div>
+      )}
+      <Sidebar toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} setActiveRoom={setActiveRoom}/>
     </Fragment>
   );
 }
