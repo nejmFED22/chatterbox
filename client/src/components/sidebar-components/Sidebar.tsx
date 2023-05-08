@@ -107,7 +107,6 @@ export default function Sidebar({
                 <SidebarRoomList />
               </Box>
               <AddRoomButtom />
-              <LogoutButton />
             </TabPanel>
             <TabPanel value={tab} index={1}>
               <Box sx={{ p: 3 }}>
@@ -119,6 +118,7 @@ export default function Sidebar({
                 <SidebarUserList />
               </Box>
             </TabPanel>
+            <LogoutButton />
           </Drawer>
         </>
       ) : null}

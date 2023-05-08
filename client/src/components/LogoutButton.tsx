@@ -1,5 +1,4 @@
 import { Button, Typography } from "@mui/material";
-import { theme } from "../theme";
 
 function handleClearSessionStorage() {
   sessionStorage.clear();

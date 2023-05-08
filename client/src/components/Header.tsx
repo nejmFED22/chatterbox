@@ -61,10 +61,10 @@ export default function Header({ toggleSidebar, sidebarOpen }: HeaderProps) {
         <AppBar sx={getStyleAppBar()} position={"relative"}>
           <Container maxWidth="lg" sx={styledContainer}>
             <Box sx={styledLeft}>
-              <IconButton aria-label="exit-room" sx={{...styledLeft, mt:0}}>
+              <IconButton aria-label="exit-room" size={"large"} sx={{...styledLeft, px:0, mt:0.2}}>
                 <CloseOutlined sx={styledLeft} />
               </IconButton>
-              <Typography variant="body2" component="div" sx={{...styledLeft, mb:0.3}}>
+              <Typography variant="body2" component="div" sx={{...styledLeft, ml:2.5, mb:0.3}}>
                 Room: 1337
               </Typography>
             </Box>
@@ -98,7 +98,6 @@ const styledLeft = {
   justifyContent: "space-between",
   alignItems: "center",
   color: "#fff",
-  paddingLeft: 0,
   fontWeight: "400",
   whiteSpace: "nowrap",
 };
