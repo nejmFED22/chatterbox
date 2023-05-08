@@ -1,14 +1,14 @@
-// Servern skickar
+import { Message, Room } from "./types";
+
 export interface ServerToClientEvents {
-  message: (message: string) => void;
-  roomCreated: (roomId: string) => void;
+  message: (room: string, message: Message) => void;
+  rooms: (rooms: Room[]) => void;
   typingStart: (user: string) => void;
   typingStop: (suser: string) => void;
 }
 
-// Klienten skickar
 export interface ClientToServerEvents {
-  message: (message: string, room: string) => void;
+  message: (room: string, message: Message) => void;
   join: (room: string) => void;
   leave: (room: string) => void;
   createRoom: (roomName: string, firstUser: string) => void;
@@ -18,9 +18,4 @@ export interface ClientToServerEvents {
 
 export interface InterServerEvents {
   ping: () => void;
-}
-
-export interface SocketData {
-  name: string;
-  age: number;
 }

@@ -1,7 +1,8 @@
 export interface Room {
-  roomName: string;
-  users: string[];
-  messages: Message[];
+  name: string;
+  onlineUsers: number;
+  //users: User[];
+  //messages: Message[]
 }
 
 export interface User {

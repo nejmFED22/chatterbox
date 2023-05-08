@@ -17,7 +17,8 @@ export default function MessageInput({ isMobile }: Props) {
   const [typing, setTyping] = useState(false);
   const timerRef = useRef<number | null>(null);
 
-  const { typingStart, typingStop, typingUsers } = useSocket();
+  const { typingStart, typingStop, typingUsers, sendMessage, loggedInUser } =
+    useSocket();
 
   function handleTyping(e: React.ChangeEvent<HTMLInputElement>) {
     if (!typing) {
@@ -34,8 +35,11 @@ export default function MessageInput({ isMobile }: Props) {
 
   function handleSendMessage(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    console.log("Message '" + message + "' has been sent.");
-    setMessage("");
+    if (message.trim() && loggedInUser) {
+      sendMessage({ content: message, author: loggedInUser });
+      //console.log("Message '" + message + "' has been sent.");
+      setMessage("");
+    }
   }
 
   const renderTypingUsers = () => {

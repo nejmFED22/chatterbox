@@ -6,36 +6,36 @@ Utöver koden ska en muntligt presentation skall genomföras per grupp där ni d
 
 **Krav för godkänt:**
 
-[ ] Användaren får börja med att välja ett eget visningsnamn när den besöker sidan.
+- [x] Användaren får börja med att välja ett eget visningsnamn när den besöker sidan.
 
-[ ] Det ska gå att skapa ett rum (och samtidigt gå med i rummet).
+- [x] Det ska gå att skapa ett rum (och samtidigt gå med i rummet).
 
-[ ] Det ska gå att lämna ett rum (tomma rum ska automatiskt försvinna).
+- [x] Det ska gå att lämna ett rum (tomma rum ska automatiskt försvinna).
 
-[ ] Samtliga rum skall vara synligt i en lista.
+- [x] Samtliga rum skall vara synligt i en lista.
 
-[ ] De går att gå med i ett rum genom att klicka på det i listan.
+- [x] De går att gå med i ett rum genom att klicka på det i listan.
 
-[ ] När en användare går med i ett nytt rum ska befintligt rum lämnas automatiskt.
+- [x] När en användare går med i ett nytt rum ska befintligt rum lämnas automatiskt.
 
-[ ] Användare ska kunna skicka och läsa nya meddelanden i rummet de har gått med i.
+- [x] Användare ska kunna skicka och läsa nya meddelanden i rummet de har gått med i.
 
-[ ] När en användare håller på att skriva ett meddelande skall det synas för alla andra i rummet.
+- [ ] När en användare håller på att skriva ett meddelande skall det synas för alla andra i rummet.
 
-[ ] Git & GitHub har använts.
+- [x] Git & GitHub har använts.
 
-[ ] Projektmappen innehåller en README.md fil (läs ovan för mer info).
+- [ ] Projektmappen innehåller en README.md fil (läs ovan för mer info).
 
-[ ] Uppgiften lämnas in i tid!
+- [ ] Uppgiften lämnas in i tid!
 
 **Krav för väl godkänt:**
 
-[ ] Alla punkter för godkänt är uppfyllda.
+- [ ] Alla punkter för godkänt är uppfyllda.
 
-[ ] Varje rum i listan skall även visa vilka användare som finns i rummet.
+- [ ] Varje rum i listan skall även visa vilka användare som finns i rummet.
 
-[ ] Det ska gå att ha privata konversationer med enskilda användare (DM’s).
+- [ ] Det ska gå att ha privata konversationer med enskilda användare (DM’s).
 
-[ ] Historik ska sparas för skickade meddelanden och visas när en konversation öppnas (gäller både för Rum och för DM’s).
+- [ ] Historik ska sparas för skickade meddelanden och visas när en konversation öppnas (gäller både för Rum och för DM’s).
 
-[ ] När sidan laddas om ska användaren behålla sitt användarnamn, läggas tillbaka i konversationen som den befann sig i (Rum eller DM) och kunna sina läsa tidigare DM’s.
+- [ ] När sidan laddas om ska användaren behålla sitt användarnamn, läggas tillbaka i konversationen som den befann sig i (Rum eller DM) och kunna sina läsa tidigare DM’s.
