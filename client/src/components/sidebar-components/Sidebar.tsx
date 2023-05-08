@@ -5,7 +5,7 @@ import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
 import { theme } from "../../theme";
-import RoomList from "./SidebarRoomList";
+import SidebarRoomList from "./SidebarRoomList";
 
 export default function Sidebar({
   // Decides whether sidebar is permanent or toggleable
@@ -52,7 +52,7 @@ export default function Sidebar({
               </IconButton>
             )}
           </Box>
-          <RoomList />
+          <SidebarRoomList />
         </Drawer>
       ) : null}
     </Box>
