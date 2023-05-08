@@ -72,8 +72,9 @@ export default function Header({
                   aria-label="exit-room"
                   size={"large"}
                   sx={{ ...styledLeft, px: 0, mt: 0.2, mr: 1.5 }}
+                  onClick={leaveAllRooms}
                 >
-                  <CloseOutlined sx={styledLeft} onClick={leaveAllRooms} />
+                  <CloseOutlined sx={styledLeft} />
                 </IconButton>
               ) : null}
 

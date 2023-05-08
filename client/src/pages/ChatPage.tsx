@@ -1,4 +1,4 @@
-import { Box, Container, useMediaQuery } from "@mui/material";
+import { Box, Container, Typography, useMediaQuery } from "@mui/material";
 import { CSSProperties, Fragment, useEffect, useState } from "react";
 import Header from "../components/Header";
 import MessageInput from "../components/MessageInput";
@@ -34,7 +34,7 @@ export default function ChatPage() {
           </Box>
         </>
       ) : (
-        <div>No Active Room</div>
+        <Typography variant={"h2"}>Welcome back! Join or create a room.</Typography>
       )}
       <Sidebar toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen}/>
     </Fragment>
