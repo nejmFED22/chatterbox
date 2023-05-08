@@ -3,7 +3,7 @@ import { CSSProperties, Fragment, useEffect, useState } from "react";
 import Header from "../components/Header";
 import MessageInput from "../components/MessageInput";
 import MessageStack from "../components/MessageStack";
-import Sidebar from "../components/Sidebar";
+import Sidebar from "../components/sidebar-components/Sidebar";
 import { theme } from "../theme";
 
 export default function ChatPage() {
