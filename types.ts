@@ -8,8 +8,9 @@ export interface Room {
 export interface User {
   //SessionID: socket.sessionID
   //UserID: socket.userID;
+  id: string;
   username: string;
-  isConnected: boolean;
+  isConnected?: boolean;
 }
 
 export interface Message {

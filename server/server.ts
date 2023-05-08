@@ -4,7 +4,7 @@ import {
   InterServerEvents,
   ServerToClientEvents,
 } from "../communications";
-import { Message, Room } from "../types";
+import { Message, Room, User } from "../types";
 
 const io = new Server<
   ClientToServerEvents,
@@ -15,10 +15,22 @@ const io = new Server<
 
 const rooms: Room[] = [];
 
+const idToUser: Map<string, User> = new Map();
+
 io.on("connection", (socket) => {
   // Setup for client
   console.log("A user has connected");
   socket.emit("rooms", getRooms());
+
+  socket.on("setUser", (user: User) => {
+    idToUser.set(socket.id, user);
+    updateUserList();
+  });
+
+  socket.on("getUsers", () => {
+    const userList: User[] = Array.from(idToUser.values());
+    socket.emit("users", userList);
+  });
 
   // Joins room
   socket.on("join", (room) => {
@@ -55,6 +67,7 @@ io.on("connection", (socket) => {
 
   // Disconnecting and leaving all rooms
   socket.on("disconnect", () => {
+    idToUser.delete(socket.id);
     io.emit("rooms", getRooms());
     console.log("A user has disconnected");
   });
@@ -74,6 +87,16 @@ function getRooms() {
     }
   }
   return roomList;
+}
+
+function getUsers() {
+  return Array.from(idToUser.values());
+}
+
+// Update user list for all clients
+function updateUserList() {
+  const userList = getUsers();
+  io.emit("users", userList);
 }
 
 io.listen(3000);
