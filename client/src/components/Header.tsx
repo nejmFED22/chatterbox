@@ -2,7 +2,6 @@ import { CloseOutlined } from "@mui/icons-material";
 import MenuIcon from "@mui/icons-material/Menu";
 import {
   Box,
-  Button,
   Container,
   IconButton,
   useMediaQuery,
@@ -44,7 +43,7 @@ export default function Header({ toggleSidebar, sidebarOpen }: HeaderProps) {
     return {
       background: "#000",
       padding: "0.15rem 0",
-      height: "3.26rem",
+      height: "3.66rem",
 
       width:
         sidebarOpen && !isMobile ? `calc(100% - ${drawerWidth}px)` : "100%",
@@ -56,22 +55,16 @@ export default function Header({ toggleSidebar, sidebarOpen }: HeaderProps) {
     };
   };
 
-  function handleClearLocalStorage() {
-    localStorage.clear();
-    localStorage.clear();
-    location.reload();
-  }
-
   return (
     <>
       <HideOnScroll>
         <AppBar sx={getStyleAppBar()} position={"relative"}>
           <Container maxWidth="lg" sx={styledContainer}>
             <Box sx={styledLeft}>
-              <IconButton aria-label="exit-room" sx={styledLeft}>
+              <IconButton aria-label="exit-room" sx={{...styledLeft, mt:0}}>
                 <CloseOutlined sx={styledLeft} />
               </IconButton>
-              <Typography variant="body2" component="div" sx={styledLeft}>
+              <Typography variant="body2" component="div" sx={{...styledLeft, mb:0.3}}>
                 Room: 1337
               </Typography>
             </Box>
@@ -86,7 +79,6 @@ export default function Header({ toggleSidebar, sidebarOpen }: HeaderProps) {
                 {!sidebarOpen ? <MenuIcon sx={styledMenuIcon} /> : null}
               </IconButton>
             )}
-            <Button onClick={handleClearLocalStorage}>Logout</Button>
           </Container>
         </AppBar>
       </HideOnScroll>
