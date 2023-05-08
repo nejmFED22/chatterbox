@@ -60,6 +60,7 @@ const styledForm = {
   padding: "1rem",
   position: "absolute",
   bottom: "0",
+  zIndex: 10,
 };
 
 const styledTitle = {
