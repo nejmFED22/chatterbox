@@ -27,7 +27,7 @@ interface ContextValues {
 
 const SocketContext = createContext<ContextValues>(null as any);
 export const useSocket = () => useContext(SocketContext);
-const socket = io();
+const socket = io({ autoConnect: false });
 
 function SocketProvider({ children }: PropsWithChildren) {
   // States and variables

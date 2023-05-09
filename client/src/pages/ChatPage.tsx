@@ -15,7 +15,8 @@ export default function ChatPage() {
     setSidebarOpen(!sidebarOpen);
   };
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const { currentRoom } = useSocket();
+  const { currentRoom, socket } = useSocket();
+  socket.connect();
 
   useEffect(() => {
     setWindowWidth(isMobile ? "100%" : `calc(100% - ${drawerWidth}px)`);
