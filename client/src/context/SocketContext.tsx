@@ -31,8 +31,6 @@ const socket = io({ autoConnect: false });
 
 function SocketProvider({ children }: PropsWithChildren) {
   // States and variables
-  // const [socket] =
-  //   useState<Socket<ServerToClientEvents, ClientToServerEvents>>(io);
 
   // TODO: Create a localStorage-hook
 

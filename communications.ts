@@ -16,6 +16,8 @@ export interface ClientToServerEvents {
   typingStop: (room: string, user: string) => void;
 }
 
-export interface InterServerEvents {
-  ping: () => void;
+export interface InterServerEvents {}
+
+export interface SocketData {
+  username: string
 }

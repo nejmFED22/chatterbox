@@ -1,8 +1,9 @@
 import { Server } from "socket.io";
 import {
   ClientToServerEvents,
-  InterServerEvents,
   ServerToClientEvents,
+  InterServerEvents,
+  SocketData
 } from "../communications";
 import { Message, Room } from "../types";
 
@@ -10,10 +11,17 @@ const io = new Server<
   ClientToServerEvents,
   ServerToClientEvents,
   InterServerEvents,
-  Room
+  SocketData
 >();
 
-const rooms: Room[] = [];
+io.use((socket, next) => {
+  const username = socket.handshake.auth.username;
+  if (!username) {
+    return next(new Error("invalid username"));
+  }
+  socket.data.username = username;
+  next();
+});
 
 io.on("connection", (socket) => {
   // Setup for client
