@@ -17,6 +17,7 @@ interface ContextValues {
   typingStart: () => void;
   typingStop: () => void;
   joinRoom: (room: string) => void;
+  leaveAllRooms: () => void;
   messages: Message[];
   sendMessage: (message: Message) => void;
   currentRoom?: string;
@@ -34,7 +35,6 @@ function SocketProvider({ children }: PropsWithChildren) {
   //   useState<Socket<ServerToClientEvents, ClientToServerEvents>>(io);
 
   // TODO: Create a localStorage-hook
-  // TODO: Change from localStorage to sessionStorage
 
   //-------------------------------------STATES AND VARIABLES-------------------------------------//
 
@@ -58,6 +58,11 @@ function SocketProvider({ children }: PropsWithChildren) {
     console.log(`Joined room: ${room}`);
     setCurrentRoom(room);
     console.log("Current room: " + currentRoom);
+  }
+
+  function leaveAllRooms() {
+    socket.emit("leave", currentRoom as string);
+    setCurrentRoom(undefined);
   }
 
   function typingStart() {
@@ -130,11 +135,9 @@ function SocketProvider({ children }: PropsWithChildren) {
     <SocketContext.Provider
       value={{
         socket,
-
         loggedInUser,
-
         setLoggedInUser,
-
+        leaveAllRooms,
         typingUsers,
         typingStart,
         typingStop,

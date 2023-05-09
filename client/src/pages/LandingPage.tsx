@@ -13,7 +13,7 @@ const schema = z.object({
 type FormValues = z.infer<typeof schema>;
 
 export default function LandingPage() {
-  const { loggedInUser, setLoggedInUser } = useSocket();
+  const { setLoggedInUser } = useSocket();
 
   const {
     register,
@@ -58,11 +58,6 @@ export default function LandingPage() {
           </Box>
         </Box>
       </form>
-      {loggedInUser ? (
-        <p>Current user logged in: {loggedInUser}</p>
-      ) : (
-        <p>Not logged in</p>
-      )}
     </Box>
   );
 }

@@ -2,7 +2,6 @@ import { CloseOutlined } from "@mui/icons-material";
 import MenuIcon from "@mui/icons-material/Menu";
 import {
   Box,
-  Button,
   Container,
   IconButton,
   useMediaQuery,
@@ -13,6 +12,7 @@ import Slide from "@mui/material/Slide";
 import Typography from "@mui/material/Typography";
 import { ReactElement } from "react";
 import { theme } from "../theme";
+import { useSocket } from "../context/SocketContext";
 
 interface HideOnScrollProps {
   children: ReactElement;
@@ -34,7 +34,10 @@ interface HeaderProps {
 
 const drawerWidth = 340;
 
-export default function Header({ toggleSidebar, sidebarOpen }: HeaderProps) {
+export default function Header({
+  toggleSidebar,
+  sidebarOpen,
+}: HeaderProps) {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const handleSidebarToggle = () => {
@@ -44,10 +47,10 @@ export default function Header({ toggleSidebar, sidebarOpen }: HeaderProps) {
     return {
       background: "#000",
       padding: "0.15rem 0",
-      height: "3.26rem",
+      height: "3.66rem",
 
       width:
-        sidebarOpen || !isMobile ? `calc(100% - ${drawerWidth}px)` : "100%",
+        sidebarOpen && !isMobile ? `calc(100% - ${drawerWidth}px)` : "100%",
       mr: { sm: `${drawerWidth}px` },
       left: 0,
       "@media (max-width: 600px)": {
@@ -56,23 +59,31 @@ export default function Header({ toggleSidebar, sidebarOpen }: HeaderProps) {
     };
   };
 
-  function handleClearLocalStorage() {
-    localStorage.clear();
-    localStorage.clear();
-    location.reload();
-  }
+  const { leaveAllRooms, currentRoom } = useSocket();
 
   return (
     <>
       <HideOnScroll>
-        <AppBar sx={getStyleAppBar()}>
+        <AppBar sx={getStyleAppBar()} position={"relative"}>
           <Container maxWidth="lg" sx={styledContainer}>
             <Box sx={styledLeft}>
-              <IconButton aria-label="exit-room" sx={styledLeft}>
-                <CloseOutlined sx={styledLeft} />
-              </IconButton>
-              <Typography variant="body2" component="div" sx={styledLeft}>
-                Room: 1337
+              {currentRoom ? (
+                <IconButton
+                  aria-label="exit-room"
+                  size={"large"}
+                  sx={{ ...styledLeft, px: 0, mt: 0.2, mr: 1.5 }}
+                  onClick={leaveAllRooms}
+                >
+                  <CloseOutlined sx={styledLeft} />
+                </IconButton>
+              ) : null}
+
+              <Typography
+                variant="body2"
+                component="div"
+                sx={{ ...styledLeft, ml: 1 }}
+              >
+               {currentRoom ? currentRoom : "Chatterbox"}
               </Typography>
             </Box>
             {isMobile && (
@@ -86,7 +97,6 @@ export default function Header({ toggleSidebar, sidebarOpen }: HeaderProps) {
                 {!sidebarOpen ? <MenuIcon sx={styledMenuIcon} /> : null}
               </IconButton>
             )}
-            <Button onClick={handleClearLocalStorage}>Logout</Button>
           </Container>
         </AppBar>
       </HideOnScroll>
@@ -106,7 +116,6 @@ const styledLeft = {
   justifyContent: "space-between",
   alignItems: "center",
   color: "#fff",
-  paddingLeft: 0,
   fontWeight: "400",
   whiteSpace: "nowrap",
 };

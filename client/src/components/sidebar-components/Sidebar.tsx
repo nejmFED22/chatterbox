@@ -1,20 +1,15 @@
 // import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CloseIcon from "@mui/icons-material/Close";
-import {
-  IconButton,
-  Tab,
-  Tabs,
-  Typography,
-  useMediaQuery,
-} from "@mui/material";
+import { IconButton, Tab, Tabs, useMediaQuery } from "@mui/material";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import React from "react";
 import { theme } from "../../theme";
+import LogoutButton from "../LogoutButton";
+import AddRoomButtom from "./../AddRoomButton";
 import SidebarDMList from "./SidebarDMList";
 import SidebarRoomList from "./SidebarRoomList";
 import SidebarUserList from "./SidebarUserList";
-import AddRoomButtom from "./../AddRoomButton";
 
 // Tab panel logic
 interface TabPanelProps {
@@ -34,11 +29,7 @@ function TabPanel(props: TabPanelProps) {
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      {value === index && (
-        <Box>
-          {children}
-        </Box>
-      )}
+      {value === index && <Box>{children}</Box>}
     </div>
   );
 }
@@ -75,58 +66,61 @@ export default function Sidebar({
   return (
     <Box sx={sidebarStyles}>
       {!isMobile || sidebarOpen ? (
-        <Drawer
-          variant="permanent"
-          anchor="right"
-          sx={{
-            display: "block",
-            zIndex: 1,
-            "& .MuiDrawer-paper": drawerPaperStyles,
-          }}
-          open={sidebarOpen}
-        >
-          {/* Tabs */}
-          <Box sx={styledBox}>
-            <Tabs
-              value={tab}
-              onChange={handleTabChange}
-              aria-label="basic tabs example"
-            >
-              <Tab sx={styledLink} label="Rooms" {...a11yProps(0)} />
-              <Tab sx={styledLink} label="DMs" {...a11yProps(1)} />
-              <Tab sx={styledLink} label="Users" {...a11yProps(2)} />
-            </Tabs>
-
-            {/* Close button on mobile */}
-            {isMobile && sidebarOpen && (
-              <IconButton
-                size="small"
-                sx={styledCloseIcon}
-                onClick={handleSidebarToggle}
+        <>
+          <Drawer
+            variant="permanent"
+            anchor="right"
+            sx={{
+              display: "block",
+              zIndex: 1,
+              "& .MuiDrawer-paper": drawerPaperStyles,
+            }}
+            open={sidebarOpen}
+          >
+            {/* Tabs */}
+            <Box sx={styledBox}>
+              <Tabs
+                value={tab}
+                onChange={handleTabChange}
+                aria-label="basic tabs example"
               >
-                <CloseIcon sx={styledCloseIcon} />
-              </IconButton>
-            )}
-          </Box>
+                <Tab sx={styledLink} label="Rooms" {...a11yProps(0)} />
+                <Tab sx={styledLink} label="DMs" {...a11yProps(1)} />
+                <Tab sx={styledLink} label="Users" {...a11yProps(2)} />
+              </Tabs>
 
-          {/* Tab content */}
-          <TabPanel value={tab} index={0}>
-            <Box sx={{ p: 3 }}>
-              <SidebarRoomList />
+              {/* Close button on mobile */}
+              {isMobile && sidebarOpen && (
+                <IconButton
+                  size="small"
+                  sx={styledCloseIcon}
+                  onClick={handleSidebarToggle}
+                >
+                  <CloseIcon sx={styledCloseIcon} />
+                </IconButton>
+              )}
             </Box>
-            <AddRoomButtom />
-          </TabPanel>
-          <TabPanel value={tab} index={1}>
-            <Box sx={{ p: 3 }}>
-              <SidebarDMList />
-            </Box>
-          </TabPanel>
-          <TabPanel value={tab} index={2}>
-            <Box sx={{ p: 3 }}>
-              <SidebarUserList />
-            </Box>
-          </TabPanel>
-        </Drawer>
+
+            {/* Tab content */}
+            <TabPanel value={tab} index={0}>
+              <Box sx={{ p: 3 }}>
+                <SidebarRoomList />
+              </Box>
+              <AddRoomButtom />
+            </TabPanel>
+            <TabPanel value={tab} index={1}>
+              <Box sx={{ p: 3 }}>
+                <SidebarDMList />
+              </Box>
+            </TabPanel>
+            <TabPanel value={tab} index={2}>
+              <Box sx={{ p: 3 }}>
+                <SidebarUserList />
+              </Box>
+            </TabPanel>
+            <LogoutButton />
+          </Drawer>
+        </>
       ) : null}
     </Box>
   );
@@ -139,16 +133,15 @@ const drawerWidth = 340;
 const sidebarStyles = {
   display: "flex",
   width: "100vw",
-  zIndex: 10,
-  position: "relative",
+  zIndex: 100,
+  position: "fixed",
 };
 
 const styledBox = {
   display: "flex",
-  alignItems: "center",
-  gap: "1rem",
+  gap: "0.1rem",
   justifyContent: "center",
-  padding: "1rem",
+  marginTop: "0.3rem",
 };
 
 const styledLink = {
@@ -196,6 +189,7 @@ const drawerPaperStyles = {
 const styledCloseIcon = {
   color: theme.palette.primary.dark,
   cursor: "pointer",
-  padding: 0,
+  paddingLeft: "0.4rem",
+  paddingRight: "0.4rem",
   zIndex: 2,
 };

@@ -56,7 +56,7 @@ export let theme: Theme = createTheme({
       },
     },
     body2: {
-      fontSize: "1.875rem", // 30px
+      fontSize: "1.575rem", // 30px
       "@media (max-width: 600px)": {
         fontSize: "1.25rem", // 20px
       },

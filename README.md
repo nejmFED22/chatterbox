@@ -20,7 +20,7 @@ Utöver koden ska en muntligt presentation skall genomföras per grupp där ni d
 
 - [x] Användare ska kunna skicka och läsa nya meddelanden i rummet de har gått med i.
 
-- [ ] När en användare håller på att skriva ett meddelande skall det synas för alla andra i rummet.
+- [x] När en användare håller på att skriva ett meddelande skall det synas för alla andra i rummet.
 
 - [x] Git & GitHub har använts.
 
