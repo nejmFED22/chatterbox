@@ -6,8 +6,9 @@ import {
   Link,
   List,
   ListItem,
-  Typography
+  Typography,
 } from "@mui/material";
+import { useEffect, useState } from "react";
 import { useSocket } from "../../context/SocketContext";
 import { theme } from "../../theme";
 
@@ -15,6 +16,45 @@ export default function SidebarRoomList() {
   // States and variables
   const { roomList, joinRoom } = useSocket();
   const users = ["Jenny", "Nat", "Marcus", "Ellen"];
+  const [activeRoom, setActiveRoom] = useState<string | null>(null); // Skapa en state-variabel för att hålla reda på det aktiva styledAccordion-elementet
+
+  useEffect(() => {
+    console.log("activeRoom " + activeRoom);
+  }, [activeRoom]);
+
+  const getAccordionStyle = (roomName: string) => ({
+    width: "100%",
+    background: "none",
+    fontSize: "35px",
+    padding: "0",
+    minHeight: "none",
+
+    "& .MuiAccordionSummary-content": {
+      margin: 0,
+      height: "56px",
+    },
+
+    "& .MuiAccordionSummary-expandIconWrapper": {
+      margin: 0,
+      height: "100%",
+    },
+
+    "& .MuiTypography-root": {
+      display: "flex",
+      alignItems: "center",
+    },
+
+    "&.Mui-expanded": {
+      minHeight: "0px",
+    },
+
+    ...(activeRoom === roomName && {
+      background: theme.palette.primary.main,
+      padding: 0,
+      textDecoration: "none",
+      color: theme.palette.primary.main,
+    }),
+  });
 
   return (
     <>
@@ -28,14 +68,16 @@ export default function SidebarRoomList() {
                   expandIcon={<ArrowForwardIosIcon sx={styledArrowIcon} />}
                   aria-controls="panel1a-content"
                   id="panel1a-header"
-                  sx={styledAccordionSummary}
+                  sx={getAccordionStyle(room.name)}
                 >
                   <Link
                     sx={styledLink}
                     onClick={(e) => {
                       e.stopPropagation();
                       joinRoom(room.name);
+                      setActiveRoom(room.name);
                     }}
+                    className={activeRoom === room.name ? "active" : ""}
                   >
                     <Typography variant="h4">
                       ({room.onlineUsers}) {room.name}
@@ -78,33 +120,29 @@ const styledLink = {
   cursor: "pointer",
   fontFamily: "Inter",
   paddingRight: "2rem",
+  width: "100%",
+  height: "100%",
 
   "&:hover": {
     textDecoration: "underline",
+    background: theme.palette.primary.dark,
+    color: theme.palette.primary.light,
   },
 };
 
-// const hoverStyles = {
-//   "&:hover": {
-//     background: theme.palette.primary.dark,
-//     color: theme.palette.primary.light,
-//   },
-// };
-
-// const activeStyles = {
-//   "&:active": {
-//     background: theme.palette.primary.main,
-//     color: theme.palette.primary.dark,
-//   },
-// };
+const styledAccordion = {
+  width: "100%",
+  fontSize: "35px",
+  padding: 0,
+  justifyContent: "space-between",
+};
 
 const styledArrowIcon = {
   color: theme.palette.primary.dark,
   cursor: "pointer",
   zIndex: 2,
+  padding: "1rem",
   background: theme.palette.primary.light,
-  paddingRight: "1rem",
-  // ...activeStyles,
 };
 
 const styledList = {
@@ -119,28 +157,4 @@ const styledListItem = {
   color: theme.palette.primary.light,
   textDecoration: "none",
   cursor: "pointer",
-  // ...hoverStyles,
-  // ...activeStyles,
 };
-
-const styledAccordion = {
-  width: "100%",
-  background: "none",
-  paddingLeft: "1rem",
-  fontSize: "35px",
-
-  // ...hoverStyles,
-};
-
-const styledAccordionSummary = {
-  minHeight: "0px",
-  padding: "0px",
-  // ...activeStyles,
-};
-
-// const styledAccordionInner = {
-//   display: "flex",
-//   alignItems: "center",
-//   justifyContent: "space-between",
-//   width: "100%",
-// };
