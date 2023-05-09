@@ -23,7 +23,7 @@ interface ContextValues {
   currentRoom?: string;
   roomList?: Room[];
   userList: User[];
-  //sendMessage: (message: string) => void;
+  sessionList: Session[];
 }
 
 const SocketContext = createContext<ContextValues>(null as any);
@@ -40,12 +40,20 @@ function SocketProvider({ children }: PropsWithChildren) {
   const [loggedInUser, setLoggedInUser] = useState(
     sessionStorage.getItem("username") || ""
   );
+  const [localSession, setLocalSession] = useState<string>(
+    sessionStorage.getItem("sessionID") || ""
+  );
   const [currentRoom, setCurrentRoom] = useState<string>();
   const [roomList, setRoomList] = useState<Room[]>([]);
   const [sessionList, setSessonList] = useState<Session[]>([]);
   const [userList, setUserList] = useState<User[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
+
+  useEffect(() => {
+    socket.auth = { sessionID: localSession };
+    socket.connect();
+  }, [localSession]);
 
   //-------------------------------------FUNCTIONS-------------------------------------//
 
@@ -84,6 +92,7 @@ function SocketProvider({ children }: PropsWithChildren) {
     //------------------CONNECTION------------------//
 
     function connect() {
+      socket.emit("sessions");
       console.log("Connected to server");
     }
 
@@ -150,7 +159,7 @@ function SocketProvider({ children }: PropsWithChildren) {
       socket.off("rooms", rooms);
       socket.off("users", getUsers);
     };
-  }, [currentRoom]);
+  }, []);
 
   return (
     <SocketContext.Provider
@@ -168,6 +177,7 @@ function SocketProvider({ children }: PropsWithChildren) {
         roomList,
         userList,
         sendMessage,
+        sessionList,
       }}
     >
       {children}

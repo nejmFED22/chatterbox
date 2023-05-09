@@ -43,6 +43,7 @@ const main = async () => {
 
   io.use(async (socket, next) => {
     const sessionID = socket.handshake.auth.sessionID;
+    console.log("Session ID: " + sessionID);
     if (sessionID) {
       const session = await sessionCollection.findOne({ sessionID });
       if (session) {
@@ -79,6 +80,10 @@ const main = async () => {
       username: socket.data.username as string,
       userID: socket.data.userID as string,
       sessionID: socket.data.sessionID as string,
+    });
+
+    socket.on("sessions", (socket) => {
+      emitSessions(socket);
     });
 
     // Joins room
