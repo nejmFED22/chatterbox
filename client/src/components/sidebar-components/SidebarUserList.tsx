@@ -7,7 +7,7 @@ export default function SidebarUserList() {
   return (
     <List>
       {userList.map((user) => (
-        <ListItem key={user.userID}>{user.userID}</ListItem>
+        <ListItem key={user.userID}>{user.username}</ListItem>
       ))}
     </List>
   );

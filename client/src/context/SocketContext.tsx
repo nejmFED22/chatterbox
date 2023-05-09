@@ -119,6 +119,11 @@ function SocketProvider({ children }: PropsWithChildren) {
       setTypingUsers((users) => users.filter((u) => u !== user));
     }
 
+    socket.on("session", ({ sessionID }) => {
+      socket.auth = { sessionID };
+      sessionStorage.setItem("sessionID", sessionID);
+    });
+
     socket.on("connect", connect);
     socket.on("disconnect", disconnect);
     socket.on("message", message);

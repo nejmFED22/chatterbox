@@ -6,7 +6,7 @@ export interface Room {
 }
 
 export interface User {
-  //SessionID: socket.sessionID
+  sessionID: string;
   userID: string;
   username: string;
   isConnected?: boolean;

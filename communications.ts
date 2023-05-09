@@ -4,6 +4,7 @@ export interface ServerToClientEvents {
   message: (room: string, message: Message) => void;
   users: (users: User[]) => void;
   rooms: (rooms: Room[]) => void;
+  session: (session: SocketData) => void;
   typingStart: (user: string) => void;
   typingStop: (suser: string) => void;
 }
@@ -22,4 +23,5 @@ export interface InterServerEvents {}
 export interface SocketData {
   username: string;
   userID: string;
+  sessionID: string;
 }

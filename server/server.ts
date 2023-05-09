@@ -1,8 +1,9 @@
 import { Server } from "socket.io";
+import { v4 as uuidv4 } from 'uuid';
 import {
   ClientToServerEvents,
-  ServerToClientEvents,
   InterServerEvents,
+  ServerToClientEvents,
   SocketData
 } from "../communications";
 import { Message, Room, User } from "../types";
@@ -15,10 +16,22 @@ const io = new Server<
 >();
 
 io.use((socket, next) => {
+  // const sessionID = socket.handshake.auth.sessionID;
+  // if (sessionID) {
+  //   const session = findSession(sessionID);
+  //   if (session) {
+  //     socket.data.sessionID = sessionID;
+  //     socket.data.userID = session.userID;
+  //     socket.data.username = session.username;
+  //     return next();
+  //   }
+  // }
   const username = socket.handshake.auth.username;
   if (!username) {
     return next(new Error("invalid username"));
   }
+  socket.data.sessionID = uuidv4();
+  socket.data.userID = uuidv4();
   socket.data.username = username;
   next();
 });
@@ -28,6 +41,12 @@ io.on("connection", (socket) => {
   console.log("A user has connected");
   socket.emit("rooms", getRooms());
   io.emit("users", getUsers());
+
+  socket.emit("session", {
+    username: socket.data.username as string,
+    sessionID: socket.data.sessionID as string,
+    userID: socket.data.userID as string,
+  });
 
   // Joins room
   socket.on("join", (room) => {
@@ -66,7 +85,6 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     io.emit("rooms", getRooms());
     io.emit("users", getUsers());
-    console.log("A user has disconnected");
   });
 });
 
@@ -93,6 +111,7 @@ function getUsers() {
     userList.push({
       userID: id,
       username: socket.data.username as string,
+      sessionID: socket.data.sessionID as string,
     });
   }
   return userList;
