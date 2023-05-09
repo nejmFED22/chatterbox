@@ -15,7 +15,7 @@ const io = new Server<
 
 const rooms: Room[] = [];
 
-const idToUser: Map<string, User> = new Map();
+const idToUser = new Map();
 
 io.on("connection", (socket) => {
   // Setup for client
