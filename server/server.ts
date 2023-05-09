@@ -5,7 +5,7 @@ import {
   InterServerEvents,
   SocketData
 } from "../communications";
-import { Message, Room } from "../types";
+import { Message, Room, User } from "../types";
 
 const io = new Server<
   ClientToServerEvents,
@@ -27,6 +27,7 @@ io.on("connection", (socket) => {
   // Setup for client
   console.log("A user has connected");
   socket.emit("rooms", getRooms());
+  io.emit("users", getUsers());
 
   // Joins room
   socket.on("join", (room) => {
@@ -64,6 +65,7 @@ io.on("connection", (socket) => {
   // Disconnecting and leaving all rooms
   socket.on("disconnect", () => {
     io.emit("rooms", getRooms());
+    io.emit("users", getUsers());
     console.log("A user has disconnected");
   });
 });
@@ -82,6 +84,18 @@ function getRooms() {
     }
   }
   return roomList;
+}
+
+function getUsers() {
+  const userList:User[] = [];
+  console.log(userList);
+  for (let [id, socket] of io.of("/").sockets) {
+    userList.push({
+      userID: id,
+      username: socket.data.username as string,
+    });
+  }
+  return userList;
 }
 
 io.listen(3000);

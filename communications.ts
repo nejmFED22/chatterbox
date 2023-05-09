@@ -1,7 +1,8 @@
-import { Message, Room } from "./types";
+import { Message, Room, User } from "./types";
 
 export interface ServerToClientEvents {
   message: (room: string, message: Message) => void;
+  users: (users: User[]) => void;
   rooms: (rooms: Room[]) => void;
   typingStart: (user: string) => void;
   typingStop: (suser: string) => void;
@@ -19,5 +20,6 @@ export interface ClientToServerEvents {
 export interface InterServerEvents {}
 
 export interface SocketData {
-  username: string
+  username: string;
+  userID: string;
 }

@@ -7,7 +7,7 @@ import {
   Typography,
   useMediaQuery,
 } from "@mui/material";
-import { CSSProperties, useEffect } from "react";
+import { CSSProperties } from "react";
 import { useSocket } from "../context/SocketContext";
 import { theme } from "../theme";
 
@@ -23,9 +23,9 @@ export default function MessageStack(
 
   const largeScreen = useMediaQuery(theme.breakpoints.up("md"));
 
-  useEffect(() => {
-    console.log(messages);
-  }, [messages]);
+  // useEffect(() => {
+  //   console.log(messages);
+  // }, [messages]);
 
   return (
     <Stack

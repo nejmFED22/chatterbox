@@ -6,7 +6,7 @@ import {
   useState,
 } from "react";
 import { Socket, io } from "socket.io-client";
-import { Message, Room } from "../../../types";
+import { Message, Room, User } from "../../../types";
 
 // Context setup
 interface ContextValues {
@@ -22,6 +22,7 @@ interface ContextValues {
   sendMessage: (message: Message) => void;
   currentRoom?: string;
   roomList?: Room[];
+  userList: User[];
   //sendMessage: (message: string) => void;
 }
 
@@ -32,7 +33,7 @@ const socket = io({ autoConnect: false });
 function SocketProvider({ children }: PropsWithChildren) {
   // States and variables
 
-  // TODO: Create a localStorage-hook
+  // TODO: Create a sessionStorage-hook
 
   //-------------------------------------STATES AND VARIABLES-------------------------------------//
 
@@ -40,11 +41,12 @@ function SocketProvider({ children }: PropsWithChildren) {
     sessionStorage.getItem("username") || ""
   );
   const [currentRoom, setCurrentRoom] = useState<string>();
-  const [roomList, setRoomList] = useState<Room[]>();
+  const [roomList, setRoomList] = useState<Room[]>([]);
+  const [userList, setUserList] = useState<User[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [typingUsers, setTypingUsers] = useState<string[]>([]);
 
   //-------------------------------------FUNCTIONS-------------------------------------//
-  const [typingUsers, setTypingUsers] = useState<string[]>([]);
 
   function joinRoom(room: string) {
     console.log("Joining room: " + room);
@@ -55,7 +57,6 @@ function SocketProvider({ children }: PropsWithChildren) {
     socket.emit("join", room);
     console.log(`Joined room: ${room}`);
     setCurrentRoom(room);
-    console.log("Current room: " + currentRoom);
   }
 
   function leaveAllRooms() {
@@ -88,6 +89,12 @@ function SocketProvider({ children }: PropsWithChildren) {
       console.log("Disconnected from server");
     }
 
+    //------------------USERS------------------//
+
+    function getUsers(users: User[]) {
+      setUserList(users);
+    }
+
     //------------------ROOM------------------//
 
     function rooms(rooms: Room[]) {
@@ -113,19 +120,21 @@ function SocketProvider({ children }: PropsWithChildren) {
     }
 
     socket.on("connect", connect);
+    socket.on("disconnect", disconnect);
     socket.on("message", message);
     socket.on("typingStart", typingStart);
     socket.on("typingStop", typingStop);
-    socket.on("disconnect", disconnect);
     socket.on("rooms", rooms);
+    socket.on("users", getUsers)
 
     return () => {
       socket.off("connect", connect);
       socket.off("disconnect", disconnect);
+      socket.off("message", message);
       socket.off("typingStart", typingStart);
       socket.off("typingStop", typingStop);
       socket.off("rooms", rooms);
-      socket.off("message", message);
+      socket.off("users", getUsers)
     };
   }, [currentRoom]);
 
@@ -143,6 +152,7 @@ function SocketProvider({ children }: PropsWithChildren) {
         messages,
         currentRoom,
         roomList,
+        userList,
         sendMessage,
       }}
     >
