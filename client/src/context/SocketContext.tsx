@@ -6,7 +6,7 @@ import {
   useState,
 } from "react";
 import { Socket, io } from "socket.io-client";
-import { Message, Room, User } from "../../../types";
+import { Message, Room, Session, User } from "../../../types";
 
 // Context setup
 interface ContextValues {
@@ -42,6 +42,7 @@ function SocketProvider({ children }: PropsWithChildren) {
   );
   const [currentRoom, setCurrentRoom] = useState<string>();
   const [roomList, setRoomList] = useState<Room[]>([]);
+  const [sessionList, setSessonList] = useState<Session[]>([]);
   const [userList, setUserList] = useState<User[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
@@ -85,6 +86,12 @@ function SocketProvider({ children }: PropsWithChildren) {
     function connect() {
       console.log("Connected to server");
     }
+
+    function handleSessions(sessions: Session[]) {
+      console.log("Sessions:", sessions);
+      setSessonList(sessions);
+    }
+
     function disconnect() {
       console.log("Disconnected from server");
     }
@@ -125,21 +132,23 @@ function SocketProvider({ children }: PropsWithChildren) {
     });
 
     socket.on("connect", connect);
+    socket.on("sessions", handleSessions);
     socket.on("disconnect", disconnect);
     socket.on("message", message);
     socket.on("typingStart", typingStart);
     socket.on("typingStop", typingStop);
     socket.on("rooms", rooms);
-    socket.on("users", getUsers)
+    socket.on("users", getUsers);
 
     return () => {
       socket.off("connect", connect);
+      socket.on("sessions", handleSessions);
       socket.off("disconnect", disconnect);
       socket.off("message", message);
       socket.off("typingStart", typingStart);
       socket.off("typingStop", typingStop);
       socket.off("rooms", rooms);
-      socket.off("users", getUsers)
+      socket.off("users", getUsers);
     };
   }, [currentRoom]);
 

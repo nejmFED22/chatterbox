@@ -1,13 +1,14 @@
-import { Server } from "socket.io";
-import { v4 as uuidv4 } from 'uuid';
+import { createAdapter } from "@socket.io/mongo-adapter";
+import { Emitter } from "@socket.io/mongo-emitter";
+import { MongoClient } from "mongodb";
+import { Server, Socket } from "socket.io";
+import { v4 as uuidv4 } from "uuid";
 import {
   ClientToServerEvents,
   InterServerEvents,
   ServerToClientEvents,
-  SocketData
 } from "../communications";
-import { Message, Room, User } from "../types";
-
+import { Message, Room, SocketData, User } from "../types";
 const io = new Server<
   ClientToServerEvents,
   ServerToClientEvents,
@@ -15,107 +16,146 @@ const io = new Server<
   SocketData
 >();
 
-io.use((socket, next) => {
-  // const sessionID = socket.handshake.auth.sessionID;
-  // if (sessionID) {
-  //   const session = findSession(sessionID);
-  //   if (session) {
-  //     socket.data.sessionID = sessionID;
-  //     socket.data.userID = session.userID;
-  //     socket.data.username = session.username;
-  //     return next();
-  //   }
-  // }
-  const username = socket.handshake.auth.username;
-  if (!username) {
-    return next(new Error("invalid username"));
-  }
-  socket.data.sessionID = uuidv4();
-  socket.data.userID = uuidv4();
-  socket.data.username = username;
-  next();
-});
+const DB = "chatterbox";
+const COLLECTION = "socket.io-adapter-events";
 
-io.on("connection", (socket) => {
-  // Setup for client
-  console.log("A user has connected");
-  socket.emit("rooms", getRooms());
-  io.emit("users", getUsers());
+const mongoClient = new MongoClient(
+  "mongodb+srv://nabl:o8A3Lq7bAFyvlUg1@chatterbox.ugl1wjb.mongodb.net/"
+);
 
-  socket.emit("session", {
-    username: socket.data.username as string,
-    sessionID: socket.data.sessionID as string,
-    userID: socket.data.userID as string,
-  });
+const main = async () => {
+  await mongoClient.connect();
 
-  // Joins room
-  socket.on("join", (room) => {
-    socket.join(room);
-    io.emit("rooms", getRooms());
-  });
-
-  // Leaves room
-  socket.on("leave", (room) => {
-    socket.leave(room);
-    io.emit("rooms", getRooms());
-  });
-
-  // Receives and sends out messages
-  socket.on("message", (room: string, message: Message) => {
-    console.log(
-      `Message received: ${message.content} from ${message.author} in room ${room}`
-    );
-    io.to(room).emit("message", room, {
-      content: message.content,
-      author: message.author,
+  try {
+    await mongoClient.db(DB).createCollection(COLLECTION, {
+      capped: true,
+      size: 1e6,
     });
-  });
-
-  // Communicate to client that user started typing
-  socket.on("typingStart", (room, user) => {
-    socket.broadcast.to(room).emit("typingStart", user);
-  });
-
-  // Communicate to client that user stopped typing
-  socket.on("typingStop", (room, user) => {
-    socket.broadcast.to(room).emit("typingStop", user);
-  });
-
-  // Disconnecting and leaving all rooms
-  socket.on("disconnect", () => {
-    io.emit("rooms", getRooms());
-    io.emit("users", getUsers());
-  });
-});
-
-// Updates list of rooms
-function getRooms() {
-  const { rooms } = io.sockets.adapter;
-  const roomList: Room[] = [];
-
-  for (const [name, setOfSocketIds] of rooms) {
-    if (!setOfSocketIds.has(name)) {
-      roomList.push({
-        name: name,
-        onlineUsers: setOfSocketIds.size,
-      });
-    }
+  } catch (e) {
+    // collection already exists
   }
-  return roomList;
-}
+  const mongoCollection = mongoClient.db(DB).collection(COLLECTION);
+  const historyCollection = mongoClient.db(DB).collection("history");
+  const sessionCollection = mongoClient.db(DB).collection("session");
+  const sessionEmitter = new Emitter(sessionCollection);
 
-function getUsers() {
-  const userList:User[] = [];
-  console.log(userList);
-  for (let [id, socket] of io.of("/").sockets) {
-    userList.push({
-      userID: id,
+  io.adapter(createAdapter(mongoCollection));
+
+  io.use(async (socket, next) => {
+    const sessionID = socket.handshake.auth.sessionID;
+    if (sessionID) {
+      const session = await sessionCollection.findOne({ sessionID });
+      if (session) {
+        socket.data.sessionID = session.sessionID;
+        socket.data.userID = session.userID;
+        socket.data.username = session.username;
+        return next();
+      }
+    }
+    const username = socket.handshake.auth.username;
+    if (!username) {
+      return next(new Error("invalid username"));
+    }
+    console.log("Creating user");
+    socket.data.sessionID = uuidv4();
+    socket.data.userID = uuidv4();
+    socket.data.username = username;
+    sessionCollection.insertOne({
+      sessionID: socket.data.sessionID,
+      userID: socket.data.userID,
+      username: socket.data.username,
+    });
+    next();
+  });
+
+  io.on("connection", async (socket) => {
+    // Setup for client
+    console.log("A user has connected");
+    socket.emit("rooms", getRooms());
+    await emitSessions(socket);
+    io.emit("users", getUsers());
+
+    socket.emit("session", {
       username: socket.data.username as string,
+      userID: socket.data.userID as string,
       sessionID: socket.data.sessionID as string,
     });
-  }
-  return userList;
-}
 
-io.listen(3000);
-console.log("listening on port 3000");
+    // Joins room
+    socket.on("join", (room) => {
+      socket.join(room);
+      io.emit("rooms", getRooms());
+    });
+
+    // Leaves room
+    socket.on("leave", (room) => {
+      socket.leave(room);
+      io.emit("rooms", getRooms());
+    });
+
+    // Receives and sends out messages
+    socket.on("message", (room: string, message: Message) => {
+      console.log(
+        `Message received: ${message.content} from ${message.author} in room ${room}`
+      );
+      io.to(room).emit("message", room, {
+        content: message.content,
+        author: message.author,
+      });
+    });
+
+    // Communicate to client that user started typing
+    socket.on("typingStart", (room, user) => {
+      socket.broadcast.to(room).emit("typingStart", user);
+    });
+
+    // Communicate to client that user stopped typing
+    socket.on("typingStop", (room, user) => {
+      socket.broadcast.to(room).emit("typingStop", user);
+    });
+
+    // Disconnecting and leaving all rooms
+    socket.on("disconnect", () => {
+      io.emit("rooms", getRooms());
+      io.emit("users", getUsers());
+    });
+  });
+
+  // Updates list of rooms
+  function getRooms() {
+    const { rooms } = io.sockets.adapter;
+    const roomList: Room[] = [];
+
+    for (const [name, setOfSocketIds] of rooms) {
+      if (!setOfSocketIds.has(name)) {
+        roomList.push({
+          name: name,
+          onlineUsers: setOfSocketIds.size,
+        });
+      }
+    }
+    return roomList;
+  }
+
+  async function emitSessions(socket: Socket) {
+    const sessions = await sessionCollection.find().toArray();
+    socket.emit("sessions", sessions);
+  }
+
+  function getUsers() {
+    const userList: User[] = [];
+    console.log(userList);
+    for (let [id, socket] of io.of("/").sockets) {
+      userList.push({
+        userID: id,
+        username: socket.data.username as string,
+        sessionID: socket.data.sessionID as string,
+      });
+    }
+    return userList;
+  }
+  io.listen(3000);
+  console.log("listening on port 3000");
+};
+
+main();
