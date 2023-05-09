@@ -11,8 +11,8 @@ import AppBar from "@mui/material/AppBar";
 import Slide from "@mui/material/Slide";
 import Typography from "@mui/material/Typography";
 import { ReactElement } from "react";
-import { theme } from "../theme";
 import { useSocket } from "../context/SocketContext";
+import { theme } from "../theme";
 
 interface HideOnScrollProps {
   children: ReactElement;
@@ -34,10 +34,7 @@ interface HeaderProps {
 
 const drawerWidth = 340;
 
-export default function Header({
-  toggleSidebar,
-  sidebarOpen,
-}: HeaderProps) {
+export default function Header({ toggleSidebar, sidebarOpen }: HeaderProps) {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const handleSidebarToggle = () => {
@@ -83,10 +80,10 @@ export default function Header({
                 component="div"
                 sx={{ ...styledLeft, ml: 1 }}
               >
-               {currentRoom ? currentRoom : "Chatterbox"}
+                {currentRoom ? currentRoom : "Chatterbox"}
               </Typography>
             </Box>
-            {isMobile && (
+            {!sidebarOpen && (
               <IconButton
                 size="small"
                 sx={styledMenuIcon}
