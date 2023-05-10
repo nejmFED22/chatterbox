@@ -7,7 +7,8 @@ export interface ServerToClientEvents {
   rooms: (rooms: Room[]) => void;
   session: (session: SocketData) => void;
   typingStart: (user: string) => void;
-  typingStop: (suser: string) => void;
+  typingStop: (user: string) => void;
+  roomHistory: (room: string, history: Message[]) => void;
 }
 
 export interface ClientToServerEvents {
@@ -18,6 +19,7 @@ export interface ClientToServerEvents {
   createRoom: (roomName: string, firstUser: string) => void;
   typingStart: (room: string, user: string) => void;
   typingStop: (room: string, user: string) => void;
+  getRoomHistory: (room: string) => void;
 }
 
 export interface InterServerEvents {}

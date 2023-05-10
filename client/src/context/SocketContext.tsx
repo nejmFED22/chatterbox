@@ -117,12 +117,17 @@ function SocketProvider({ children }: PropsWithChildren) {
       setRoomList(rooms);
     }
 
+    function handleRoomHistory(room: string, history: Message[]) {
+      if (room === currentRoom) {
+        setMessages(history);
+      }
+    }
+
     //------------------MESSAGE------------------//
 
     function message(room: string, message: Message) {
-      console.log(room, currentRoom);
+      console.log("Room and current room", room, currentRoom);
       if (room === currentRoom) {
-        console.log("If statement passed");
         setMessages((messages) => [...messages, message]);
       }
     }
@@ -148,6 +153,7 @@ function SocketProvider({ children }: PropsWithChildren) {
     socket.on("typingStop", typingStop);
     socket.on("rooms", rooms);
     socket.on("users", getUsers);
+    socket.on("roomHistory", handleRoomHistory);
 
     return () => {
       socket.off("connect", connect);
@@ -158,8 +164,9 @@ function SocketProvider({ children }: PropsWithChildren) {
       socket.off("typingStop", typingStop);
       socket.off("rooms", rooms);
       socket.off("users", getUsers);
+      socket.off("roomHistory", handleRoomHistory);
     };
-  }, []);
+  }, [currentRoom]);
 
   return (
     <SocketContext.Provider

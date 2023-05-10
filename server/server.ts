@@ -20,7 +20,8 @@ const DB = "chatterbox";
 const COLLECTION = "socket.io-adapter-events";
 
 const mongoClient = new MongoClient(
-  "mongodb+srv://nabl:o8A3Lq7bAFyvlUg1@chatterbox.ugl1wjb.mongodb.net/"
+  //"mongodb+srv://nabl:o8A3Lq7bAFyvlUg1@chatterbox.ugl1wjb.mongodb.net/"
+  "mongodb+srv://jenny:zyqluPwgsy7Scf5H@chatterboxtest.w6o91jx.mongodb.net/"
 );
 
 const main = async () => {
@@ -87,9 +88,11 @@ const main = async () => {
     });
 
     // Joins room
-    socket.on("join", (room) => {
+    socket.on("join", async (room) => {
       socket.join(room);
       io.emit("rooms", getRooms());
+      const roomHistory = await getRoomHistory(room);
+      socket.emit("roomHistory", room, roomHistory);
     });
 
     // Leaves room
@@ -99,14 +102,40 @@ const main = async () => {
     });
 
     // Receives and sends out messages
-    socket.on("message", (room: string, message: Message) => {
+    socket.on("message", async (room: string, message: Message) => {
       console.log(
         `Message received: ${message.content} from ${message.author} in room ${room}`
       );
+
+      // Save message to history collection
+      try {
+        await historyCollection.insertOne({
+          room: room,
+          content: message.content,
+          author: message.author,
+        });
+      } catch (e) {
+        console.error("Failed to save message to history:", e);
+      }
+
+      // Fetch the message from the history collection
+      const historyDocs = await historyCollection
+        .find({ room, content: message.content, author: message.author })
+        .sort({ _id: -1 })
+        .limit(1)
+        .toArray();
+      const retrievedMessage = historyDocs[0];
+
       io.to(room).emit("message", room, {
-        content: message.content,
-        author: message.author,
+        content: retrievedMessage.content,
+        author: retrievedMessage.author,
       });
+    });
+
+    // Fetch room history from database
+    socket.on("getRoomHistory", async (room: string) => {
+      const history = await getRoomHistory(room);
+      socket.emit("roomHistory", room, history);
     });
 
     // Communicate to client that user started typing
@@ -159,6 +188,18 @@ const main = async () => {
     }
     return userList;
   }
+
+  async function getRoomHistory(room: string) {
+    const historyDocs = await historyCollection.find({ room }).toArray();
+    const history: Message[] = historyDocs.map((doc) => {
+      return {
+        content: doc.content,
+        author: doc.author,
+      };
+    });
+    return history;
+  }
+
   io.listen(3000);
   console.log("listening on port 3000");
 };
