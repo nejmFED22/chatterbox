@@ -8,7 +8,7 @@ import {
   InterServerEvents,
   ServerToClientEvents,
 } from "../communications";
-import { Message, Room, SocketData, User } from "../types";
+import { Message, Room, Session, SocketData, User } from "../types";
 const io = new Server<
   ClientToServerEvents,
   ServerToClientEvents,
@@ -16,12 +16,15 @@ const io = new Server<
   SocketData
 >();
 
+//-------------------------MONGODB SETUP-------------------------//
+
 const DB = "chatterbox";
 const COLLECTION = "socket.io-adapter-events";
 
 const mongoClient = new MongoClient(
-  "mongodb+srv://nabl:o8A3Lq7bAFyvlUg1@chatterbox.ugl1wjb.mongodb.net/"
+  // "mongodb+srv://nabl:o8A3Lq7bAFyvlUg1@chatterbox.ugl1wjb.mongodb.net/"
   //"mongodb+srv://jenny:zyqluPwgsy7Scf5H@chatterboxtest.w6o91jx.mongodb.net/"
+  "mongodb+srv://marcus:5bgDikBCj7g88b6p@chatterbox.tzxzwxr.mongodb.net/"
 );
 
 const main = async () => {
@@ -38,9 +41,11 @@ const main = async () => {
   const mongoCollection = mongoClient.db(DB).collection(COLLECTION);
   const historyCollection = mongoClient.db(DB).collection("history");
   const sessionCollection = mongoClient.db(DB).collection("session");
-  const sessionEmitter = new Emitter(sessionCollection);
+  // const sessionEmitter = new Emitter(sessionCollection);
 
   io.adapter(createAdapter(mongoCollection));
+
+//-----------------SOCKET SESSION SETUP-----------------//
 
   io.use(async (socket, next) => {
     const sessionID = socket.handshake.auth.sessionID;
@@ -56,7 +61,7 @@ const main = async () => {
     }
     const username = socket.handshake.auth.username;
     if (!username) {
-      return next(new Error("invalid username"));
+      return next(new Error("Not logged in"));
     }
     console.log("Creating user");
     socket.data.sessionID = uuidv4();
@@ -67,25 +72,26 @@ const main = async () => {
       userID: socket.data.userID,
       username: socket.data.username,
     });
-    next();
-  });
-
-  io.on("connection", async (socket) => {
-    // Setup for client
-    console.log("A user has connected");
-    socket.emit("rooms", getRooms());
-    await emitSessions(socket);
-    io.emit("users", getUsers());
-
-    socket.emit("session", {
+    socket.emit("setSession", {
       username: socket.data.username as string,
       userID: socket.data.userID as string,
       sessionID: socket.data.sessionID as string,
     });
+    const sessionList = await updateSessionList();
+    io.emit("updateSessionList", sessionList)
+    next();
+  });
 
-    socket.on("sessions", (socket) => {
-      emitSessions(socket);
-    });
+  io.on("connection", async (socket) => {
+
+    //-----------------SOCKET CONNECTION-----------------//
+
+    // Updates session list and room list
+    console.log("A user has connected");
+    socket.emit("rooms", getRooms());
+    const sessionList = await updateSessionList();
+    io.emit("updateSessionList", sessionList)
+    io.emit("users", getUsers());
 
     // Joins room
     socket.on("join", async (room) => {
@@ -155,6 +161,8 @@ const main = async () => {
     });
   });
 
+  //-----------------SERVER FUNCTIONS-----------------//
+
   // Updates list of rooms
   function getRooms() {
     const { rooms } = io.sockets.adapter;
@@ -171,11 +179,17 @@ const main = async () => {
     return roomList;
   }
 
-  async function emitSessions(socket: Socket) {
+  // Updates list of sessions
+  async function updateSessionList(): Promise<Session[]> {
     const sessions = await sessionCollection.find().toArray();
-    socket.emit("sessions", sessions);
+    return sessions.map(({ sessionID, userID, username }) => ({
+      sessionID,
+      userID,
+      username,
+    }));
   }
 
+  // Updates list of users
   function getUsers() {
     const userList: User[] = [];
     console.log(userList);
@@ -189,6 +203,7 @@ const main = async () => {
     return userList;
   }
 
+  // Fetches room history from database
   async function getRoomHistory(room: string) {
     const historyDocs = await historyCollection.find({ room }).toArray();
     const history: Message[] = historyDocs.map((doc) => {
@@ -200,6 +215,7 @@ const main = async () => {
     return history;
   }
 
+  // Starts server
   io.listen(3000);
   console.log("listening on port 3000");
 };
