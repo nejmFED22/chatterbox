@@ -66,6 +66,7 @@ const main = async () => {
       sessionID: socket.data.sessionID,
       userID: socket.data.userID,
       username: socket.data.username,
+      isConnected: true
     });
     next();
   });
