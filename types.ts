@@ -6,13 +6,25 @@ export interface Room {
 }
 
 export interface User {
-  //SessionID: socket.sessionID
-  //UserID: socket.userID;
+  sessionID: string;
+  userID: string;
   username: string;
-  isConnected: boolean;
+  isConnected?: boolean;
 }
 
 export interface Message {
   content: string;
   author: string;
+}
+
+export interface Session {
+  sessionID: string;
+  userID: string;
+  username: string;
+}
+
+export interface SocketData {
+  username: string;
+  userID: string;
+  sessionID: string;
 }

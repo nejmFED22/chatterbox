@@ -4,8 +4,8 @@ import Header from "../components/Header";
 import MessageInput from "../components/MessageInput";
 import MessageStack from "../components/MessageStack";
 import Sidebar from "../components/sidebar-components/Sidebar";
-import { theme } from "../theme";
 import { useSocket } from "../context/SocketContext";
+import { theme } from "../theme";
 
 export default function ChatPage() {
   const drawerWidth = 340;
@@ -15,7 +15,11 @@ export default function ChatPage() {
     setSidebarOpen(!sidebarOpen);
   };
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const { currentRoom } = useSocket();
+  const { currentRoom, socket } = useSocket();
+
+  useEffect(() => {
+    socket.connect();
+  });
 
   useEffect(() => {
     setWindowWidth(isMobile ? "100%" : `calc(100% - ${drawerWidth}px)`);
@@ -23,7 +27,7 @@ export default function ChatPage() {
 
   return (
     <Fragment>
-      <Header toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen}/>
+      <Header toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
       {currentRoom ? (
         <>
           <Box sx={{ width: windowWidth, ...styledBox }} component={"main"}>
@@ -34,9 +38,11 @@ export default function ChatPage() {
           </Box>
         </>
       ) : (
-        <Typography variant={"h2"}>Welcome back! Join or create a room.</Typography>
+        <Typography variant={"h2"}>
+          Welcome back! Join or create a room.
+        </Typography>
       )}
-      <Sidebar toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen}/>
+      <Sidebar toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
     </Fragment>
   );
 }

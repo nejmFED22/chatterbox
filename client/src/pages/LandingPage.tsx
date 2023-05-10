@@ -13,7 +13,7 @@ const schema = z.object({
 type FormValues = z.infer<typeof schema>;
 
 export default function LandingPage() {
-  const { setLoggedInUser } = useSocket();
+  const { setLoggedInUser, socket } = useSocket();
 
   const {
     register,
@@ -25,9 +25,11 @@ export default function LandingPage() {
   });
 
   const onSubmit = (data: FormValues) => {
-    if (data.username) {
-      sessionStorage.setItem("username", data.username);
-      setLoggedInUser(data.username);
+    const { username } = data;
+    if (username) {
+      sessionStorage.setItem("username", username);
+      setLoggedInUser(username);
+      socket.auth = { username };
     } else {
       console.log("Empty username is not allowed");
     }
