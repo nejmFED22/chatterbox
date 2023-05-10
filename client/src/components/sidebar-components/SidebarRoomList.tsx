@@ -30,12 +30,7 @@ export default function SidebarRoomList() {
 
     "& .MuiAccordionSummary-content": {
       margin: 0,
-      height: "3rem",
-    },
-
-    "& .MuiAccordionSummary-expandIconWrapper": {
-      margin: 0,
-      height: "100%",
+      height: "56px",
     },
 
     "& .MuiTypography-root": {
