@@ -42,7 +42,7 @@ export default function ChatPage() {
       ) : (
         <Box sx={{ width: windowWidth, ...styledBox }} component={"main"}>
           <Container component={"div"} sx={styledInputContainer}>
-            <Typography sx={styledTitle} variant={"h1"}>
+            <Typography variant={"h1"}>
               Welcome back! Join or create a room.
             </Typography>
           </Container>
@@ -55,18 +55,15 @@ export default function ChatPage() {
 
 const styledBox: CSSProperties = {
   position: "relative",
-  minHeight: "100vh",
+  minHeight: "calc(100vh - 53.76px)",
   display: "flex",
   flexDirection: "column",
   justifyContent: "space-between",
+  paddingTop: "6rem",
 };
 
 const styledInputContainer: CSSProperties = {
   position: "sticky",
   bottom: 0,
   paddingBottom: "0.5rem",
-};
-
-const styledTitle: CSSProperties = {
-  marginTop: "6rem",
 };

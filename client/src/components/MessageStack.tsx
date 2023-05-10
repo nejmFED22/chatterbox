@@ -81,7 +81,7 @@ function styledCardContent(isItMe: boolean) {
 
 const styledStack: CSSProperties = {
   width: "100%",
-  marginBottom: "1rem",
+  marginBottom: "2rem",
 };
 
 const styledDivider: CSSProperties = {
