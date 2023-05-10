@@ -58,18 +58,19 @@ function SocketProvider({ children }: PropsWithChildren) {
   //-------------------------------------FUNCTIONS-------------------------------------//
 
   function joinRoom(room: string) {
-    console.log("Context joining room: " + room);
+    //console.log("Context joining room: " + room);
     if (currentRoom) {
       console.log(`Context left room: ${currentRoom}`);
       socket.emit("leave", currentRoom as string);
     }
     socket.emit("join", room);
-    //setCurrentRoom(room);
+    setCurrentRoom(room);
     //console.log(`Joined room: ${room}`);
-    socket.once("joined", (joinedRoom: string) => {
-      setCurrentRoom(joinedRoom);
-      console.log(`Joined room: ${joinedRoom}`);
-    });
+    // socket.once("joined", (joinedRoom: string) => {
+    //   setCurrentRoom(joinedRoom);
+    //   //console.log(`Joined room: ${joinedRoom}`);
+    // });
+    socket.emit("getRoomHistory", room);
   }
 
   function leaveAllRooms() {
@@ -114,12 +115,14 @@ function SocketProvider({ children }: PropsWithChildren) {
     //------------------USERS------------------//
 
     function getUsers(users: User[]) {
+      //console.log("CONTEXT Received users list:", users);
       setUserList(users.map(user => ({ ...user, isConnected: true })));
     }
 
     //------------------ROOM------------------//
 
     function rooms(rooms: Room[]) {
+      console.log("CONTEXT Received rooms list:", rooms);
       setRoomList(rooms);
     }
 
@@ -132,7 +135,7 @@ function SocketProvider({ children }: PropsWithChildren) {
     //------------------MESSAGE------------------//
 
     function message(room: string, message: Message) {
-      console.log("Context room and current room", room, currentRoom);
+      //console.log("Context room and current room", room, currentRoom);
       if (room === currentRoom) {
         setMessages((messages) => [...messages, message]);
       }

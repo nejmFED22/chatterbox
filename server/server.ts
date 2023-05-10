@@ -66,7 +66,7 @@ const main = async () => {
       sessionID: socket.data.sessionID,
       userID: socket.data.userID,
       username: socket.data.username,
-      isConnected: true
+      isConnected: true,
     });
     next();
   });
@@ -81,6 +81,7 @@ const main = async () => {
     );
 
     socket.emit("rooms", getRooms());
+
     await emitSessions(socket);
     io.emit("users", await getConnectedUsers());
 
@@ -97,11 +98,11 @@ const main = async () => {
     // Joins room
     socket.on("join", async (room) => {
       socket.join(room);
+      //socket.emit("joined", room);
       io.emit("rooms", getRooms());
-      socket.emit("joined", room);
-      
-      const roomHistory = await getRoomHistory(room);
-      socket.emit("roomHistory", room, roomHistory);
+
+      // const roomHistory = await getRoomHistory(room);
+      // socket.emit("roomHistory", room, roomHistory);
     });
 
     // Leaves room
@@ -168,6 +169,7 @@ const main = async () => {
       io.emit("users", await getConnectedUsers());
     });
   });
+  
 
   // Updates list of rooms
   function getRooms() {
@@ -201,7 +203,7 @@ const main = async () => {
         sessionID: session.sessionID,
       }));
 
-      console.log("Connected users:", connectedUserList);
+      //console.log("Connected users:", connectedUserList);
       return connectedUserList;
     } catch (e) {
       console.error("Failed to fetch active sessions:", e);
@@ -210,18 +212,22 @@ const main = async () => {
   }
 
   async function getRoomHistory(room: string) {
-    const historyDocs = await historyCollection.find({ room }).toArray();
-    const history: Message[] = historyDocs.map((doc) => {
-      return {
+    try {
+      const historyDocs = await historyCollection.find({ room }).toArray();
+      const history: Message[] = historyDocs.map((doc) => ({
         content: doc.content,
         author: doc.author,
-      };
-    });
-    return history;
+      }));
+
+      return history;
+    } catch (e) {
+      console.error("Failed to fetch room history:", e);
+      return [];
+    }
   }
 
   io.listen(3000);
-  //console.log("listening on port 3000");
+  console.log("listening on port 3000");
 };
 
 main();
