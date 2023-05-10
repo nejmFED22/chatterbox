@@ -3,6 +3,7 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  Box,
   Link,
   List,
   ListItem,
@@ -16,7 +17,7 @@ export default function SidebarRoomList() {
   // States and variables
   const { roomList, joinRoom } = useSocket();
   const users = ["Jenny", "Nat", "Marcus", "Ellen"];
-  const [activeRoom, setActiveRoom] = useState<string | null>(null); // Skapa en state-variabel för att hålla reda på det aktiva styledAccordion-elementet
+  const [activeRoom, setActiveRoom] = useState<string | null>(null);
 
   useEffect(() => {
     console.log("activeRoom " + activeRoom);
@@ -42,6 +43,7 @@ export default function SidebarRoomList() {
     "& .MuiTypography-root": {
       display: "flex",
       alignItems: "center",
+      paddingLeft: "1rem",
     },
 
     "&.Mui-expanded": {
@@ -70,6 +72,8 @@ export default function SidebarRoomList() {
                   id="panel1a-header"
                   sx={getAccordionStyle(room.name)}
                 >
+                  <Box sx={styledArrowBackground}></Box>
+
                   <Link
                     sx={styledLink}
                     onClick={(e) => {
@@ -137,12 +141,19 @@ const styledAccordion = {
   justifyContent: "space-between",
 };
 
+const styledArrowBackground = {
+  position: "absolute",
+  right: 0,
+  background: theme.palette.primary.light,
+  height: "56px",
+  width: "56px",
+};
+
 const styledArrowIcon = {
   color: theme.palette.primary.dark,
   cursor: "pointer",
-  zIndex: 2,
   padding: "1rem",
-  background: theme.palette.primary.light,
+  position: "relative",
 };
 
 const styledList = {

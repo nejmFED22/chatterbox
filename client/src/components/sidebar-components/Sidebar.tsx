@@ -83,6 +83,7 @@ export default function Sidebar({
                 value={tab}
                 onChange={handleTabChange}
                 aria-label="basic tabs example"
+                sx={styledTabs}
               >
                 <Tab sx={styledLink} label="Rooms" {...a11yProps(0)} />
                 <Tab sx={styledLink} label="DMs" {...a11yProps(1)} />
@@ -103,7 +104,7 @@ export default function Sidebar({
 
             {/* Tab content */}
             <TabPanel value={tab} index={0}>
-              <Box sx={{ p: 3 }}>
+              <Box>
                 <SidebarRoomList />
               </Box>
               <AddRoomButtom />
@@ -141,7 +142,12 @@ const styledBox = {
   display: "flex",
   gap: "0.1rem",
   justifyContent: "center",
-  marginTop: "0.3rem",
+  marginBottom: "0.8rem",
+};
+
+const styledTabs = {
+  minHeight: "40px",
+  height: "44px",
 };
 
 const styledLink = {
@@ -150,10 +156,8 @@ const styledLink = {
   cursor: "pointer",
   justifyContent: "center",
   fontWeight: 700,
+  padding: "0px 16px",
 
-  "&:hover": {
-    textDecoration: "underline",
-  },
   "&.Mui-selected": {
     color: "black",
   },
