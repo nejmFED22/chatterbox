@@ -21,6 +21,7 @@ export default function SidebarUserList() {
 const styledLink = {
   padding: "1rem 2rem",
   textDecoration: "none",
+  cursor: "pointer",
   width: "100%",
   weight: "100%",
   color: theme.palette.primary.dark,
