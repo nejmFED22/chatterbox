@@ -75,7 +75,7 @@ const main = async () => {
     console.log("A user has connected");
     socket.emit("rooms", getRooms());
     await emitSessions(socket);
-    io.emit("users", getUsers());
+    io.emit("users", getConnectedUsers());
 
     socket.emit("session", {
       username: socket.data.username as string,
@@ -151,7 +151,7 @@ const main = async () => {
     // Disconnecting and leaving all rooms
     socket.on("disconnect", () => {
       io.emit("rooms", getRooms());
-      io.emit("users", getUsers());
+      io.emit("users", getConnectedUsers());
     });
   });
 
@@ -176,17 +176,32 @@ const main = async () => {
     socket.emit("sessions", sessions);
   }
 
-  function getUsers() {
-    const userList: User[] = [];
-    console.log(userList);
+  // function getUsers() {
+  //   const userList: User[] = [];
+  //   console.log(userList);
+  //   for (let [id, socket] of io.of("/").sockets) {
+  //     userList.push({
+  //       userID: id,
+  //       username: socket.data.username as string,
+  //       sessionID: socket.data.sessionID as string,
+  //     });
+  //   }
+  //   return userList;
+  // }
+
+  function getConnectedUsers() {
+    const connectedUserList: User[] = [];
     for (let [id, socket] of io.of("/").sockets) {
-      userList.push({
-        userID: id,
-        username: socket.data.username as string,
-        sessionID: socket.data.sessionID as string,
-      });
+      if (socket.connected) {
+        connectedUserList.push({
+          userID: id,
+          username: socket.data.username as string,
+          sessionID: socket.data.sessionID as string,
+        });
+        console.log("Connected users:", connectedUserList);
+      }
     }
-    return userList;
+    return connectedUserList;
   }
 
   async function getRoomHistory(room: string) {
