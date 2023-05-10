@@ -44,7 +44,7 @@ const main = async () => {
 
   io.use(async (socket, next) => {
     const sessionID = socket.handshake.auth.sessionID;
-    console.log("Session ID: " + sessionID);
+    //console.log("Session ID: " + sessionID);
     if (sessionID) {
       const session = await sessionCollection.findOne({ sessionID });
       if (session) {
@@ -58,7 +58,7 @@ const main = async () => {
     if (!username) {
       return next(new Error("invalid username"));
     }
-    console.log("Creating user");
+    //console.log("Creating user");
     socket.data.sessionID = uuidv4();
     socket.data.userID = uuidv4();
     socket.data.username = username;
@@ -72,7 +72,7 @@ const main = async () => {
 
   io.on("connection", async (socket) => {
     // Setup for client
-    console.log("A user has connected");
+    //console.log("A user has connected");
     socket.emit("rooms", getRooms());
     await emitSessions(socket);
     io.emit("users", getUsers());
@@ -91,6 +91,8 @@ const main = async () => {
     socket.on("join", async (room) => {
       socket.join(room);
       io.emit("rooms", getRooms());
+      socket.emit("joined", room);
+      
       const roomHistory = await getRoomHistory(room);
       socket.emit("roomHistory", room, roomHistory);
     });
@@ -103,9 +105,9 @@ const main = async () => {
 
     // Receives and sends out messages
     socket.on("message", async (room: string, message: Message) => {
-      console.log(
-        `Message received: ${message.content} from ${message.author} in room ${room}`
-      );
+      // console.log(
+      //   `Message received: ${message.content} from ${message.author} in room ${room}`
+      // );
 
       // Save message to history collection
       try {
@@ -178,7 +180,7 @@ const main = async () => {
 
   function getUsers() {
     const userList: User[] = [];
-    console.log(userList);
+    //console.log(userList);
     for (let [id, socket] of io.of("/").sockets) {
       userList.push({
         userID: id,
@@ -201,7 +203,7 @@ const main = async () => {
   }
 
   io.listen(3000);
-  console.log("listening on port 3000");
+  //console.log("listening on port 3000");
 };
 
 main();

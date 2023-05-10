@@ -9,6 +9,7 @@ export interface ServerToClientEvents {
   typingStart: (user: string) => void;
   typingStop: (user: string) => void;
   roomHistory: (room: string, history: Message[]) => void;
+  joined: (room: string) => void;
 }
 
 export interface ClientToServerEvents {

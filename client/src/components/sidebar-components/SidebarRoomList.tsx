@@ -17,10 +17,11 @@ export default function SidebarRoomList() {
   // States and variables
   const { roomList, joinRoom } = useSocket();
   const users = ["Jenny", "Nat", "Marcus", "Ellen"];
-  const [activeRoom, setActiveRoom] = useState<string | null>(null);
+  const [activeRoom, setActiveRoom] = useState<string | "">();
+  const { currentRoom } = useSocket();
 
   useEffect(() => {
-    console.log("activeRoom " + activeRoom);
+    console.log("Sidebar currentRoom " + activeRoom);
   }, [activeRoom]);
 
   const getAccordionStyle = (roomName: string) => ({
@@ -45,7 +46,7 @@ export default function SidebarRoomList() {
       minHeight: "0px",
     },
 
-    ...(activeRoom === roomName && {
+    ...(currentRoom === roomName && {
       background: theme.palette.primary.main,
       padding: 0,
       textDecoration: "none",
@@ -71,12 +72,13 @@ export default function SidebarRoomList() {
 
                   <Link
                     sx={styledLink}
+                    // sx={{...styledLink, pointerEvents: activeRoom === room.name ? "none" : "auto",}}
                     onClick={(e) => {
                       e.stopPropagation();
                       joinRoom(room.name);
                       setActiveRoom(room.name);
                     }}
-                    className={activeRoom === room.name ? "active" : ""}
+                    className={currentRoom === room.name ? "active" : ""}
                   >
                     <Typography variant="h4">
                       ({room.onlineUsers}) {room.name}
