@@ -2,7 +2,7 @@ import { Link, List, ListItem } from "@mui/material";
 import { useSocket } from "../../context/SocketContext";
 
 export default function SidebarUserList() {
-  const { joinRoom, sessionList } = useSocket();
+  const { joinDM, sessionList } = useSocket();
 
   return (
     <List>
@@ -10,7 +10,7 @@ export default function SidebarUserList() {
         <ListItem key={session.userID}>
           <Link
             onClick={() => {
-              joinRoom(session.userID);
+              joinDM(session);
             }}
           >
             {session.username}

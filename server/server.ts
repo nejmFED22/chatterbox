@@ -1,13 +1,20 @@
 import { createAdapter } from "@socket.io/mongo-adapter";
 import { MongoClient } from "mongodb";
-import { Server } from "socket.io";
+import { Server, Socket } from "socket.io";
 import { v4 as uuidv4 } from "uuid";
 import {
   ClientToServerEvents,
   InterServerEvents,
   ServerToClientEvents,
 } from "../communications";
-import { Message, PrivateMessage, Room, Session, SocketData, User } from "../types";
+import {
+  Message,
+  PrivateMessage,
+  Room,
+  Session,
+  SocketData,
+  User,
+} from "../types";
 const io = new Server<
   ClientToServerEvents,
   ServerToClientEvents,
@@ -45,7 +52,7 @@ const main = async () => {
 
   io.adapter(createAdapter(mongoCollection));
 
-//-----------------SOCKET SESSION SETUP-----------------//
+  //-----------------SOCKET SESSION SETUP-----------------//
 
   io.use(async (socket, next) => {
     const sessionID = socket.handshake.auth.sessionID;
@@ -78,25 +85,24 @@ const main = async () => {
       sessionID: socket.data.sessionID as string,
     });
     const sessionList = await updateSessionList();
-    io.emit("updateSessionList", sessionList)
+    io.emit("updateSessionList", sessionList);
     next();
   });
 
   io.on("connection", async (socket) => {
-
     //-----------------SOCKET CONNECTION-----------------//
 
     // Updates session list and room list
     socket.join(socket.data.userID as string);
     console.log("A user has connected");
-    socket.emit("rooms", getRooms());
+    socket.emit("rooms", getRooms(socket));
     const sessionList = await updateSessionList();
-    io.emit("updateSessionList", sessionList)
+    io.emit("updateSessionList", sessionList);
     io.emit("users", getUsers());
 
     // Disconnecting and leaving all rooms
     socket.on("disconnect", () => {
-      io.emit("rooms", getRooms());
+      io.emit("rooms", getRooms(socket));
       io.emit("users", getUsers());
     });
 
@@ -105,7 +111,7 @@ const main = async () => {
     // Joins room
     socket.on("join", async (room) => {
       socket.join(room);
-      io.emit("rooms", getRooms());
+      io.emit("rooms", getRooms(socket));
       const roomHistory = await getRoomHistory(room);
       socket.emit("roomHistory", room, roomHistory);
     });
@@ -113,7 +119,7 @@ const main = async () => {
     // Leaves room
     socket.on("leave", (room) => {
       socket.leave(room);
-      io.emit("rooms", getRooms());
+      io.emit("rooms", getRooms(socket));
     });
 
     // Fetch room history from database
@@ -128,7 +134,7 @@ const main = async () => {
     //   socket.emit("roomHistory", room, history);
     // });
 
-    //-----------------MESSAGES-----------------//   
+    //-----------------MESSAGES-----------------//
 
     // Receives and sends out messages
     socket.on("message", async (room: string, message: Message) => {
@@ -171,55 +177,65 @@ const main = async () => {
       socket.broadcast.to(room).emit("typingStop", user);
     });
 
-    //-----------------PRIVATE MESSAGES-----------------//   
+    //-----------------PRIVATE MESSAGES-----------------//
 
     // Receives and sends out messages
-    socket.on("privateMessage", async (recipient: string, message: PrivateMessage) => {
-      console.log(
-        `Message received: ${message.content} from ${message.author}`
-      );
+    socket.on(
+      "privateMessage",
+      async (message: PrivateMessage) => {
 
-      // Save message to history collection
-      try {
-        await DMHistoryCollection.insertOne({
+        // Save message to history collection
+        try {
+          await DMHistoryCollection.insertOne({
+            content: message.content,
+            author: socket.data.userID,
+            recipient: message.recipient,
+          });
+        } catch (e) {
+          console.error("Failed to save message to history:", e);
+        }
+
+        // Fetch the message from the history collection
+        const historyDocs = await DMHistoryCollection.find({
           content: message.content,
-          author: message.author,
+          author: socket.data.userID,
           recipient: message.recipient,
-        });
-      } catch (e) {
-        console.error("Failed to save message to history:", e);
+        })
+          .sort({ _id: -1 })
+          .limit(1)
+          .toArray();
+        const retrievedMessage = historyDocs[0];
+
+        // Sends message to recipient and sender
+        console.log("Recipient: " + message.recipient);
+        console.log("Sender: " + socket.data.userID);
+        console.log("Message: " + retrievedMessage.content);
+        console.log(socket.rooms)
+        socket.to(message.recipient).to(socket.data.userID as string)
+          .emit("privateMessage", {
+            content: retrievedMessage.content,
+            author: retrievedMessage.author,
+            recipient: retrievedMessage.recipient,
+          });
       }
-
-      // Fetch the message from the history collection
-      const historyDocs = await DMHistoryCollection
-        .find({ content: message.content, author: message.author, recipient: message.recipient })
-        .sort({ _id: -1 })
-        .limit(1)
-        .toArray();
-      const retrievedMessage = historyDocs[0];
-
-      // Sends message to recipient and sender
-      socket.to(recipient).to(socket.data.userID as string).emit("privateMessage", {
-        content: retrievedMessage.content,
-        author: retrievedMessage.author,
-        recipient: retrievedMessage.recipient,
-      });
-    });    
+    );
   });
 
   //-----------------SERVER FUNCTIONS-----------------//
 
   // Updates list of rooms
-  function getRooms() {
+  function getRooms(socket: Socket) {
     const { rooms } = io.sockets.adapter;
     const roomList: Room[] = [];
 
     for (const [name, setOfSocketIds] of rooms) {
       if (!setOfSocketIds.has(name)) {
-        roomList.push({
-          name: name,
-          onlineUsers: setOfSocketIds.size,
-        });
+        if (name !== socket.data.userID) {
+          roomList.push({
+            name: name,
+            onlineUsers: setOfSocketIds.size,
+          });
+        }
       }
     }
     return roomList;

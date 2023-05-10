@@ -17,6 +17,7 @@ interface ContextValues {
   typingStart: () => void;
   typingStop: () => void;
   joinRoom: (room: string) => void;
+  joinDM: (user: Session) => void;
   leaveAllRooms: () => void;
   messages: Message[];
   privateMessages: PrivateMessage[];
@@ -68,6 +69,11 @@ function SocketProvider({ children }: PropsWithChildren) {
     setCurrentRoom(room);
   }
 
+  function joinDM(user: Session) {
+    console.log(`Joined room: ${user.username}`);
+    setCurrentRoom(user.userID);
+  }
+
   function leaveAllRooms() {
     socket.emit("leave", currentRoom as string);
     setCurrentRoom(undefined);
@@ -88,7 +94,7 @@ function SocketProvider({ children }: PropsWithChildren) {
   };
 
   const sendPrivateMessage = (message: PrivateMessage) => {
-    console.log(message)
+    socket.emit("privateMessage", message);
   };
 
   useEffect(() => {
@@ -141,7 +147,7 @@ function SocketProvider({ children }: PropsWithChildren) {
     }
 
     function privateMessage(message: PrivateMessage) {
-      console.log("Room and current room", currentRoom);
+      console.log(`${message.author} sent "${message.content}" to ${message.recipient}`);
       setPrivateMessages((privateMessages) => [...privateMessages, message]);
     }
 
@@ -193,6 +199,7 @@ function SocketProvider({ children }: PropsWithChildren) {
         typingStart,
         typingStop,
         joinRoom,
+        joinDM,
         messages,
         privateMessages,
         currentRoom,
