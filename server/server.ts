@@ -1,14 +1,13 @@
 import { createAdapter } from "@socket.io/mongo-adapter";
-import { Emitter } from "@socket.io/mongo-emitter";
 import { MongoClient } from "mongodb";
-import { Server, Socket } from "socket.io";
+import { Server } from "socket.io";
 import { v4 as uuidv4 } from "uuid";
 import {
   ClientToServerEvents,
   InterServerEvents,
   ServerToClientEvents,
 } from "../communications";
-import { Message, Room, Session, SocketData, User } from "../types";
+import { Message, PrivateMessage, Room, Session, SocketData, User } from "../types";
 const io = new Server<
   ClientToServerEvents,
   ServerToClientEvents,
@@ -39,9 +38,9 @@ const main = async () => {
     // collection already exists
   }
   const mongoCollection = mongoClient.db(DB).collection(COLLECTION);
-  const historyCollection = mongoClient.db(DB).collection("roomHistory");
-  const DMHistoryCollection = mongoClient.db(DB).collection("DMroomHistory");
-  const sessionCollection = mongoClient.db(DB).collection("session");
+  const historyCollection = mongoClient.db(DB).collection("Room History");
+  const DMHistoryCollection = mongoClient.db(DB).collection("DM Room History");
+  const sessionCollection = mongoClient.db(DB).collection("Sessions");
   // const sessionEmitter = new Emitter(sessionCollection);
 
   io.adapter(createAdapter(mongoCollection));
@@ -88,6 +87,7 @@ const main = async () => {
     //-----------------SOCKET CONNECTION-----------------//
 
     // Updates session list and room list
+    socket.join(socket.data.userID as string);
     console.log("A user has connected");
     socket.emit("rooms", getRooms());
     const sessionList = await updateSessionList();
@@ -174,17 +174,17 @@ const main = async () => {
     //-----------------PRIVATE MESSAGES-----------------//   
 
     // Receives and sends out messages
-    socket.on("privateMessage", async (room: string, message: Message) => {
+    socket.on("privateMessage", async (recipient: string, message: PrivateMessage) => {
       console.log(
-        `Message received: ${message.content} from ${message.author} in room ${room}`
+        `Message received: ${message.content} from ${message.author}`
       );
 
       // Save message to history collection
       try {
         await DMHistoryCollection.insertOne({
-          room: room,
           content: message.content,
           author: message.author,
+          recipient: message.recipient,
         });
       } catch (e) {
         console.error("Failed to save message to history:", e);
@@ -192,15 +192,17 @@ const main = async () => {
 
       // Fetch the message from the history collection
       const historyDocs = await DMHistoryCollection
-        .find({ room, content: message.content, author: message.author })
+        .find({ content: message.content, author: message.author, recipient: message.recipient })
         .sort({ _id: -1 })
         .limit(1)
         .toArray();
       const retrievedMessage = historyDocs[0];
 
-      io.to(room).emit("message", room, {
+      // Sends message to recipient and sender
+      socket.to(recipient).to(socket.data.userID as string).emit("privateMessage", {
         content: retrievedMessage.content,
         author: retrievedMessage.author,
+        recipient: retrievedMessage.recipient,
       });
     });    
   });

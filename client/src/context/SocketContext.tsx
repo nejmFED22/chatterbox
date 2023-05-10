@@ -6,7 +6,7 @@ import {
   useState,
 } from "react";
 import { Socket, io } from "socket.io-client";
-import { Message, Room, Session, User } from "../../../types";
+import { Message, PrivateMessage, Room, Session, User } from "../../../types";
 
 // Context setup
 interface ContextValues {
@@ -19,7 +19,9 @@ interface ContextValues {
   joinRoom: (room: string) => void;
   leaveAllRooms: () => void;
   messages: Message[];
+  privateMessages: PrivateMessage[];
   sendMessage: (message: Message) => void;
+  sendPrivateMessage: (message: PrivateMessage) => void;
   currentRoom?: string;
   roomList?: Room[];
   userList: User[];
@@ -42,6 +44,7 @@ function SocketProvider({ children }: PropsWithChildren) {
   const [sessionList, setSessonList] = useState<Session[]>([]);
   const [userList, setUserList] = useState<User[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [privateMessages, setPrivateMessages] = useState<PrivateMessage[]>([]);
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
 
   useEffect(() => {
@@ -82,6 +85,10 @@ function SocketProvider({ children }: PropsWithChildren) {
     if (!currentRoom) throw Error("Can't send message without a room");
     console.log("Sending message:", currentRoom, message);
     socket.emit("message", currentRoom, message);
+  };
+
+  const sendPrivateMessage = (message: PrivateMessage) => {
+    console.log(message)
   };
 
   useEffect(() => {
@@ -133,6 +140,11 @@ function SocketProvider({ children }: PropsWithChildren) {
       }
     }
 
+    function privateMessage(message: PrivateMessage) {
+      console.log("Room and current room", currentRoom);
+      setPrivateMessages((privateMessages) => [...privateMessages, message]);
+    }
+
     function typingStart(user: string) {
       setTypingUsers((users) => [...users, user]);
     }
@@ -148,7 +160,7 @@ function SocketProvider({ children }: PropsWithChildren) {
     socket.on("updateSessionList", handleSessions);
     socket.on("disconnect", disconnect);
     socket.on("message", message);
-    socket.on("privateMessage", message);
+    socket.on("privateMessage", privateMessage);
     socket.on("typingStart", typingStart);
     socket.on("typingStop", typingStop);
     socket.on("rooms", rooms);
@@ -161,7 +173,7 @@ function SocketProvider({ children }: PropsWithChildren) {
       socket.off("updateSessionList", handleSessions);
       socket.off("disconnect", disconnect);
       socket.off("message", message);
-      socket.off("privateMessage", message);
+      socket.off("privateMessage", privateMessage);
       socket.off("typingStart", typingStart);
       socket.off("typingStop", typingStop);
       socket.off("rooms", rooms);
@@ -182,10 +194,12 @@ function SocketProvider({ children }: PropsWithChildren) {
         typingStop,
         joinRoom,
         messages,
+        privateMessages,
         currentRoom,
         roomList,
         userList,
         sendMessage,
+        sendPrivateMessage,
         sessionList,
       }}
     >
