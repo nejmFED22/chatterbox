@@ -188,19 +188,6 @@ const main = async () => {
     socket.emit("sessions", sessions);
   }
 
-  // function getUsers() {
-  //   const userList: User[] = [];
-  //   console.log(userList);
-  //   for (let [id, socket] of io.of("/").sockets) {
-  //     userList.push({
-  //       userID: id,
-  //       username: socket.data.username as string,
-  //       sessionID: socket.data.sessionID as string,
-  //     });
-  //   }
-  //   return userList;
-  // }
-
   async function getConnectedUsers() {
     try {
       const activeSessions = await sessionCollection
