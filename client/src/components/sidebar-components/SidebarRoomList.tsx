@@ -3,6 +3,7 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  Box,
   Link,
   List,
   ListItem,
@@ -25,12 +26,11 @@ export default function SidebarRoomList() {
     width: "100%",
     background: "none",
     fontSize: "35px",
-    padding: "0",
-    minHeight: "none",
+    padding: "0 0.5rem",
 
     "& .MuiAccordionSummary-content": {
       margin: 0,
-      height: "56px",
+      height: "3rem",
     },
 
     "& .MuiAccordionSummary-expandIconWrapper": {
@@ -41,18 +41,35 @@ export default function SidebarRoomList() {
     "& .MuiTypography-root": {
       display: "flex",
       alignItems: "center",
+      color: theme.palette.primary.dark,
     },
 
     "&.Mui-expanded": {
       minHeight: "0px",
     },
 
+    "& .MuiSvgIcon-root": {
+      fill: theme.palette.primary.dark,
+    },
+
     ...(activeRoom === roomName && {
       background: theme.palette.primary.main,
-      padding: 0,
       textDecoration: "none",
       color: theme.palette.primary.main,
     }),
+
+    "&:hover": {
+      background: theme.palette.primary.dark,
+      color: theme.palette.primary.light,
+
+      "& .MuiTypography-root": {
+        color: theme.palette.primary.light,
+      },
+
+      "& .MuiSvgIcon-root": {
+        fill: theme.palette.primary.light,
+      },
+    },
   });
 
   return (
@@ -64,7 +81,7 @@ export default function SidebarRoomList() {
               <Accordion sx={styledAccordion}>
                 {/* Room information */}
                 <AccordionSummary
-                  expandIcon={<ArrowForwardIosIcon sx={styledArrowIcon} />}
+                  expandIcon={<ArrowForwardIosIcon />}
                   aria-controls="panel1a-content"
                   id="panel1a-header"
                   sx={getAccordionStyle(room.name)}
@@ -82,13 +99,14 @@ export default function SidebarRoomList() {
                   </Link>
                 </AccordionSummary>
                 {/* List of online users in the room */}
-                <AccordionDetails>
+                <AccordionDetails sx={styledAccordionDetails}>
                   <List>
-                    {room.onlineUsers.map((user) => (
-                      <ListItem key={user}>
-                        <Typography variant="body1">{user}</Typography>
-                      </ListItem>
-                    ))}
+                    {room.onlineUsers &&
+                      room.onlineUsers.map((user) => (
+                        <ListItem key={user} sx={styledUsername}>
+                          <Typography variant="body1">{user}</Typography>
+                        </ListItem>
+                      ))}
                   </List>
                 </AccordionDetails>
               </Accordion>
@@ -96,14 +114,14 @@ export default function SidebarRoomList() {
           ))}
         </List>
       ) : (
-        <>
+        <Box sx={styledBox}>
           <Typography gutterBottom variant="h3">
             No rooms available :-(
           </Typography>
           <Typography variant="h5">
             Why not create one with the button below?
           </Typography>
-        </>
+        </Box>
       )}
     </>
   );
@@ -112,18 +130,11 @@ export default function SidebarRoomList() {
 // CSS styling
 
 const styledLink = {
-  color: theme.palette.primary.dark,
   textDecoration: "none",
-  cursor: "pointer",
-  fontFamily: "Inter",
-  paddingRight: "2rem",
-  width: "100%",
-  height: "100%",
 
   "&:hover": {
-    textDecoration: "underline",
-    background: theme.palette.primary.dark,
-    color: theme.palette.primary.light,
+    textDecorationColor: "none",
+    textDecoration: "none",
   },
 };
 
@@ -134,24 +145,28 @@ const styledAccordion = {
   justifyContent: "space-between",
 };
 
-const styledArrowIcon = {
-  color: theme.palette.primary.dark,
-  cursor: "pointer",
-  zIndex: 2,
-  padding: "1rem",
-  background: theme.palette.primary.light,
-};
-
 const styledList = {
-  padding: "0",
+  padding: 0,
   display: "flex",
   flexDirection: "column",
   gap: "1rem",
 };
 
 const styledListItem = {
-  padding: "0px",
+  padding: 0,
   color: theme.palette.primary.light,
   textDecoration: "none",
   cursor: "pointer",
+};
+
+const styledAccordionDetails = {
+  padding: "0 0.5rem",
+};
+
+const styledUsername = {
+  padding: 0,
+};
+
+const styledBox = {
+  padding: "0 0.3rem",
 };

@@ -159,10 +159,11 @@ const main = async () => {
       if (!setOfSocketIds.has(name)) {
         roomList.push({
           name: name,
-          onlineUsers: Array.from(setOfSocketIds).map(
-            (socketId) =>
-              io.sockets.sockets.get(socketId)?.data.username as string
-          ),
+          onlineUsers:
+            Array.from(setOfSocketIds).map(
+              (socketId) =>
+                io.sockets.sockets.get(socketId)?.data.username as string
+            ) || [],
         });
       }
     }

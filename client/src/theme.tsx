@@ -68,6 +68,9 @@ export let theme: Theme = createTheme({
       light: "#fff",
       dark: "#000",
     },
+    secondary: {
+      main: "#000",
+    },
   },
   components: {
     MuiButton: {
