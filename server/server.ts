@@ -8,7 +8,7 @@ import {
   InterServerEvents,
   ServerToClientEvents,
 } from "../communications";
-import { Message, Room, SocketData, User } from "../types";
+import { Message, Room, SocketData } from "../types";
 const io = new Server<
   ClientToServerEvents,
   ServerToClientEvents,
@@ -66,6 +66,7 @@ const main = async () => {
       sessionID: socket.data.sessionID,
       userID: socket.data.userID,
       username: socket.data.username,
+      isConnected: true
     });
     next();
   });
@@ -73,9 +74,15 @@ const main = async () => {
   io.on("connection", async (socket) => {
     // Setup for client
     //console.log("A user has connected");
+
+    await sessionCollection.updateOne(
+      { sessionID: socket.data.sessionID },
+      { $set: { isConnected: true } }
+    );
+
     socket.emit("rooms", getRooms());
     await emitSessions(socket);
-    io.emit("users", getUsers());
+    io.emit("users", await getConnectedUsers());
 
     socket.emit("session", {
       username: socket.data.username as string,
@@ -151,9 +158,14 @@ const main = async () => {
     });
 
     // Disconnecting and leaving all rooms
-    socket.on("disconnect", () => {
+    socket.on("disconnect", async () => {
+      await sessionCollection.updateOne(
+        { sessionID: socket.data.sessionID },
+        { $set: { isConnected: false } }
+      );
+
       io.emit("rooms", getRooms());
-      io.emit("users", getUsers());
+      io.emit("users", await getConnectedUsers());
     });
   });
 
@@ -178,17 +190,23 @@ const main = async () => {
     socket.emit("sessions", sessions);
   }
 
-  function getUsers() {
-    const userList: User[] = [];
-    //console.log(userList);
-    for (let [id, socket] of io.of("/").sockets) {
-      userList.push({
-        userID: id,
-        username: socket.data.username as string,
-        sessionID: socket.data.sessionID as string,
-      });
+  async function getConnectedUsers() {
+    try {
+      const activeSessions = await sessionCollection
+        .find({ isConnected: true })
+        .toArray();
+      const connectedUserList = activeSessions.map((session) => ({
+        userID: session.userID,
+        username: session.username,
+        sessionID: session.sessionID,
+      }));
+
+      console.log("Connected users:", connectedUserList);
+      return connectedUserList;
+    } catch (e) {
+      console.error("Failed to fetch active sessions:", e);
+      return [];
     }
-    return userList;
   }
 
   async function getRoomHistory(room: string) {

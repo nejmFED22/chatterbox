@@ -101,6 +101,7 @@ function SocketProvider({ children }: PropsWithChildren) {
       //console.log("Connected to server");
     }
 
+    // Vad gör den här funktionen?
     function handleSessions(sessions: Session[]) {
       //console.log("Sessions:", sessions);
       setSessonList(sessions);
@@ -113,7 +114,7 @@ function SocketProvider({ children }: PropsWithChildren) {
     //------------------USERS------------------//
 
     function getUsers(users: User[]) {
-      setUserList(users);
+      setUserList(users.map(user => ({ ...user, isConnected: true })));
     }
 
     //------------------ROOM------------------//
