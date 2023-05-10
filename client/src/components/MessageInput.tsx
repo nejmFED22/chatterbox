@@ -8,11 +8,7 @@ import {
 import { useRef, useState } from "react";
 import { useSocket } from "../context/SocketContext";
 
-interface Props {
-  isMobile: boolean;
-}
-
-export default function MessageInput({ isMobile }: Props) {
+export default function MessageInput() {
   const [message, setMessage] = useState("");
   const [typing, setTyping] = useState(false);
   const timerRef = useRef<number | null>(null);
@@ -59,12 +55,7 @@ export default function MessageInput({ isMobile }: Props) {
         {typingUsers.length > 0 && renderTypingUsers()}
       </Typography>
       <form onSubmit={handleSendMessage}>
-        <FormControl
-          sx={{
-            ...styledFormControl,
-            flexDirection: isMobile ? "column" : "row",
-          }}
-        >
+        <FormControl sx={styledFormControl}>
           <TextField
             multiline={true}
             onChange={handleTyping}
@@ -93,6 +84,7 @@ const styledType = {
 
 const styledFormControl = {
   display: "flex",
+  flexDirection: "row",
   gap: "0.5rem",
   alignItems: "flex-end",
 };
