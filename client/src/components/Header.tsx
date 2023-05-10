@@ -1,32 +1,12 @@
 import { CloseOutlined } from "@mui/icons-material";
 import MenuIcon from "@mui/icons-material/Menu";
-import {
-  Box,
-  Container,
-  IconButton,
-  useMediaQuery,
-  useScrollTrigger,
-} from "@mui/material";
+import { Box, Container, IconButton, useMediaQuery } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
-import Slide from "@mui/material/Slide";
 import Typography from "@mui/material/Typography";
-import { ReactElement } from "react";
-import { theme } from "../theme";
+import { useEffect, useRef, useState } from "react";
 import { useSocket } from "../context/SocketContext";
+import { theme } from "../theme";
 
-interface HideOnScrollProps {
-  children: ReactElement;
-}
-
-function HideOnScroll({ children }: HideOnScrollProps) {
-  const trigger = useScrollTrigger();
-
-  return (
-    <Slide appear={true} direction="down" in={!trigger}>
-      {children}
-    </Slide>
-  );
-}
 interface HeaderProps {
   toggleSidebar: () => void;
   sidebarOpen: boolean;
@@ -34,21 +14,40 @@ interface HeaderProps {
 
 const drawerWidth = 340;
 
-export default function Header({
-  toggleSidebar,
-  sidebarOpen,
-}: HeaderProps) {
+export default function Header({ toggleSidebar, sidebarOpen }: HeaderProps) {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const { leaveAllRooms, currentRoom } = useSocket();
+  const [scrolledUp, setScrolledUp] = useState<boolean>(true);
+  const prevPositionRef = useRef<number>(0);
 
   const handleSidebarToggle = () => {
     toggleSidebar();
   };
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentPosition = window.pageYOffset;
+
+      if (currentPosition < prevPositionRef.current) {
+        setScrolledUp(true);
+      } else {
+        setScrolledUp(false);
+      }
+      prevPositionRef.current = currentPosition;
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   const getStyleAppBar = () => {
-    return {
+    const defaultStyle = {
       background: "#000",
       padding: "0.15rem 0",
       height: "3.66rem",
-
       width:
         sidebarOpen && !isMobile ? `calc(100% - ${drawerWidth}px)` : "100%",
       mr: { sm: `${drawerWidth}px` },
@@ -57,49 +56,54 @@ export default function Header({
         fontSize: "1.25rem",
       },
     };
-  };
+    const scrolledStyle = {
+      transform: scrolledUp ? "none" : "translateY(-80px)",
+      transition: "transform 0.4s ease",
+    };
 
-  const { leaveAllRooms, currentRoom } = useSocket();
+    return {
+      ...defaultStyle,
+      ...scrolledStyle,
+    };
+  };
 
   return (
     <>
-      <HideOnScroll>
-        <AppBar sx={getStyleAppBar()} position={"relative"}>
-          <Container maxWidth="lg" sx={styledContainer}>
-            <Box sx={styledLeft}>
-              {currentRoom ? (
-                <IconButton
-                  aria-label="exit-room"
-                  size={"large"}
-                  sx={{ ...styledLeft, px: 0, mt: 0.2, mr: 1.5 }}
-                  onClick={leaveAllRooms}
-                >
-                  <CloseOutlined sx={styledLeft} />
-                </IconButton>
-              ) : null}
-
-              <Typography
-                variant="body2"
-                component="div"
-                sx={{ ...styledLeft, ml: 1 }}
-              >
-               {currentRoom ? currentRoom : "Chatterbox"}
-              </Typography>
-            </Box>
-            {isMobile && (
+      <AppBar sx={getStyleAppBar()} position={"fixed"}>
+        <Container maxWidth="lg" sx={styledContainer}>
+          <Box sx={styledLeft}>
+            {currentRoom ? (
               <IconButton
-                size="small"
-                sx={styledMenuIcon}
-                color="inherit"
-                aria-label="open sidebar"
-                onClick={handleSidebarToggle}
+                aria-label="exit-room"
+                size={"large"}
+                sx={{ ...styledLeft, px: 0, mt: 0.2, mr: 1.5 }}
+                onClick={leaveAllRooms}
               >
-                {!sidebarOpen ? <MenuIcon sx={styledMenuIcon} /> : null}
+                <CloseOutlined sx={styledLeft} />
               </IconButton>
-            )}
-          </Container>
-        </AppBar>
-      </HideOnScroll>
+            ) : null}
+
+            <Typography
+              variant="body2"
+              component="div"
+              sx={{ ...styledLeft, ml: 1 }}
+            >
+              {currentRoom ? currentRoom : "Chatterbox"}
+            </Typography>
+          </Box>
+          {isMobile && (
+            <IconButton
+              size="small"
+              sx={styledMenuIcon}
+              color="inherit"
+              aria-label="open sidebar"
+              onClick={handleSidebarToggle}
+            >
+              {!sidebarOpen ? <MenuIcon sx={styledMenuIcon} /> : null}
+            </IconButton>
+          )}
+        </Container>
+      </AppBar>
     </>
   );
 }

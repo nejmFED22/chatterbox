@@ -133,7 +133,7 @@ const drawerWidth = 340;
 const sidebarStyles = {
   display: "flex",
   width: "100vw",
-  zIndex: 100,
+  zIndex: 10000000,
   position: "fixed",
 };
 
@@ -158,27 +158,6 @@ const styledLink = {
     color: "black",
   },
 };
-
-// const hoverStyles = {
-//   "&:hover": {
-//     background: theme.palette.primary.dark,
-//     color: theme.palette.primary.light,
-//   },
-// };
-
-// const activeStyles = {
-//   "&:active": {
-//     background: theme.palette.primary.main,
-//     color: theme.palette.primary.dark,
-//   },
-// };
-
-// const styledAccordionInner = {
-//   display: "flex",
-//   alignItems: "center",
-//   justifyContent: "space-between",
-//   width: "100%",
-// };
 
 const drawerPaperStyles = {
   width: drawerWidth,
