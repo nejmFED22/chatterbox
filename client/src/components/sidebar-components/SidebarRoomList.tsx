@@ -15,7 +15,6 @@ import { theme } from "../../theme";
 export default function SidebarRoomList() {
   // States and variables
   const { roomList, joinRoom } = useSocket();
-  const users = ["Jenny", "Nat", "Marcus", "Ellen"];
   const [activeRoom, setActiveRoom] = useState<string | null>(null); // Skapa en state-variabel för att hålla reda på det aktiva styledAccordion-elementet
 
   useEffect(() => {
@@ -79,17 +78,15 @@ export default function SidebarRoomList() {
                     }}
                     className={activeRoom === room.name ? "active" : ""}
                   >
-                    <Typography variant="h4">
-                      ({room.onlineUsers}) {room.name}
-                    </Typography>
+                    <Typography variant="h4">{room.name}</Typography>
                   </Link>
                 </AccordionSummary>
                 {/* List of online users in the room */}
                 <AccordionDetails>
                   <List>
-                    {users.map((user) => (
+                    {room.onlineUsers.map((user) => (
                       <ListItem key={user}>
-                        <Typography variant="body2">{user}</Typography>
+                        <Typography variant="body1">{user}</Typography>
                       </ListItem>
                     ))}
                   </List>
