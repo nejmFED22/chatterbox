@@ -39,7 +39,8 @@ const main = async () => {
     // collection already exists
   }
   const mongoCollection = mongoClient.db(DB).collection(COLLECTION);
-  const historyCollection = mongoClient.db(DB).collection("history");
+  const historyCollection = mongoClient.db(DB).collection("roomHistory");
+  const DMHistoryCollection = mongoClient.db(DB).collection("DMroomHistory");
   const sessionCollection = mongoClient.db(DB).collection("session");
   // const sessionEmitter = new Emitter(sessionCollection);
 
@@ -93,6 +94,14 @@ const main = async () => {
     io.emit("updateSessionList", sessionList)
     io.emit("users", getUsers());
 
+    // Disconnecting and leaving all rooms
+    socket.on("disconnect", () => {
+      io.emit("rooms", getRooms());
+      io.emit("users", getUsers());
+    });
+
+    //----------------ROOMS----------------//
+
     // Joins room
     socket.on("join", async (room) => {
       socket.join(room);
@@ -106,6 +115,20 @@ const main = async () => {
       socket.leave(room);
       io.emit("rooms", getRooms());
     });
+
+    // Fetch room history from database
+    socket.on("getRoomHistory", async (room: string) => {
+      const history = await getRoomHistory(room);
+      socket.emit("roomHistory", room, history);
+    });
+
+    // Fetch DM room history from database
+    // socket.on("getDMRoomHistory", async (room: string) => {
+    //   const history = await getDMRoomHistory(room);
+    //   socket.emit("roomHistory", room, history);
+    // });
+
+    //-----------------MESSAGES-----------------//   
 
     // Receives and sends out messages
     socket.on("message", async (room: string, message: Message) => {
@@ -138,12 +161,6 @@ const main = async () => {
       });
     });
 
-    // Fetch room history from database
-    socket.on("getRoomHistory", async (room: string) => {
-      const history = await getRoomHistory(room);
-      socket.emit("roomHistory", room, history);
-    });
-
     // Communicate to client that user started typing
     socket.on("typingStart", (room, user) => {
       socket.broadcast.to(room).emit("typingStart", user);
@@ -154,11 +171,38 @@ const main = async () => {
       socket.broadcast.to(room).emit("typingStop", user);
     });
 
-    // Disconnecting and leaving all rooms
-    socket.on("disconnect", () => {
-      io.emit("rooms", getRooms());
-      io.emit("users", getUsers());
-    });
+    //-----------------PRIVATE MESSAGES-----------------//   
+
+    // Receives and sends out messages
+    socket.on("privateMessage", async (room: string, message: Message) => {
+      console.log(
+        `Message received: ${message.content} from ${message.author} in room ${room}`
+      );
+
+      // Save message to history collection
+      try {
+        await DMHistoryCollection.insertOne({
+          room: room,
+          content: message.content,
+          author: message.author,
+        });
+      } catch (e) {
+        console.error("Failed to save message to history:", e);
+      }
+
+      // Fetch the message from the history collection
+      const historyDocs = await DMHistoryCollection
+        .find({ room, content: message.content, author: message.author })
+        .sort({ _id: -1 })
+        .limit(1)
+        .toArray();
+      const retrievedMessage = historyDocs[0];
+
+      io.to(room).emit("message", room, {
+        content: retrievedMessage.content,
+        author: retrievedMessage.author,
+      });
+    });    
   });
 
   //-----------------SERVER FUNCTIONS-----------------//

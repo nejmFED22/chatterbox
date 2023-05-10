@@ -148,6 +148,7 @@ function SocketProvider({ children }: PropsWithChildren) {
     socket.on("updateSessionList", handleSessions);
     socket.on("disconnect", disconnect);
     socket.on("message", message);
+    socket.on("privateMessage", message);
     socket.on("typingStart", typingStart);
     socket.on("typingStop", typingStop);
     socket.on("rooms", rooms);
@@ -160,6 +161,7 @@ function SocketProvider({ children }: PropsWithChildren) {
       socket.off("updateSessionList", handleSessions);
       socket.off("disconnect", disconnect);
       socket.off("message", message);
+      socket.off("privateMessage", message);
       socket.off("typingStart", typingStart);
       socket.off("typingStop", typingStop);
       socket.off("rooms", rooms);
