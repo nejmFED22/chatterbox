@@ -3,7 +3,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { IconButton, Tab, Tabs, useMediaQuery } from "@mui/material";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
-import React from "react";
+import React, { useEffect } from "react";
 import { theme } from "../../theme";
 import LogoutButton from "../LogoutButton";
 import AddRoomButtom from "./../AddRoomButton";
@@ -43,11 +43,9 @@ function a11yProps(index: number) {
 }
 
 // Sidebar component
-
 export default function Sidebar({
-  // Decides whether sidebar is permanent or toggleable
   toggleSidebar,
-  sidebarOpen,
+  sidebarOpen = true,
 }: {
   toggleSidebar: () => void;
   sidebarOpen: boolean;
@@ -56,7 +54,23 @@ export default function Sidebar({
     toggleSidebar();
   };
 
-  const isMobile = useMediaQuery("(max-width: 600px)");
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+  // Changes sidebar open when you resize window.
+  useEffect(() => {
+    const handleResize = () => {
+      if (isMobile && sidebarOpen) {
+        toggleSidebar();
+      }
+      if (!isMobile && !sidebarOpen) {
+        toggleSidebar();
+      }
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [isMobile, sidebarOpen, toggleSidebar]);
+
+  // Tab logic
   const [tab, setTab] = React.useState(0);
 
   const handleTabChange = (_event: React.SyntheticEvent, newTab: number) => {
@@ -65,7 +79,7 @@ export default function Sidebar({
 
   return (
     <Box sx={sidebarStyles}>
-      {!isMobile || sidebarOpen ? (
+      {sidebarOpen ? (
         <>
           <Drawer
             variant="permanent"
@@ -91,15 +105,13 @@ export default function Sidebar({
               </Tabs>
 
               {/* Close button on mobile */}
-              {isMobile && sidebarOpen && (
-                <IconButton
-                  size="small"
-                  sx={styledCloseIcon}
-                  onClick={handleSidebarToggle}
-                >
-                  <CloseIcon sx={styledCloseIcon} />
-                </IconButton>
-              )}
+              <IconButton
+                size="small"
+                sx={styledCloseIcon}
+                onClick={handleSidebarToggle}
+              >
+                <CloseIcon sx={styledCloseIcon} />
+              </IconButton>
             </Box>
 
             {/* Tab content */}

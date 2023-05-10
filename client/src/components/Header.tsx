@@ -91,17 +91,15 @@ export default function Header({ toggleSidebar, sidebarOpen }: HeaderProps) {
               {currentRoom ? currentRoom : "Chatterbox"}
             </Typography>
           </Box>
-          {isMobile && (
-            <IconButton
-              size="small"
-              sx={styledMenuIcon}
-              color="inherit"
-              aria-label="open sidebar"
-              onClick={handleSidebarToggle}
-            >
-              {!sidebarOpen ? <MenuIcon sx={styledMenuIcon} /> : null}
-            </IconButton>
-          )}
+          <IconButton
+            size="small"
+            sx={styledMenuIcon}
+            color="inherit"
+            aria-label="open sidebar"
+            onClick={handleSidebarToggle}
+          >
+            {!sidebarOpen ? <MenuIcon sx={styledMenuIcon} /> : null}
+          </IconButton>
         </Container>
       </AppBar>
     </>
