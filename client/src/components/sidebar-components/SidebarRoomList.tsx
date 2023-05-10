@@ -35,11 +35,6 @@ export default function SidebarRoomList() {
       height: "56px",
     },
 
-    "& .MuiAccordionSummary-expandIconWrapper": {
-      margin: 0,
-      height: "100%",
-    },
-
     "& .MuiTypography-root": {
       display: "flex",
       alignItems: "center",
@@ -103,14 +98,14 @@ export default function SidebarRoomList() {
           ))}
         </List>
       ) : (
-        <>
+        <Box sx={styledNoRoomText}>
           <Typography gutterBottom variant="h3">
             No rooms available :-(
           </Typography>
           <Typography variant="h5">
             Why not create one with the button below?
           </Typography>
-        </>
+        </Box>
       )}
     </>
   );
@@ -168,4 +163,12 @@ const styledListItem = {
   color: theme.palette.primary.light,
   textDecoration: "none",
   cursor: "pointer",
+};
+
+const styledNoRoomText = {
+  padding: "1rem 2rem",
+
+  "& h3": {
+    fontSize: "1.66rem",
+  },
 };
