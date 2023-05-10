@@ -7,7 +7,7 @@ import {
   Typography,
   useMediaQuery,
 } from "@mui/material";
-import { CSSProperties } from "react";
+import { CSSProperties, useEffect, useRef } from "react";
 import { useSocket } from "../context/SocketContext";
 import { theme } from "../theme";
 
@@ -20,12 +20,13 @@ export default function MessageStack(
 ) {
   // We'll fetch this from the context eventually
   const { messages, loggedInUser } = useSocket();
-
   const largeScreen = useMediaQuery(theme.breakpoints.up("md"));
+  const messageEndRef = useRef<HTMLDivElement | null>(null);
 
-  // useEffect(() => {
-  //   console.log(messages);
-  // }, [messages]);
+  // Scroll to the bottom of the page
+  useEffect(() => {
+    messageEndRef.current?.scrollIntoView();
+  }, [messages]);
 
   return (
     <Stack
@@ -48,7 +49,6 @@ export default function MessageStack(
           </Container>
         </Card>
       ))} */}
-
       {/* TODO: Ändra index till id? */}
       {messages.map((message, index) => (
         <Card key={index}>
@@ -64,6 +64,8 @@ export default function MessageStack(
           </Container>
         </Card>
       ))}
+
+      <div ref={messageEndRef} />
     </Stack>
   );
 }
