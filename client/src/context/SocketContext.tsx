@@ -55,6 +55,10 @@ function SocketProvider({ children }: PropsWithChildren) {
     socket.connect();
   }, [localSession]);
 
+  // useEffect(() => {
+  //   socket.emit("rooms");
+  // });
+
   //-------------------------------------FUNCTIONS-------------------------------------//
 
   function joinRoom(room: string) {
@@ -97,7 +101,6 @@ function SocketProvider({ children }: PropsWithChildren) {
     }
 
     function handleSessions(sessions: Session[]) {
-      console.log("Sessions:", sessions);
       setSessonList(sessions);
     }
 
@@ -115,6 +118,7 @@ function SocketProvider({ children }: PropsWithChildren) {
 
     function rooms(rooms: Room[]) {
       setRoomList(rooms);
+      console.log(rooms);
     }
 
     function handleRoomHistory(room: string, history: Message[]) {
@@ -157,12 +161,12 @@ function SocketProvider({ children }: PropsWithChildren) {
 
     return () => {
       socket.off("connect", connect);
-      socket.on("sessions", handleSessions);
+      socket.off("sessions", handleSessions);
       socket.off("disconnect", disconnect);
       socket.off("message", message);
       socket.off("typingStart", typingStart);
       socket.off("typingStop", typingStop);
-      socket.off("rooms", rooms);
+      socket.off("getRooms", rooms);
       socket.off("users", getUsers);
       socket.off("roomHistory", handleRoomHistory);
     };

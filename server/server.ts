@@ -1,5 +1,4 @@
 import { createAdapter } from "@socket.io/mongo-adapter";
-import { Emitter } from "@socket.io/mongo-emitter";
 import { MongoClient } from "mongodb";
 import { Server, Socket } from "socket.io";
 import { v4 as uuidv4 } from "uuid";
@@ -21,7 +20,6 @@ const COLLECTION = "socket.io-adapter-events";
 
 const mongoClient = new MongoClient(
   "mongodb+srv://nabl:o8A3Lq7bAFyvlUg1@chatterbox.ugl1wjb.mongodb.net/"
-  //"mongodb+srv://jenny:zyqluPwgsy7Scf5H@chatterboxtest.w6o91jx.mongodb.net/"
 );
 
 const main = async () => {
@@ -36,15 +34,15 @@ const main = async () => {
     // collection already exists
   }
   const mongoCollection = mongoClient.db(DB).collection(COLLECTION);
+  const roomsCollection = mongoClient.db(DB).collection("rooms");
   const historyCollection = mongoClient.db(DB).collection("history");
   const sessionCollection = mongoClient.db(DB).collection("session");
-  const sessionEmitter = new Emitter(sessionCollection);
 
   io.adapter(createAdapter(mongoCollection));
+  const mainAdapter = io.of("/").adapter;
 
   io.use(async (socket, next) => {
     const sessionID = socket.handshake.auth.sessionID;
-    console.log("Session ID: " + sessionID);
     if (sessionID) {
       const session = await sessionCollection.findOne({ sessionID });
       if (session) {
@@ -58,7 +56,6 @@ const main = async () => {
     if (!username) {
       return next(new Error("invalid username"));
     }
-    console.log("Creating user");
     socket.data.sessionID = uuidv4();
     socket.data.userID = uuidv4();
     socket.data.username = username;
@@ -73,8 +70,7 @@ const main = async () => {
   io.on("connection", async (socket) => {
     // Setup for client
     console.log("A user has connected");
-    socket.emit("rooms", getRooms());
-    await emitSessions(socket);
+    emitRooms(socket);
     io.emit("users", getUsers());
 
     socket.emit("session", {
@@ -83,14 +79,15 @@ const main = async () => {
       sessionID: socket.data.sessionID as string,
     });
 
-    socket.on("sessions", (socket) => {
-      emitSessions(socket);
-    });
+    // socket.on("sessions", (socket) => {
+    //   emitSessions(socket);
+    // });
 
     // Joins room
     socket.on("join", async (room) => {
       socket.join(room);
-      io.emit("rooms", getRooms());
+      console.log("Post room join: ", io.sockets.adapter.rooms);
+      emitRooms(io);
       const roomHistory = await getRoomHistory(room);
       socket.emit("roomHistory", room, roomHistory);
     });
@@ -98,7 +95,7 @@ const main = async () => {
     // Leaves room
     socket.on("leave", (room) => {
       socket.leave(room);
-      io.emit("rooms", getRooms());
+      emitRooms(io);
     });
 
     // Receives and sends out messages
@@ -149,17 +146,28 @@ const main = async () => {
     });
 
     // Disconnecting and leaving all rooms
-    socket.on("disconnect", () => {
-      io.emit("rooms", getRooms());
+    socket.on("disconnect", async () => {
+      emitRooms(io);
       io.emit("users", getUsers());
     });
   });
 
   // Updates list of rooms
-  function getRooms() {
+  async function emitRooms(source: Socket | Server = io) {
     const { rooms } = io.sockets.adapter;
+    // const rooms = await mongoCollection.find().toArray();
+    console.log("Room check: ", rooms);
     const roomList: Room[] = [];
 
+    // Room names not always being saved??
+    // for (const [name, setOfSocketIds] of rooms) {
+    //   roomList.push({
+    //     name: name,
+    //     onlineUsers: setOfSocketIds.size,
+    //   });
+    // }
+
+    // Marcus' original code
     for (const [name, setOfSocketIds] of rooms) {
       if (!setOfSocketIds.has(name)) {
         roomList.push({
@@ -168,13 +176,15 @@ const main = async () => {
         });
       }
     }
-    return roomList;
+
+    console.log("Room list: ", roomList);
+    source.emit("rooms", roomList);
   }
 
-  async function emitSessions(socket: Socket) {
-    const sessions = await sessionCollection.find().toArray();
-    socket.emit("sessions", sessions);
-  }
+  // async function emitSessions(socket: Socket) {
+  //   const sessions = await sessionCollection.find().toArray();
+  //   socket.emit("sessions", sessions);
+  // }
 
   function getUsers() {
     const userList: User[] = [];
