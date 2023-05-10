@@ -49,6 +49,10 @@ export default function ChatPage() {
 
 const styledBox: CSSProperties = {
   position: "relative",
+  minHeight: "100vh",
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "space-between",
 };
 
 const styledInputContainer: CSSProperties = {
