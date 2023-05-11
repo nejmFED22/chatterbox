@@ -13,6 +13,7 @@ export interface ServerToClientEvents {
   roomJoined: (room: string) => void;
   roomHistory: (room: string, history: Message[]) => void;
   DMHistory: (user: User, history: Message[]) => void;
+  DMJoined: (user: User) => void;
   message: (room: string, message: Message) => void;
   recievePrivateMessage: (message: PrivateMessage) => void;
   users: (users: User[]) => void;

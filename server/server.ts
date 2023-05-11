@@ -52,7 +52,6 @@ const main = async () => {
   io.adapter(createAdapter(mongoCollection));
 
   //-----------------SOCKET SESSION SETUP-----------------//
-
   io.use(async (socket, next) => {
     const sessionID = socket.handshake.auth.sessionID;
     if (sessionID) {
@@ -84,13 +83,14 @@ const main = async () => {
       sessionID: socket.data.sessionID as string,
     });
     const sessionList = await updateSessionList();
+    console.log(sessionList);
     io.emit("updateSessionList", sessionList);
     next();
   });
 
-  io.on("connection", async (socket) => {
-    //-----------------SOCKET CONNECTION-----------------//
+  //-----------------SOCKET CONNECTION-----------------//
 
+  io.on("connection", async (socket) => {
     // Updates session list and room list
     socket.join(socket.data.userID as string);
     console.log("A user has connected");
@@ -113,9 +113,8 @@ const main = async () => {
     });
 
     // Joins DM
-    socket.on("joinDM", async (user) => {
-      const DMHistory = await getDMHistory(user, socket);
-      socket.emit("DMHistory", user, DMHistory);
+    socket.on("joinDM", (user) => {
+      joinDM(user, socket);
     });
 
     // Leaves room
@@ -250,11 +249,26 @@ const main = async () => {
     socket.emit("roomJoined", room);
   }
 
+  async function joinDM(user: Session, socket: Socket) {
+    const DMHistory = await getDMHistory(user, socket);
+    socket.emit("DMHistory", user, DMHistory);
+    sessionCollection.updateOne(
+      { sessionID: socket.data.sessionID },
+      { $set: { lastRoom: user } }
+    );
+    socket.emit("DMJoined", user);
+  }
+
   async function joinLastRoom(socket: Socket) {
     const session = await sessionCollection.findOne({
       sessionID: socket.data.sessionID,
     });
-    session?.lastRoom && joinRoom(session.lastRoom, socket);
+    console.log(session);
+    if (Boolean(session?.lastRoom)) {
+      typeof session?.lastRoom === "string"
+        ? joinRoom(session.lastRoom, socket)
+        : joinDM(session?.lastRoom, socket);
+    }
   }
 
   async function getRooms() {
@@ -283,6 +297,7 @@ const main = async () => {
   // Updates list of sessions
   async function updateSessionList(): Promise<Session[]> {
     const sessions = await sessionCollection.find().toArray();
+    console.log(sessions);
     return sessions.map(({ sessionID, userID, username }) => ({
       sessionID,
       userID,

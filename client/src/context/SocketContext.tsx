@@ -63,7 +63,6 @@ function SocketProvider({ children }: PropsWithChildren) {
   //-----------------------------FUNCTIONS-----------------------------//
 
   function joinRoom(room: string) {
-    setIsPrivate(false);
     if (currentRoom) {
       socket.emit("leave", currentRoom as string);
     }
@@ -72,13 +71,11 @@ function SocketProvider({ children }: PropsWithChildren) {
   }
 
   function joinDM(user: Session) {
-    setIsPrivate(true);
     if (currentRoom) {
       socket.emit("leave", currentRoom as string);
       setCurrentRoom(undefined);
     }
     socket.emit("joinDM", user);
-    setCurrentUser(user);
   }
 
   function leaveAllRooms() {
@@ -139,6 +136,7 @@ function SocketProvider({ children }: PropsWithChildren) {
     }
 
     function roomJoined(room: string) {
+      setIsPrivate(false);
       setCurrentRoom(room);
     }
 
@@ -153,6 +151,11 @@ function SocketProvider({ children }: PropsWithChildren) {
       // if (user === currentUser) {
       setPrivateMessages(history);
       // }
+    }
+
+    function joinedDM(user: Session) {
+      setIsPrivate(true);
+      setCurrentUser(user);
     }
 
     //------------------MESSAGE------------------//
@@ -197,6 +200,7 @@ function SocketProvider({ children }: PropsWithChildren) {
     socket.on("users", getUsers);
     socket.on("roomHistory", handleRoomHistory);
     socket.on("DMHistory", handleDMHistory);
+    socket.on("DMJoined", joinedDM);
 
     return () => {
       socket.off("connect", connect);
@@ -212,6 +216,7 @@ function SocketProvider({ children }: PropsWithChildren) {
       socket.off("users", getUsers);
       socket.off("roomHistory", handleRoomHistory);
       socket.off("DMHistory", handleDMHistory);
+      socket.off("DMJoined", joinedDM);
     };
   }, [currentRoom, currentUser]);
 
