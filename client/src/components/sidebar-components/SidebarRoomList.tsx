@@ -16,7 +16,6 @@ import { theme } from "../../theme";
 export default function SidebarRoomList() {
   // States and variables
   const { roomList, joinRoom } = useSocket();
-  const users = ["Jenny", "Nat", "Marcus", "Ellen"];
   const [activeRoom, setActiveRoom] = useState<string | null>(null);
 
   useEffect(() => {
@@ -153,7 +152,6 @@ const styledList = {
   padding: "0",
   display: "flex",
   flexDirection: "column",
-  gap: "1rem",
 };
 
 const styledListItem = {
