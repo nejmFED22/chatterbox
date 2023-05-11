@@ -102,7 +102,7 @@ export default function Sidebar({
               >
                 <Tab sx={styledLink} label="Rooms" {...a11yProps(0)} />
                 {/* <Tab sx={styledLink} label="DMs" {...a11yProps(1)} /> */}
-                <Tab sx={styledLink} label="Users" {...a11yProps(1)} />
+                <Tab sx={styledLink} label="Direct Messages" {...a11yProps(1)} />
               </Tabs>
 
               {/* Close button on mobile */}
