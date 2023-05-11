@@ -25,6 +25,7 @@ export interface ClientToServerEvents {
   typingStop: (room: string, user: string) => void;
   getRoomHistory: (room: string) => void;
   getDMHistory: (user: User) => void;
+  logout: (session: string) => void;
 }
 
 export interface InterServerEvents {}

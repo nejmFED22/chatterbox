@@ -116,6 +116,13 @@ const main = async () => {
       socket.emit("roomHistory", room, roomHistory);
     });
 
+    // Removes user from session list
+    socket.on("logout", async (session) => {
+      await sessionCollection.deleteOne({ sessionID: session });
+      const sessionList = await updateSessionList();
+      io.emit("updateSessionList", sessionList);
+    })
+
     // Joins DM
     socket.on("joinDM", async (user) => {
       const DMHistory = await getDMHistory(user, socket);

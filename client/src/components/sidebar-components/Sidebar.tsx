@@ -7,7 +7,7 @@ import React, { useEffect } from "react";
 import { theme } from "../../theme";
 import LogoutButton from "../LogoutButton";
 import AddRoomButtom from "./../AddRoomButton";
-import SidebarDMList from "./SidebarDMList";
+// import SidebarDMList from "./SidebarDMList";
 import SidebarRoomList from "./SidebarRoomList";
 import SidebarUserList from "./SidebarUserList";
 
