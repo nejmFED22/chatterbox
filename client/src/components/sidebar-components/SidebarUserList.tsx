@@ -1,9 +1,14 @@
 import { Link, List, ListItem, Typography } from "@mui/material";
+import { useEffect } from "react";
 import { useSocket } from "../../context/SocketContext";
 import { theme } from "../../theme";
 
 export default function SidebarUserList() {
   const { joinDM, sessionList, currentUser, loggedInUser } = useSocket();
+
+  useEffect(() => {
+    console.log(sessionList);
+  }, [sessionList]);
 
   return (
     <List>
