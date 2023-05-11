@@ -281,7 +281,7 @@ const main = async () => {
   async function getConnectedUsers() {
     try {
       const activeSessions = await sessionCollection
-        .find({ isConnected: true })
+         .find({ isConnected: true })
         .toArray();
       const connectedUserList = activeSessions.map((session) => ({
         userID: session.userID,

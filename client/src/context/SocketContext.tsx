@@ -37,7 +37,6 @@ export const useSocket = () => useContext(SocketContext);
 const socket = io({ autoConnect: false });
 
 function SocketProvider({ children }: PropsWithChildren) {
-
   //-------------------------------------STATES AND VARIABLES-------------------------------------//
 
   const [loggedInUser, setLoggedInUser] = useState(
@@ -46,15 +45,17 @@ function SocketProvider({ children }: PropsWithChildren) {
   const [isPrivate, setIsPrivate] = useState(false);
   const [currentRoom, setCurrentRoom] = useState<string>();
   const [currentUser, setCurrentUser] = useState<User>();
+
   const [roomList, setRoomList] = useState<Room[]>([]);
   const [sessionList, setSessonList] = useState<Session[]>([]);
   const [userList, setUserList] = useState<User[]>([]);
+
   const [messages, setMessages] = useState<Message[]>([]);
   const [privateMessages, setPrivateMessages] = useState<PrivateMessage[]>([]);
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
 
   useEffect(() => {
-    const localSession = sessionStorage.getItem("sessionID")
+    const localSession = sessionStorage.getItem("sessionID");
     if (localSession) {
       socket.auth = { sessionID: localSession };
       socket.connect();
@@ -103,7 +104,6 @@ function SocketProvider({ children }: PropsWithChildren) {
 
   const sendMessage = (message: Message) => {
     if (!currentRoom) throw Error("Can't send message without a room");
-    console.log(`Sending "${message.content}" in room "${currentRoom}"`);
     socket.emit("message", currentRoom, message);
   };
 
@@ -112,15 +112,14 @@ function SocketProvider({ children }: PropsWithChildren) {
     socket.emit("sendPrivateMessage", message, currentUser);
   };
 
-  useEffect(() => {
-    //-----------CONNECTION AND SESSION MANAGEMENT----------//
+  //-----------CONNECTION AND SESSION MANAGEMENT----------//
 
+  useEffect(() => {
     function connect() {
       socket.emit("sessions");
       console.log("Connected to server");
     }
 
-    // Vad gör den här funktionen?
     function handleSessions(sessions: Session[]) {
       setSessonList(sessions);
     }
@@ -137,7 +136,7 @@ function SocketProvider({ children }: PropsWithChildren) {
     //------------------USER------------------//
 
     function getUsers(users: User[]) {
-      setUserList(users.map(user => ({ ...user, isConnected: true })));
+      setUserList(users.map((user) => ({ ...user, isConnected: true })));
     }
 
     //------------------ROOM------------------//
@@ -153,7 +152,7 @@ function SocketProvider({ children }: PropsWithChildren) {
     }
     function handleDMHistory(user: User, history: PrivateMessage[]) {
       // if (user === currentUser) {
-        setPrivateMessages(history);
+      setPrivateMessages(history);
       // }
     }
 
@@ -166,12 +165,14 @@ function SocketProvider({ children }: PropsWithChildren) {
     }
 
     function recievePrivateMessage(message: PrivateMessage) {
-      console.log(`${message.author} sent "${message.content}" to ${message.recipient}`);
       if (currentUser) {
         if (currentUser.userID === message.author) {
-        setPrivateMessages((privateMessages) => [...privateMessages, message]);
+          setPrivateMessages((privateMessages) => [
+            ...privateMessages,
+            message,
+          ]);
         }
-    }
+      }
     }
 
     function typingStart(user: string) {
