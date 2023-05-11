@@ -5,38 +5,75 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { useSocket } from "../context/SocketContext";
 
-interface Props {
-  isMobile: boolean;
-}
-
-export default function MessageInput({ isMobile }: Props) {
-  const [userTyping, setUserTyping] = useState(false);
+export default function MessageInput() {
   const [message, setMessage] = useState("");
+  const [typing, setTyping] = useState(false);
+  const timerRef = useRef<number | null>(null);
+
+  const {
+    typingStart,
+    typingStop,
+    typingUsers,
+    sendMessage,
+    sendPrivateMessage,
+    loggedInUser,
+    currentRoom,
+    currentUser,
+    isPrivate,
+  } = useSocket();
 
   function handleTyping(e: React.ChangeEvent<HTMLInputElement>) {
-    setUserTyping(true);
+    if (!typing) {
+      typingStart();
+      setTyping(true);
+    }
     setMessage(e.target.value);
-    setTimeout(() => setUserTyping(false), 5000);
+    clearTimeout(timerRef.current!);
+    timerRef.current = setTimeout(() => {
+      typingStop();
+      setTyping(false);
+    }, 5000);
   }
 
   function handleSendMessage(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    console.log("Message '" + message + "' has been sent.");
-    setMessage("");
+    if (message.trim() && loggedInUser) {
+      if (isPrivate && currentUser) {
+        sendPrivateMessage({
+          content: message,
+          author: loggedInUser,
+          recipient: currentUser.userID as string,
+          recipientUsername: currentUser.username as string,
+          authorUsername: loggedInUser,
+        });
+      } else {
+        sendMessage({ content: message, author: loggedInUser });
+      }
+      setMessage("");
+    }
   }
+
+  const renderTypingUsers = () => {
+    return (
+      typingUsers.map(
+        (user, index) =>
+          `${user}${
+            typingUsers.length > 1 && index < typingUsers.length - 1 ? "," : ""
+          } `
+      ) + `${typingUsers.length > 1 ? "are" : "is"} typing...`
+    );
+  };
 
   return (
     <Paper sx={styledPaper}>
-      <Typography variant="body2" sx={styledType}></Typography>
+      <Typography variant="body1" sx={styledType}>
+        {typingUsers.length > 0 && renderTypingUsers()}
+      </Typography>
       <form onSubmit={handleSendMessage}>
-        <FormControl
-          sx={{
-            ...styledFormControl,
-            flexDirection: isMobile ? "column" : "row",
-          }}
-        >
+        <FormControl sx={styledFormControl}>
           <TextField
             multiline={true}
             onChange={handleTyping}
@@ -65,6 +102,7 @@ const styledType = {
 
 const styledFormControl = {
   display: "flex",
+  flexDirection: "row",
   gap: "0.5rem",
   alignItems: "flex-end",
 };

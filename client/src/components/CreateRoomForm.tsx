@@ -1,6 +1,7 @@
 import CloseIcon from "@mui/icons-material/Close";
 import { Box, Button, IconButton, TextField, Typography } from "@mui/material";
 import { ChangeEvent, FormEvent, useState } from "react";
+import { useSocket } from "../context/SocketContext";
 import { theme } from "../theme";
 
 interface CreateRoomFormProps {
@@ -9,6 +10,7 @@ interface CreateRoomFormProps {
 
 export default function CreateRoomForm({ onClose }: CreateRoomFormProps) {
   const [roomName, setRoomName] = useState("");
+  const { joinRoom } = useSocket();
 
   const handleRoomNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     setRoomName(event.target.value);
@@ -16,8 +18,9 @@ export default function CreateRoomForm({ onClose }: CreateRoomFormProps) {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // send roomName to backend?
-    console.log("Create room:", roomName);
+    console.log(`Created room: ${roomName}`)
+    joinRoom(roomName);
+    // TODO: switch to room on client side
     setRoomName("");
     onClose();
   };
@@ -57,6 +60,7 @@ const styledForm = {
   padding: "1rem",
   position: "absolute",
   bottom: "0",
+  zIndex: 10,
 };
 
 const styledTitle = {

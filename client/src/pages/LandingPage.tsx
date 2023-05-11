@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import TextButton from "../components/TextButton";
 import { useSocket } from "../context/SocketContext";
+import { theme } from "../theme";
 
 const schema = z.object({
   username: z.string().min(3).max(20),
@@ -12,20 +13,23 @@ const schema = z.object({
 type FormValues = z.infer<typeof schema>;
 
 export default function LandingPage() {
-  const { loggedInUser, setLoggedInUser } = useSocket();  
+  const { setLoggedInUser, socket } = useSocket();
 
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<FormValues>({
-    mode: "onChange",
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormValues>({
+    mode: "onBlur",
     resolver: zodResolver(schema),
   });
 
-  const watchedUsername = watch("username");
-  const isValid = !errors.username && watchedUsername && watchedUsername.length >= 3;
-
   const onSubmit = (data: FormValues) => {
-    if (data.username) {
-      localStorage.setItem("username", data.username);
-      setLoggedInUser(data.username);
+    const { username } = data;
+    if (username) {
+      sessionStorage.setItem("username", username);
+      setLoggedInUser(username);
+      socket.auth = { username };
     } else {
       console.log("Empty username is not allowed");
     }
@@ -41,7 +45,7 @@ export default function LandingPage() {
       </Typography>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Box sx={formContainer}>
-        <TextField
+          <TextField
             fullWidth
             id="username"
             variant="standard"
@@ -52,15 +56,10 @@ export default function LandingPage() {
             autoComplete="off"
           />
           <Box sx={buttonContainer}>
-            <TextButton disabled={!isValid}>Continue</TextButton>
+            <TextButton>Continue</TextButton>
           </Box>
         </Box>
       </form>
-      {loggedInUser ? (
-        <p>Current user logged in: {loggedInUser}</p>
-      ) : (
-        <p>Not logged in</p>
-      )}
     </Box>
   );
 }
@@ -81,9 +80,10 @@ const formContainer = {
 const textFieldStyles = {
   input: {
     textAlign: "center",
+    typography: theme.typography.body2,
   },
 };
 
 const buttonContainer = {
-  padding: {xs: "1rem 0rem", sm: "0.5rem 0.5rem 0rem"},
-}
+  padding: { xs: "1rem 0rem", sm: "0.5rem 0.5rem 0rem" },
+};
