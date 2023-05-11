@@ -9,19 +9,14 @@ import {
   ListItem,
   Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useSocket } from "../../context/SocketContext";
 import { theme } from "../../theme";
 
 export default function SidebarRoomList() {
   // States and variables
   const { roomList, joinRoom } = useSocket();
-  const users = ["Jenny", "Nat", "Marcus", "Ellen"];
   const [activeRoom, setActiveRoom] = useState<string | null>(null);
-
-  useEffect(() => {
-    console.log("activeRoom " + activeRoom);
-  }, [activeRoom]);
 
   const getAccordionStyle = (roomName: string) => ({
     width: "100%",
