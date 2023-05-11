@@ -20,7 +20,6 @@ export default function MessageInput() {
     sendMessage,
     sendPrivateMessage,
     loggedInUser,
-    currentRoom,
     currentUser,
     isPrivate,
   } = useSocket();

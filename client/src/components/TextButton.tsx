@@ -33,6 +33,5 @@ const styledButton = {
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.primary.dark,
     borderColor: theme.palette.primary.dark,
-    //display: "none",
   },
 };

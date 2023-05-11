@@ -65,24 +65,19 @@ function SocketProvider({ children }: PropsWithChildren) {
   function joinRoom(room: string) {
     setIsPrivate(false);
     if (currentRoom) {
-      console.log(`Left room: ${currentRoom}`);
       socket.emit("leave", currentRoom as string);
     }
     socket.emit("join", room);
-    console.log(`Joined room: ${room}`);
     setCurrentUser(undefined);
-    setCurrentRoom(room);
   }
 
   function joinDM(user: Session) {
     setIsPrivate(true);
     if (currentRoom) {
-      console.log(`Left room: ${currentRoom}`);
       socket.emit("leave", currentRoom as string);
       setCurrentRoom(undefined);
     }
     socket.emit("joinDM", user);
-    console.log(`Joined DM with ${user.username}`);
     setCurrentUser(user);
   }
 
@@ -102,7 +97,6 @@ function SocketProvider({ children }: PropsWithChildren) {
 
   const sendMessage = (message: Message) => {
     if (!currentRoom) throw Error("Can't send message without a room");
-    console.log(`Sending "${message.content}" in room "${currentRoom}"`);
     socket.emit("message", currentRoom, message);
   };
 
@@ -119,7 +113,6 @@ function SocketProvider({ children }: PropsWithChildren) {
       console.log("Connected to server");
     }
 
-    // Vad gör den här funktionen?
     function handleSessions(sessions: Session[]) {
       setSessonList(sessions);
     }
@@ -169,9 +162,6 @@ function SocketProvider({ children }: PropsWithChildren) {
     }
 
     function recievePrivateMessage(message: PrivateMessage) {
-      console.log(
-        `${message.author} sent "${message.content}" to ${message.recipient}`
-      );
       if (currentUser) {
         if (currentUser.userID === message.author) {
           setPrivateMessages((privateMessages) => [

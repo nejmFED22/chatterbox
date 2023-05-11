@@ -18,7 +18,6 @@ interface Props {
 export default function MessageStack(
   { isMobile }: Props = { isMobile: false }
 ) {
-  // We'll fetch this from the context eventually
   const { messages, isPrivate, privateMessages, loggedInUser } = useSocket();
   const largeScreen = useMediaQuery(theme.breakpoints.up("md"));
   const messageEndRef = useRef<HTMLDivElement | null>(null);
@@ -37,52 +36,39 @@ export default function MessageStack(
       }
       sx={styledStack}
     >
-      {/* {mockMessages.map((message) => (
-        <Card key={message.id}>
-          <Container>
-            <CardContent sx={styledCardContent(username === message.user)}>
-              <Typography variant="body1">{message.user}</Typography>
-              <Typography variant={largeScreen ? "h3" : "h4"}>
-                {message.content}
-              </Typography>
-            </CardContent>
-          </Container>
-        </Card>
-      ))} */}
-      {/* TODO: Ändra index till id? */}
-      
-      {!isPrivate ? (
-      messages.map((message, index) => (
-        <Card key={index}>
-          <Container>
-            <CardContent
-              sx={styledCardContent(loggedInUser === message.author)}
-            >
-              <Typography variant="body1">{message.author}</Typography>
-              <Typography variant={largeScreen ? "h3" : "h4"}>
-                {message.content}
-              </Typography>
-            </CardContent>
-          </Container>
-        </Card>
-      ))
-      ) : (
-        privateMessages.map((message, index) => (
-          <Card key={index}>
-            <Container>
-              <CardContent
-                sx={styledCardContent(loggedInUser === message.authorUsername)}
-              >
-                <Typography variant="body1">{message.authorUsername}</Typography>
-                <Typography variant={largeScreen ? "h3" : "h4"}>
-                  {message.content}
-                </Typography>
-              </CardContent>
-            </Container>
-          </Card>
-        ))
-      )
-    }
+      {!isPrivate
+        ? messages.map((message, index) => (
+            <Card key={index}>
+              <Container>
+                <CardContent
+                  sx={styledCardContent(loggedInUser === message.author)}
+                >
+                  <Typography variant="body1">{message.author}</Typography>
+                  <Typography variant={largeScreen ? "h3" : "h4"}>
+                    {message.content}
+                  </Typography>
+                </CardContent>
+              </Container>
+            </Card>
+          ))
+        : privateMessages.map((message, index) => (
+            <Card key={index}>
+              <Container>
+                <CardContent
+                  sx={styledCardContent(
+                    loggedInUser === message.authorUsername
+                  )}
+                >
+                  <Typography variant="body1">
+                    {message.authorUsername}
+                  </Typography>
+                  <Typography variant={largeScreen ? "h3" : "h4"}>
+                    {message.content}
+                  </Typography>
+                </CardContent>
+              </Container>
+            </Card>
+          ))}
       <div ref={messageEndRef} />
     </Stack>
   );
