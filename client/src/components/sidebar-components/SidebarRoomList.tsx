@@ -16,7 +16,8 @@ import { theme } from "../../theme";
 export default function SidebarRoomList() {
   // States and variables
   const { roomList, joinRoom } = useSocket();
-  const [activeRoom, setActiveRoom] = useState<string | null>(null); // Skapa en state-variabel för att hålla reda på det aktiva styledAccordion-elementet
+  const users = ["Jenny", "Nat", "Marcus", "Ellen"];
+  const [activeRoom, setActiveRoom] = useState<string | null>(null);
 
   useEffect(() => {
     console.log("activeRoom " + activeRoom);
@@ -26,7 +27,8 @@ export default function SidebarRoomList() {
     width: "100%",
     background: "none",
     fontSize: "35px",
-    padding: "0 0.5rem",
+    padding: "0",
+    minHeight: "none",
 
     "& .MuiAccordionSummary-content": {
       margin: 0,
@@ -36,35 +38,19 @@ export default function SidebarRoomList() {
     "& .MuiTypography-root": {
       display: "flex",
       alignItems: "center",
-      color: theme.palette.primary.dark,
+      paddingLeft: "1rem",
     },
 
     "&.Mui-expanded": {
       minHeight: "0px",
     },
 
-    "& .MuiSvgIcon-root": {
-      fill: theme.palette.primary.dark,
-    },
-
     ...(activeRoom === roomName && {
       background: theme.palette.primary.main,
+      padding: 0,
       textDecoration: "none",
       color: theme.palette.primary.main,
     }),
-
-    "&:hover": {
-      background: theme.palette.primary.dark,
-      color: theme.palette.primary.light,
-
-      "& .MuiTypography-root": {
-        color: theme.palette.primary.light,
-      },
-
-      "& .MuiSvgIcon-root": {
-        fill: theme.palette.primary.light,
-      },
-    },
   });
 
   return (
@@ -76,11 +62,13 @@ export default function SidebarRoomList() {
               <Accordion sx={styledAccordion}>
                 {/* Room information */}
                 <AccordionSummary
-                  expandIcon={<ArrowForwardIosIcon />}
+                  expandIcon={<ArrowForwardIosIcon sx={styledArrowIcon} />}
                   aria-controls="panel1a-content"
                   id="panel1a-header"
                   sx={getAccordionStyle(room.name)}
                 >
+                  <Box sx={styledArrowBackground}></Box>
+
                   <Link
                     sx={styledLink}
                     onClick={(e) => {
@@ -94,14 +82,13 @@ export default function SidebarRoomList() {
                   </Link>
                 </AccordionSummary>
                 {/* List of online users in the room */}
-                <AccordionDetails sx={styledAccordionDetails}>
+                <AccordionDetails>
                   <List>
-                    {room.onlineUsers &&
-                      room.onlineUsers.map((user) => (
-                        <ListItem key={user} sx={styledUsername}>
-                          <Typography variant="body1">{user}</Typography>
-                        </ListItem>
-                      ))}
+                    {room.onlineUsers.map((user) => (
+                      <ListItem key={user}>
+                        <Typography variant="body1">{user}</Typography>
+                      </ListItem>
+                    ))}
                   </List>
                 </AccordionDetails>
               </Accordion>
@@ -109,7 +96,7 @@ export default function SidebarRoomList() {
           ))}
         </List>
       ) : (
-        <Box sx={styledBox}>
+        <Box sx={styledNoRoomText}>
           <Typography gutterBottom variant="h3">
             No rooms available :-(
           </Typography>
@@ -125,11 +112,18 @@ export default function SidebarRoomList() {
 // CSS styling
 
 const styledLink = {
+  color: theme.palette.primary.dark,
   textDecoration: "none",
+  cursor: "pointer",
+  fontFamily: "Inter",
+  paddingRight: "2rem",
+  width: "100%",
+  height: "100%",
 
   "&:hover": {
-    textDecorationColor: "none",
-    textDecoration: "none",
+    textDecoration: "underline",
+    background: theme.palette.primary.dark,
+    color: theme.palette.primary.light,
   },
 };
 
@@ -140,28 +134,39 @@ const styledAccordion = {
   justifyContent: "space-between",
 };
 
+const styledArrowBackground = {
+  position: "absolute",
+  right: 0,
+  background: theme.palette.primary.light,
+  height: "56px",
+  width: "56px",
+};
+
+const styledArrowIcon = {
+  color: theme.palette.primary.dark,
+  cursor: "pointer",
+  padding: "1rem",
+  position: "relative",
+};
+
 const styledList = {
-  padding: 0,
+  padding: "0",
   display: "flex",
   flexDirection: "column",
   gap: "1rem",
 };
 
 const styledListItem = {
-  padding: 0,
+  padding: "0px",
   color: theme.palette.primary.light,
   textDecoration: "none",
   cursor: "pointer",
 };
 
-const styledAccordionDetails = {
-  padding: "0 0.5rem",
-};
+const styledNoRoomText = {
+  padding: "1rem 2rem",
 
-const styledUsername = {
-  padding: 0,
-};
-
-const styledBox = {
-  padding: "0 0.3rem",
+  "& h3": {
+    fontSize: "1.66rem",
+  },
 };
