@@ -55,7 +55,7 @@ export default function ChatPage() {
 
 const styledBox: CSSProperties = {
   position: "relative",
-  minHeight: "calc(100vh - 53.76px)",
+  minHeight: "calc(100vh - 103.76px)",
   display: "flex",
   flexDirection: "column",
   justifyContent: "space-between",
