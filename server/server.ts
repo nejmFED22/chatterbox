@@ -21,7 +21,7 @@ const COLLECTION = "socket.io-adapter-events";
 
 const mongoClient = new MongoClient(
   "mongodb+srv://nabl:o8A3Lq7bAFyvlUg1@chatterbox.ugl1wjb.mongodb.net/"
-  //"mongodb+srv://jenny:zyqluPwgsy7Scf5H@chatterboxtest.w6o91jx.mongodb.net/"
+  // "mongodb+srv://jenny:zyqluPwgsy7Scf5H@chatterboxtest.w6o91jx.mongodb.net/"
 );
 
 const main = async () => {
@@ -66,7 +66,7 @@ const main = async () => {
       sessionID: socket.data.sessionID,
       userID: socket.data.userID,
       username: socket.data.username,
-      isConnected: true
+      isConnected: true,
     });
     next();
   });
@@ -88,10 +88,6 @@ const main = async () => {
       username: socket.data.username as string,
       userID: socket.data.userID as string,
       sessionID: socket.data.sessionID as string,
-    });
-
-    socket.on("sessions", (socket) => {
-      emitSessions(socket);
     });
 
     // Joins room
@@ -176,10 +172,15 @@ const main = async () => {
       if (!setOfSocketIds.has(name)) {
         roomList.push({
           name: name,
-          onlineUsers: setOfSocketIds.size,
+          onlineUsers:
+            Array.from(setOfSocketIds).map(
+              (socketId) =>
+                io.sockets.sockets.get(socketId)?.data.username as string
+            ) || [],
         });
       }
     }
+    console.log("Room list: ", roomList);
     return roomList;
   }
 
