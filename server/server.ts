@@ -236,6 +236,7 @@ const main = async () => {
 
     for (const [name, setOfSocketIds] of rooms) {
       if (!setOfSocketIds.has(name)) {
+        console.log(name)
         if (name !== socket.data.userID) {
           roomList.push({
             name: name,

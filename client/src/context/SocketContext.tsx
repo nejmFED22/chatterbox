@@ -91,6 +91,7 @@ function SocketProvider({ children }: PropsWithChildren) {
   function leaveAllRooms() {
     socket.emit("leave", currentRoom as string);
     setCurrentRoom(undefined);
+    setCurrentUser(undefined);
   }
 
   function typingStart() {
