@@ -27,4 +27,5 @@ export interface SocketData {
   username: string;
   userID: string;
   sessionID: string;
+  isConnected?: boolean;
 }
