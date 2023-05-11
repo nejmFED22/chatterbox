@@ -110,7 +110,7 @@ function SocketProvider({ children }: PropsWithChildren) {
 
   const sendPrivateMessage = (message: PrivateMessage) => {
     setPrivateMessages((privateMessages) => [...privateMessages, message]);
-    socket.emit("sendPrivateMessage", message);
+    socket.emit("sendPrivateMessage", message, currentUser);
   };
 
   useEffect(() => {
@@ -147,13 +147,11 @@ function SocketProvider({ children }: PropsWithChildren) {
     }
 
     function handleRoomHistory(room: string, history: Message[]) {
-      console.log("körs aldrig")
       if (room === currentRoom) {
         setMessages(history);
       }
     }
     function handleDMHistory(user: User, history: PrivateMessage[]) {
-      console.log("körs aldrig")
       // if (user === currentUser) {
         setPrivateMessages(history);
       // }
@@ -170,9 +168,9 @@ function SocketProvider({ children }: PropsWithChildren) {
 
     function recievePrivateMessage(message: PrivateMessage) {
       console.log(`${message.author} sent "${message.content}" to ${message.recipient}`);
-      console.log(currentUser)
       if (currentUser) {
         if (currentUser.userID === message.author) {
+        message.author = currentUser.username;
         setPrivateMessages((privateMessages) => [...privateMessages, message]);
         }
     }

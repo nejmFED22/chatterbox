@@ -188,7 +188,7 @@ const main = async () => {
     // Receives and sends out messages
     socket.on(
       "sendPrivateMessage",
-      async (message: PrivateMessage) => {
+      async (message: PrivateMessage, user: User) => {
 
         // Save message to history collection
         try {
@@ -297,7 +297,7 @@ const main = async () => {
     const history: PrivateMessage[] = historyDocs.map((doc) => {
       return {
         content: doc.content,
-        author: doc.author,
+        author: user.username,
         recipient: doc.recipient,
       };
     });

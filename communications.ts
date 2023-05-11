@@ -16,7 +16,7 @@ export interface ServerToClientEvents {
 export interface ClientToServerEvents {
   updateSessionList: (socket: any) => void;
   message: (room: string, message: Message) => void;
-  sendPrivateMessage: (message: PrivateMessage) => void;
+  sendPrivateMessage: (message: PrivateMessage, user: User) => void;
   join: (room: string) => void;
   joinDM: (user: User) => void;
   leave: (room: string) => void;
