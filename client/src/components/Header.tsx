@@ -16,7 +16,7 @@ const drawerWidth = 340;
 
 export default function Header({ toggleSidebar, sidebarOpen }: HeaderProps) {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const { leaveAllRooms, currentRoom } = useSocket();
+  const { leaveAllRooms, currentRoom, currentUser } = useSocket();
   const [scrolledUp, setScrolledUp] = useState<boolean>(true);
   const prevPositionRef = useRef<number>(0);
 
@@ -66,13 +66,19 @@ export default function Header({ toggleSidebar, sidebarOpen }: HeaderProps) {
       ...scrolledStyle,
     };
   };
+  let roomName = "Chatterbox"
+  if (currentRoom) {
+    roomName = currentRoom;
+  } else if (currentUser) {
+    roomName = currentUser.username;
+  }
 
   return (
     <>
       <AppBar sx={getStyleAppBar()} position={"fixed"}>
         <Container maxWidth="lg" sx={styledContainer}>
           <Box sx={styledLeft}>
-            {currentRoom ? (
+            {currentRoom || currentUser ? (
               <IconButton
                 aria-label="exit-room"
                 size={"large"}
@@ -88,7 +94,7 @@ export default function Header({ toggleSidebar, sidebarOpen }: HeaderProps) {
               component="div"
               sx={{ ...styledLeft, ml: 1 }}
             >
-              {currentRoom ? currentRoom : "Chatterbox"}
+              {roomName}
             </Typography>
           </Box>
           <IconButton

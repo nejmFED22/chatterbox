@@ -17,6 +17,12 @@ export interface Message {
   author: string;
 }
 
+export interface PrivateMessage {
+  content: string;
+  author: string;
+  recipient: string;
+}
+
 export interface Session {
   sessionID: string;
   userID: string;
