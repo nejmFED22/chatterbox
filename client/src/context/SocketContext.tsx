@@ -62,14 +62,19 @@ function SocketProvider({ children }: PropsWithChildren) {
   //-------------------------------------FUNCTIONS-------------------------------------//
 
   function joinRoom(room: string) {
-    console.log("Joining room: " + room);
+    //console.log("Context joining room: " + room);
     if (currentRoom) {
-      console.log(`Left room: ${currentRoom}`);
+      console.log(`Context left room: ${currentRoom}`);
       socket.emit("leave", currentRoom as string);
     }
     socket.emit("join", room);
-    console.log(`Joined room: ${room}`);
     setCurrentRoom(room);
+    //console.log(`Joined room: ${room}`);
+    // socket.once("joined", (joinedRoom: string) => {
+    //   setCurrentRoom(joinedRoom);
+    //   //console.log(`Joined room: ${joinedRoom}`);
+    // });
+    socket.emit("getRoomHistory", room);
   }
 
   function leaveAllRooms() {
@@ -87,7 +92,6 @@ function SocketProvider({ children }: PropsWithChildren) {
 
   const sendMessage = (message: Message) => {
     if (!currentRoom) throw Error("Can't send message without a room");
-    console.log("Sending message:", currentRoom, message);
     socket.emit("message", currentRoom, message);
   };
 
@@ -97,9 +101,9 @@ function SocketProvider({ children }: PropsWithChildren) {
 
     function connect() {
       socket.emit("sessions");
-      console.log("Connected to server");
     }
 
+    // Vad gör den här funktionen?
     function handleSessions(sessions: Session[]) {
       setSessonList(sessions);
     }
@@ -111,12 +115,13 @@ function SocketProvider({ children }: PropsWithChildren) {
     //------------------USERS------------------//
 
     function getUsers(users: User[]) {
-      setUserList(users);
+      setUserList(users.map(user => ({ ...user, isConnected: true })));
     }
 
     //------------------ROOM------------------//
 
     function rooms(rooms: Room[]) {
+      console.log("CONTEXT Received rooms list:", rooms);
       setRoomList(rooms);
       console.log(rooms);
     }
@@ -130,7 +135,6 @@ function SocketProvider({ children }: PropsWithChildren) {
     //------------------MESSAGE------------------//
 
     function message(room: string, message: Message) {
-      console.log("Room and current room", room, currentRoom);
       if (room === currentRoom) {
         setMessages((messages) => [...messages, message]);
       }

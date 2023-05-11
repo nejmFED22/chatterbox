@@ -7,7 +7,7 @@ import {
   InterServerEvents,
   ServerToClientEvents,
 } from "../communications";
-import { Message, Room, SocketData, User } from "../types";
+import { Message, Room, SocketData } from "../types";
 const io = new Server<
   ClientToServerEvents,
   ServerToClientEvents,
@@ -43,6 +43,7 @@ const main = async () => {
 
   io.use(async (socket, next) => {
     const sessionID = socket.handshake.auth.sessionID;
+    //console.log("Session ID: " + sessionID);
     if (sessionID) {
       const session = await sessionCollection.findOne({ sessionID });
       if (session) {
@@ -56,6 +57,7 @@ const main = async () => {
     if (!username) {
       return next(new Error("invalid username"));
     }
+    //console.log("Creating user");
     socket.data.sessionID = uuidv4();
     socket.data.userID = uuidv4();
     socket.data.username = username;
@@ -63,15 +65,24 @@ const main = async () => {
       sessionID: socket.data.sessionID,
       userID: socket.data.userID,
       username: socket.data.username,
+      isConnected: true,
     });
     next();
   });
 
   io.on("connection", async (socket) => {
     // Setup for client
-    console.log("A user has connected");
-    emitRooms(socket);
-    io.emit("users", getUsers());
+    //console.log("A user has connected");
+
+    await sessionCollection.updateOne(
+      { sessionID: socket.data.sessionID },
+      { $set: { isConnected: true } }
+    );
+
+    socket.emit("rooms", getRooms());
+
+    await emitSessions(socket);
+    io.emit("users", await getConnectedUsers());
 
     socket.emit("session", {
       username: socket.data.username as string,
@@ -86,10 +97,12 @@ const main = async () => {
     // Joins room
     socket.on("join", async (room) => {
       socket.join(room);
-      console.log("Post room join: ", io.sockets.adapter.rooms);
-      emitRooms(io);
+      //socket.emit("joined", room);
+
       const roomHistory = await getRoomHistory(room);
       socket.emit("roomHistory", room, roomHistory);
+
+      io.emit("rooms", getRooms());
     });
 
     // Leaves room
@@ -100,10 +113,6 @@ const main = async () => {
 
     // Receives and sends out messages
     socket.on("message", async (room: string, message: Message) => {
-      console.log(
-        `Message received: ${message.content} from ${message.author} in room ${room}`
-      );
-
       // Save message to history collection
       try {
         await historyCollection.insertOne({
@@ -147,8 +156,13 @@ const main = async () => {
 
     // Disconnecting and leaving all rooms
     socket.on("disconnect", async () => {
-      emitRooms(io);
-      io.emit("users", getUsers());
+      await sessionCollection.updateOne(
+        { sessionID: socket.data.sessionID },
+        { $set: { isConnected: false } }
+      );
+
+      io.emit("rooms", getRooms());
+      io.emit("users", await getConnectedUsers());
     });
   });
 
@@ -181,33 +195,42 @@ const main = async () => {
     source.emit("rooms", roomList);
   }
 
-  // async function emitSessions(socket: Socket) {
-  //   const sessions = await sessionCollection.find().toArray();
-  //   socket.emit("sessions", sessions);
-  // }
+  async function emitSessions(socket: Socket) {
+    const sessions = await sessionCollection.find().toArray();
+    socket.emit("sessions", sessions);
+  }
 
-  function getUsers() {
-    const userList: User[] = [];
-    console.log(userList);
-    for (let [id, socket] of io.of("/").sockets) {
-      userList.push({
-        userID: id,
-        username: socket.data.username as string,
-        sessionID: socket.data.sessionID as string,
-      });
+  async function getConnectedUsers() {
+    try {
+      const activeSessions = await sessionCollection
+        .find({ isConnected: true })
+        .toArray();
+      const connectedUserList = activeSessions.map((session) => ({
+        userID: session.userID,
+        username: session.username,
+        sessionID: session.sessionID,
+      }));
+
+      return connectedUserList;
+    } catch (e) {
+      console.error("Failed to fetch active sessions:", e);
+      return [];
     }
-    return userList;
   }
 
   async function getRoomHistory(room: string) {
-    const historyDocs = await historyCollection.find({ room }).toArray();
-    const history: Message[] = historyDocs.map((doc) => {
-      return {
+    try {
+      const historyDocs = await historyCollection.find({ room }).toArray();
+      const history: Message[] = historyDocs.map((doc) => ({
         content: doc.content,
         author: doc.author,
-      };
-    });
-    return history;
+      }));
+
+      return history;
+    } catch (e) {
+      console.error("Failed to fetch room history:", e);
+      return [];
+    }
   }
 
   io.listen(3000);
