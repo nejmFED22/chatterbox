@@ -70,7 +70,7 @@ function SocketProvider({ children }: PropsWithChildren) {
     //   setCurrentRoom(joinedRoom);
     //   //console.log(`Joined room: ${joinedRoom}`);
     // });
-    //socket.emit("getRoomHistory", room);
+    socket.emit("getRoomHistory", room);
   }
 
   function leaveAllRooms() {
