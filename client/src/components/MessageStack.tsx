@@ -36,21 +36,7 @@ export default function MessageStack(
         />
       }
       sx={styledStack}
-    >
-      {/* {mockMessages.map((message) => (
-        <Card key={message.id}>
-          <Container>
-            <CardContent sx={styledCardContent(username === message.user)}>
-              <Typography variant="body1">{message.user}</Typography>
-              <Typography variant={largeScreen ? "h3" : "h4"}>
-                {message.content}
-              </Typography>
-            </CardContent>
-          </Container>
-        </Card>
-      ))} */}
-      {/* TODO: Ändra index till id? */}
-      
+    >      
       {!isPrivate ? (
       messages.map((message, index) => (
         <Card key={index}>
