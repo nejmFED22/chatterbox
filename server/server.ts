@@ -28,9 +28,9 @@ const DB = "chatterbox";
 const COLLECTION = "socket.io-adapter-events";
 
 const mongoClient = new MongoClient(
-  "mongodb+srv://nabl:o8A3Lq7bAFyvlUg1@chatterbox.ugl1wjb.mongodb.net/"
+  // "mongodb+srv://nabl:o8A3Lq7bAFyvlUg1@chatterbox.ugl1wjb.mongodb.net/"
   //"mongodb+srv://jenny:zyqluPwgsy7Scf5H@chatterboxtest.w6o91jx.mongodb.net/"
-  // "mongodb+srv://marcus:5bgDikBCj7g88b6p@chatterbox.tzxzwxr.mongodb.net/"
+  "mongodb+srv://marcus:5bgDikBCj7g88b6p@chatterbox.tzxzwxr.mongodb.net/"
 );
 
 const main = async () => {
@@ -195,6 +195,8 @@ const main = async () => {
             content: message.content,
             author: socket.data.userID,
             recipient: message.recipient,
+            authorUsername: socket.data.username,
+            recipientUsername: user.username
           });
         } catch (e) {
           console.error("Failed to save message to history:", e);
@@ -205,6 +207,8 @@ const main = async () => {
           content: message.content,
           author: socket.data.userID,
           recipient: message.recipient,
+          authorUsername: socket.data.username,
+          recipientUsername: user.username
         })
           .sort({ _id: -1 })
           .limit(1)
@@ -219,6 +223,8 @@ const main = async () => {
             content: retrievedMessage.content,
             author: retrievedMessage.author,
             recipient: retrievedMessage.recipient,
+            authorUsername: retrievedMessage.authorUsername,
+            recipientUsername: retrievedMessage.recipientUsername,
           });
       }
     );
@@ -325,8 +331,10 @@ const main = async () => {
     const history: PrivateMessage[] = historyDocs.map((doc) => {
       return {
         content: doc.content,
-        author: user.username,
+        author: doc.author,
         recipient: doc.recipient,
+        authorUsername: doc.authorUsername,
+        recipientUsername: doc.recipientUsername,
       };
     });
     return history;

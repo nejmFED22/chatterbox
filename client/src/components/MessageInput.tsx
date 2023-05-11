@@ -13,8 +13,17 @@ export default function MessageInput() {
   const [typing, setTyping] = useState(false);
   const timerRef = useRef<number | null>(null);
 
-  const { typingStart, typingStop, typingUsers, sendMessage, sendPrivateMessage, loggedInUser, currentRoom, currentUser, isPrivate } =
-    useSocket();
+  const {
+    typingStart,
+    typingStop,
+    typingUsers,
+    sendMessage,
+    sendPrivateMessage,
+    loggedInUser,
+    currentRoom,
+    currentUser,
+    isPrivate,
+  } = useSocket();
 
   function handleTyping(e: React.ChangeEvent<HTMLInputElement>) {
     if (!typing) {
@@ -33,7 +42,13 @@ export default function MessageInput() {
     e.preventDefault();
     if (message.trim() && loggedInUser) {
       if (isPrivate && currentUser) {
-        sendPrivateMessage({ content: message, author: loggedInUser, recipient: currentUser.userID as string });
+        sendPrivateMessage({
+          content: message,
+          author: loggedInUser,
+          recipient: currentUser.userID as string,
+          recipientUsername: currentUser.username as string,
+          authorUsername: loggedInUser,
+        });
       } else {
         sendMessage({ content: message, author: loggedInUser });
       }
