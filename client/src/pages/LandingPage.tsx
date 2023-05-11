@@ -7,7 +7,7 @@ import { useSocket } from "../context/SocketContext";
 import { theme } from "../theme";
 
 const schema = z.object({
-  username: z.string().min(3).max(20),
+  username: z.string().min(2).max(20),
 });
 
 type FormValues = z.infer<typeof schema>;

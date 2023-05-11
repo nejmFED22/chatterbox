@@ -1,6 +1,8 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import CloseIcon from "@mui/icons-material/Close";
 import { Box, Button, IconButton, TextField, Typography } from "@mui/material";
-import { ChangeEvent, FormEvent, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { z } from "zod";
 import { useSocket } from "../context/SocketContext";
 import { theme } from "../theme";
 
@@ -8,37 +10,57 @@ interface CreateRoomFormProps {
   onClose: () => void;
 }
 
+const schema = z.object({
+  roomName: z.string().min(1).max(15),
+});
+
+type FormValues = z.infer<typeof schema>;
+
 export default function CreateRoomForm({ onClose }: CreateRoomFormProps) {
-  const [roomName, setRoomName] = useState("");
   const { joinRoom } = useSocket();
 
-  const handleRoomNameChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setRoomName(event.target.value);
-  };
+  const {
+    handleSubmit,
+    formState: { errors },
+    control,
+  } = useForm<FormValues>({
+    mode: "onBlur",
+    resolver: zodResolver(schema),
+  });
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    console.log(`Created room: ${roomName}`)
-    joinRoom(roomName);
-    // TODO: switch to room on client side
-    setRoomName("");
+  const handleFormSubmit = (data: FormValues) => {
+    console.log(`Created room: ${data.roomName}`);
+    joinRoom(data.roomName);
     onClose();
   };
 
   return (
     <Box sx={styledForm}>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit(handleFormSubmit)}>
         <Typography variant="h6" sx={styledTitle}>
           Name your room
         </Typography>
-        <TextField
-          label="Room name"
-          value={roomName}
-          variant="standard"
-          onChange={handleRoomNameChange}
-          required
-          sx={styledTextField}
+        <Controller
+          name="roomName"
+          control={control}
+          defaultValue=""
+          render={({ field }) => (
+            <TextField
+              label="Room name"
+              value={field.value}
+              onChange={field.onChange}
+              onBlur={field.onBlur}
+              variant="standard"
+              required
+              sx={styledTextField}
+            />
+          )}
         />
+        {errors.roomName && (
+          <Typography variant="body2" sx={styledError}>
+            {errors.roomName.message}
+          </Typography>
+        )}
         <Typography variant="body2" sx={styledWarning}>
           WARNING
           <br /> Empty rooms are removed from the list. If you are the only
@@ -80,6 +102,12 @@ const styledTextField = {
 const styledWarning = {
   marginBottom: "5rem",
   fontSize: "0.9rem",
+};
+
+const styledError = {
+  marginBottom: "1.5rem",
+  fontSize: "0.8rem",
+  fontWeight: 600,
 };
 
 const styledButton = {
