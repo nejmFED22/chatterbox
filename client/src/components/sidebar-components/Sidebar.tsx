@@ -7,7 +7,6 @@ import React, { useEffect } from "react";
 import { theme } from "../../theme";
 import LogoutButton from "../LogoutButton";
 import AddRoomButtom from "./../AddRoomButton";
-import SidebarDMList from "./SidebarDMList";
 import SidebarRoomList from "./SidebarRoomList";
 import SidebarUserList from "./SidebarUserList";
 
@@ -62,9 +61,6 @@ export default function Sidebar({
       if (isMobile && sidebarOpen) {
         toggleSidebar();
       }
-      if (!isMobile && !sidebarOpen) {
-        toggleSidebar();
-      }
     };
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
@@ -102,7 +98,11 @@ export default function Sidebar({
               >
                 <Tab sx={styledLink} label="Rooms" {...a11yProps(0)} />
                 {/* <Tab sx={styledLink} label="DMs" {...a11yProps(1)} /> */}
-                <Tab sx={styledLink} label="Direct Messages" {...a11yProps(1)} />
+                <Tab
+                  sx={styledLink}
+                  label="Direct Messages"
+                  {...a11yProps(1)}
+                />
               </Tabs>
 
               {/* Close button on mobile */}
