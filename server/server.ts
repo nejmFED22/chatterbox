@@ -95,14 +95,14 @@ const main = async () => {
     // Updates session list and room list
     socket.join(socket.data.userID as string);
     console.log("A user has connected");
-    socket.emit("rooms", getRooms(socket));
+    socket.emit("rooms", await getRooms(socket));
     const sessionList = await updateSessionList();
     io.emit("updateSessionList", sessionList);
     io.emit("users", getUsers());
 
     // Disconnecting and leaving all rooms
-    socket.on("disconnect", () => {
-      io.emit("rooms", getRooms(socket));
+    socket.on("disconnect", async () => {
+      io.emit("rooms", await getRooms(socket));
       io.emit("users", getUsers());
     });
 
@@ -111,7 +111,7 @@ const main = async () => {
     // Joins room
     socket.on("join", async (room) => {
       socket.join(room);
-      io.emit("rooms", getRooms(socket));
+      io.emit("rooms", await getRooms(socket));
       const roomHistory = await getRoomHistory(room);
       socket.emit("roomHistory", room, roomHistory);
     });
@@ -123,9 +123,9 @@ const main = async () => {
     });
 
     // Leaves room
-    socket.on("leave", (room) => {
+    socket.on("leave", async (room) => {
       socket.leave(room);
-      io.emit("rooms", getRooms(socket));
+      io.emit("rooms", await getRooms(socket));
     });
 
     // Fetch room history from database
@@ -230,14 +230,17 @@ const main = async () => {
   //-----------------SERVER FUNCTIONS-----------------//
 
   // Updates list of rooms
-  function getRooms(socket: Socket) {
+  async function getRooms(socket: Socket) {
     const { rooms } = io.sockets.adapter;
     const roomList: Room[] = [];
+    const sessionList = await sessionCollection.find({}).toArray();
+    const listOfUserIDs = sessionList.map(({ userID }) => userID.toString());
+    console.log(listOfUserIDs)
 
     for (const [name, setOfSocketIds] of rooms) {
       if (!setOfSocketIds.has(name)) {
         console.log(name)
-        if (name !== socket.data.userID) {
+        if (!listOfUserIDs.includes(name)) {
           roomList.push({
             name: name,
             onlineUsers: setOfSocketIds.size,
