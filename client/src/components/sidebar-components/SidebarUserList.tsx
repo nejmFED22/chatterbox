@@ -3,11 +3,11 @@ import { useSocket } from "../../context/SocketContext";
 import { theme } from "../../theme";
 
 export default function SidebarUserList() {
-  const { joinDM, userList } = useSocket();
+  const { joinDM, sessionList } = useSocket();
 
   return (
     <List>
-      {userList.map((user) => (
+      {sessionList.map((user) => (
         <ListItem key={user.userID} sx={listItemStyling}>
           <Link
             sx={styledLink}
