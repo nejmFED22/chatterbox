@@ -99,10 +99,11 @@ const main = async () => {
     socket.on("join", async (room) => {
       socket.join(room);
       //socket.emit("joined", room);
+      
+      const roomHistory = await getRoomHistory(room);
+      socket.emit("roomHistory", room, roomHistory);
+      
       io.emit("rooms", getRooms());
-
-      // const roomHistory = await getRoomHistory(room);
-      // socket.emit("roomHistory", room, roomHistory);
     });
 
     // Leaves room
@@ -113,9 +114,6 @@ const main = async () => {
 
     // Receives and sends out messages
     socket.on("message", async (room: string, message: Message) => {
-      // console.log(
-      //   `Message received: ${message.content} from ${message.author} in room ${room}`
-      // );
 
       // Save message to history collection
       try {
@@ -203,7 +201,6 @@ const main = async () => {
         sessionID: session.sessionID,
       }));
 
-      //console.log("Connected users:", connectedUserList);
       return connectedUserList;
     } catch (e) {
       console.error("Failed to fetch active sessions:", e);

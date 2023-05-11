@@ -72,7 +72,6 @@ export default function SidebarRoomList() {
 
                   <Link
                     sx={styledLink}
-                    // sx={{...styledLink, pointerEvents: activeRoom === room.name ? "none" : "auto",}}
                     onClick={(e) => {
                       e.stopPropagation();
                       joinRoom(room.name);
