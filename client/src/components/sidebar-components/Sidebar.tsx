@@ -128,7 +128,7 @@ export default function Sidebar({
               </Box>
             </TabPanel> */}
             <TabPanel value={tab} index={1}>
-              <Box sx={{ p: 0 }}>
+              <Box>
                 <SidebarUserList />
               </Box>
             </TabPanel>

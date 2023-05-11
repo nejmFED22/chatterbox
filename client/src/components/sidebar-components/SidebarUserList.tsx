@@ -6,7 +6,7 @@ export default function SidebarUserList() {
   const { joinDM, sessionList } = useSocket();
 
   return (
-    <List>
+    <List sx={styledList}>
       {sessionList.map((user) => (
         <ListItem key={user.userID} sx={listItemStyling}>
           <Link
@@ -35,6 +35,10 @@ const styledLink = {
     color: theme.palette.primary.light,
     textDecoration: "underline",
   },
+};
+
+const styledList = {
+  padding: "0",
 };
 
 const listItemStyling = {
