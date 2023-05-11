@@ -109,7 +109,8 @@ function SocketProvider({ children }: PropsWithChildren) {
   };
 
   const sendPrivateMessage = (message: PrivateMessage) => {
-    socket.emit("privateMessage", message);
+    setPrivateMessages((privateMessages) => [...privateMessages, message]);
+    socket.emit("sendPrivateMessage", message);
   };
 
   useEffect(() => {
@@ -146,11 +147,13 @@ function SocketProvider({ children }: PropsWithChildren) {
     }
 
     function handleRoomHistory(room: string, history: Message[]) {
+      console.log("körs aldrig")
       if (room === currentRoom) {
         setMessages(history);
       }
     }
     function handleDMHistory(user: User, history: PrivateMessage[]) {
+      console.log("körs aldrig")
       // if (user === currentUser) {
         setPrivateMessages(history);
       // }
@@ -165,10 +168,14 @@ function SocketProvider({ children }: PropsWithChildren) {
       }
     }
 
-    function privateMessage(message: PrivateMessage) {
+    function recievePrivateMessage(message: PrivateMessage) {
       console.log(`${message.author} sent "${message.content}" to ${message.recipient}`);
-      
-      setPrivateMessages((privateMessages) => [...privateMessages, message]);
+      console.log(currentUser)
+      if (currentUser) {
+        if (currentUser.userID === message.author) {
+        setPrivateMessages((privateMessages) => [...privateMessages, message]);
+        }
+    }
     }
 
     function typingStart(user: string) {
@@ -186,7 +193,7 @@ function SocketProvider({ children }: PropsWithChildren) {
     socket.on("updateSessionList", handleSessions);
     socket.on("disconnect", disconnect);
     socket.on("message", message);
-    socket.on("privateMessage", privateMessage);
+    socket.on("recievePrivateMessage", recievePrivateMessage);
     socket.on("typingStart", typingStart);
     socket.on("typingStop", typingStop);
     socket.on("rooms", rooms);
@@ -200,7 +207,7 @@ function SocketProvider({ children }: PropsWithChildren) {
       socket.off("updateSessionList", handleSessions);
       socket.off("disconnect", disconnect);
       socket.off("message", message);
-      socket.off("privateMessage", privateMessage);
+      socket.off("recievePrivateMessage", recievePrivateMessage);
       socket.off("typingStart", typingStart);
       socket.off("typingStop", typingStop);
       socket.off("rooms", rooms);
@@ -208,7 +215,7 @@ function SocketProvider({ children }: PropsWithChildren) {
       socket.off("roomHistory", handleRoomHistory);
       socket.off("DMHistory", handleDMHistory);
     };
-  }, [currentRoom]);
+  }, [currentRoom, currentUser]);
 
   return (
     <SocketContext.Provider

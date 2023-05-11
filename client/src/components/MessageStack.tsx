@@ -19,7 +19,7 @@ export default function MessageStack(
   { isMobile }: Props = { isMobile: false }
 ) {
   // We'll fetch this from the context eventually
-  const { messages, isPrivate, privateMessages, loggedInUser, currentUser, currentRoom } = useSocket();
+  const { messages, isPrivate, privateMessages, loggedInUser } = useSocket();
   console.log(privateMessages)
   const largeScreen = useMediaQuery(theme.breakpoints.up("md"));
 

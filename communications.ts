@@ -3,7 +3,7 @@ import { Message, PrivateMessage, Room, Session, SocketData, User } from "./type
 export interface ServerToClientEvents {
   updateSessionList: (sessions: Session[]) => void;
   message: (room: string, message: Message) => void;
-  privateMessage: (message: PrivateMessage) => void;
+  recievePrivateMessage: (message: PrivateMessage) => void;
   users: (users: User[]) => void;
   rooms: (rooms: Room[]) => void;
   setSession: (session: SocketData) => void;
@@ -16,7 +16,7 @@ export interface ServerToClientEvents {
 export interface ClientToServerEvents {
   updateSessionList: (socket: any) => void;
   message: (room: string, message: Message) => void;
-  privateMessage: (message: PrivateMessage) => void;
+  sendPrivateMessage: (message: PrivateMessage) => void;
   join: (room: string) => void;
   joinDM: (user: User) => void;
   leave: (room: string) => void;

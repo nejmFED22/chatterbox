@@ -187,7 +187,7 @@ const main = async () => {
 
     // Receives and sends out messages
     socket.on(
-      "privateMessage",
+      "sendPrivateMessage",
       async (message: PrivateMessage) => {
 
         // Save message to history collection
@@ -218,7 +218,7 @@ const main = async () => {
         console.log("Message: " + retrievedMessage.content);
         console.log(socket.rooms)
         socket.to(message.recipient).to(socket.data.userID as string)
-          .emit("privateMessage", {
+          .emit("recievePrivateMessage", {
             content: retrievedMessage.content,
             author: retrievedMessage.author,
             recipient: retrievedMessage.recipient,
