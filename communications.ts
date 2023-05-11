@@ -1,16 +1,25 @@
-import { Message, PrivateMessage, Room, Session, SocketData, User } from "./types";
+import {
+  Message,
+  PrivateMessage,
+  Room,
+  Session,
+  SocketData,
+  User,
+} from "./types";
 
 export interface ServerToClientEvents {
   updateSessionList: (sessions: Session[]) => void;
+  rooms: (rooms: Room[]) => void;
+  roomJoined: (room: string) => void;
+  roomHistory: (room: string, history: Message[]) => void;
+  DMHistory: (user: User, history: Message[]) => void;
+  DMJoined: (user: User) => void;
   message: (room: string, message: Message) => void;
   recievePrivateMessage: (message: PrivateMessage) => void;
   users: (users: User[]) => void;
-  rooms: (rooms: Room[]) => void;
   setSession: (session: SocketData) => void;
   typingStart: (user: string) => void;
   typingStop: (user: string) => void;
-  roomHistory: (room: string, history: Message[]) => void;
-  DMHistory: (user: User, history: Message[]) => void;
 }
 
 export interface ClientToServerEvents {
