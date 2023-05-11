@@ -1,4 +1,3 @@
-// import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CloseIcon from "@mui/icons-material/Close";
 import { IconButton, Tab, Tabs, useMediaQuery } from "@mui/material";
 import Box from "@mui/material/Box";
@@ -97,7 +96,6 @@ export default function Sidebar({
                 sx={styledTabs}
               >
                 <Tab sx={styledLink} label="Rooms" {...a11yProps(0)} />
-                {/* <Tab sx={styledLink} label="DMs" {...a11yProps(1)} /> */}
                 <Tab
                   sx={styledLink}
                   label="Direct Messages"
@@ -122,11 +120,6 @@ export default function Sidebar({
               </Box>
               <AddRoomButtom />
             </TabPanel>
-            {/* <TabPanel value={tab} index={1}>
-              <Box sx={{ p: 3 }}>
-                <SidebarDMList />
-              </Box>
-            </TabPanel> */}
             <TabPanel value={tab} index={1}>
               <Box>
                 <SidebarUserList />
