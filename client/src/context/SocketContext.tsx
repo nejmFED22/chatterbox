@@ -65,7 +65,6 @@ function SocketProvider({ children }: PropsWithChildren) {
 
   function joinRoom(room: string) {
     setIsPrivate(false);
-    console.log("Joining room: " + room);
     if (currentRoom) {
       console.log(`Left room: ${currentRoom}`);
       socket.emit("leave", currentRoom as string);
@@ -104,7 +103,7 @@ function SocketProvider({ children }: PropsWithChildren) {
 
   const sendMessage = (message: Message) => {
     if (!currentRoom) throw Error("Can't send message without a room");
-    console.log("Sending message:", currentRoom, message);
+    console.log(`Sending "${message.content}" in room "${currentRoom}"`);
     socket.emit("message", currentRoom, message);
   };
 
@@ -160,7 +159,6 @@ function SocketProvider({ children }: PropsWithChildren) {
     //------------------MESSAGE------------------//
 
     function message(room: string, message: Message) {
-      console.log("Room and current room", room, currentRoom);
       if (room === currentRoom) {
         setMessages((messages) => [...messages, message]);
       }

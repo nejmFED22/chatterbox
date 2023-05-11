@@ -20,7 +20,6 @@ export default function MessageStack(
 ) {
   // We'll fetch this from the context eventually
   const { messages, isPrivate, privateMessages, loggedInUser } = useSocket();
-  console.log(privateMessages)
   const largeScreen = useMediaQuery(theme.breakpoints.up("md"));
 
   // useEffect(() => {

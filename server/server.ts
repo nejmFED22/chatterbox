@@ -56,7 +56,6 @@ const main = async () => {
 
   io.use(async (socket, next) => {
     const sessionID = socket.handshake.auth.sessionID;
-    console.log("Session ID: " + sessionID);
     if (sessionID) {
       const session = await sessionCollection.findOne({ sessionID });
       if (session) {
@@ -189,7 +188,6 @@ const main = async () => {
     socket.on(
       "sendPrivateMessage",
       async (message: PrivateMessage, user: User) => {
-
         // Save message to history collection
         try {
           await DMHistoryCollection.insertOne({
@@ -213,11 +211,9 @@ const main = async () => {
         const retrievedMessage = historyDocs[0];
 
         // Sends message to recipient and sender
-        console.log("Recipient: " + message.recipient);
-        console.log("Sender: " + socket.data.userID);
-        console.log("Message: " + retrievedMessage.content);
-        console.log(socket.rooms)
-        socket.to(message.recipient).to(socket.data.userID as string)
+        socket
+          .to(message.recipient)
+          .to(socket.data.userID as string)
           .emit("recievePrivateMessage", {
             content: retrievedMessage.content,
             author: retrievedMessage.author,
@@ -235,11 +231,11 @@ const main = async () => {
     const roomList: Room[] = [];
     const sessionList = await sessionCollection.find({}).toArray();
     const listOfUserIDs = sessionList.map(({ userID }) => userID.toString());
-    console.log(listOfUserIDs)
+    console.log(listOfUserIDs);
 
     for (const [name, setOfSocketIds] of rooms) {
       if (!setOfSocketIds.has(name)) {
-        console.log(name)
+        console.log(name);
         if (!listOfUserIDs.includes(name)) {
           roomList.push({
             name: name,
@@ -289,14 +285,23 @@ const main = async () => {
 
   // Fetches DM history from database
   async function getDMHistory(user: User, socket: Socket) {
-    const userID = user.userID
+    const userID = user.userID;
     const historyDocs = await DMHistoryCollection.find({
       $or: [
-        { $and: [{ author: userID }, { recipient: socket.data.userID as string }] },
-        { $and: [{ author: socket.data.userID as string }, { recipient: userID }] }
-      ]
-  }).toArray();
-    console.log(historyDocs)
+        {
+          $and: [
+            { author: userID },
+            { recipient: socket.data.userID as string },
+          ],
+        },
+        {
+          $and: [
+            { author: socket.data.userID as string },
+            { recipient: userID },
+          ],
+        },
+      ],
+    }).toArray();
     const history: PrivateMessage[] = historyDocs.map((doc) => {
       return {
         content: doc.content,

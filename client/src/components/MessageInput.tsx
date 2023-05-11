@@ -37,12 +37,8 @@ export default function MessageInput({ isMobile }: Props) {
     e.preventDefault();
     if (message.trim() && loggedInUser) {
       if (isPrivate && currentUser) {
-        console.log("Current user: ", currentUser)
-        console.log("Current room: ", currentRoom)
         sendPrivateMessage({ content: message, author: loggedInUser, recipient: currentUser.userID as string });
       } else {
-        console.log("Current user: ", currentUser)
-        console.log("Current room: ", currentRoom)
         sendMessage({ content: message, author: loggedInUser });
       }
       setMessage("");
