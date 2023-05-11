@@ -67,6 +67,7 @@ const main = async () => {
       userID: socket.data.userID,
       username: socket.data.username,
       isConnected: true,
+      lastRoom: undefined,
     });
     next();
   });
@@ -80,6 +81,8 @@ const main = async () => {
       { $set: { isConnected: true } }
     );
 
+    await joinLastRoom(socket);
+
     socket.emit("rooms", getRooms());
     await emitSessions(socket);
     io.emit("users", await getConnectedUsers());
@@ -91,17 +94,18 @@ const main = async () => {
     });
 
     // Joins room
-    socket.on("join", async (room) => {
-      socket.join(room);
-      io.emit("rooms", getRooms());
-      const roomHistory = await getRoomHistory(room);
-      socket.emit("roomHistory", room, roomHistory);
+    socket.on("join", (room) => {
+      joinRoom(room, socket);
     });
 
     // Leaves room
     socket.on("leave", (room) => {
       socket.leave(room);
       io.emit("rooms", getRooms());
+      sessionCollection.updateOne(
+        { sessionID: socket.data.sessionID },
+        { $set: { lastRoom: undefined } }
+      );
     });
 
     // Receives and sends out messages
@@ -163,7 +167,28 @@ const main = async () => {
     });
   });
 
-  // Updates list of rooms
+  // ------------ FUNCTIONS ------------ //
+
+  async function joinRoom(room: string, socket: Socket) {
+    socket.join(room);
+    io.emit("rooms", getRooms());
+    const roomHistory = await getRoomHistory(room);
+    socket.emit("roomHistory", room, roomHistory);
+    sessionCollection.updateOne(
+      { sessionID: socket.data.sessionID },
+      { $set: { lastRoom: room } }
+    );
+    socket.emit("roomJoined", room);
+  }
+
+  async function joinLastRoom(socket: Socket) {
+    const session = await sessionCollection.findOne({
+      sessionID: socket.data.sessionID,
+    });
+    console.log("Last room: " + session?.lastRoom);
+    session?.lastRoom && joinRoom(session.lastRoom, socket);
+  }
+
   function getRooms() {
     const { rooms } = io.sockets.adapter;
     const roomList: Room[] = [];
@@ -180,7 +205,6 @@ const main = async () => {
         });
       }
     }
-    console.log("Room list: ", roomList);
     return roomList;
   }
 
@@ -200,7 +224,6 @@ const main = async () => {
         sessionID: session.sessionID,
       }));
 
-      console.log("Connected users:", connectedUserList);
       return connectedUserList;
     } catch (e) {
       console.error("Failed to fetch active sessions:", e);

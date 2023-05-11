@@ -65,7 +65,6 @@ function SocketProvider({ children }: PropsWithChildren) {
     }
     socket.emit("join", room);
     console.log(`Joined room: ${room}`);
-    setCurrentRoom(room);
   }
 
   function leaveAllRooms() {
@@ -109,13 +108,17 @@ function SocketProvider({ children }: PropsWithChildren) {
     //------------------USERS------------------//
 
     function getUsers(users: User[]) {
-      setUserList(users.map(user => ({ ...user, isConnected: true })));
+      setUserList(users.map((user) => ({ ...user, isConnected: true })));
     }
 
     //------------------ROOM------------------//
 
     function rooms(rooms: Room[]) {
       setRoomList(rooms);
+    }
+
+    function roomJoined(room: string) {
+      setCurrentRoom(room);
     }
 
     function handleRoomHistory(room: string, history: Message[]) {
@@ -149,6 +152,7 @@ function SocketProvider({ children }: PropsWithChildren) {
     socket.on("connect", connect);
     socket.on("sessions", handleSessions);
     socket.on("disconnect", disconnect);
+    socket.on("roomJoined", roomJoined);
     socket.on("message", message);
     socket.on("typingStart", typingStart);
     socket.on("typingStop", typingStop);
@@ -160,6 +164,7 @@ function SocketProvider({ children }: PropsWithChildren) {
       socket.off("connect", connect);
       socket.on("sessions", handleSessions);
       socket.off("disconnect", disconnect);
+      socket.off("roomJoined", roomJoined);
       socket.off("message", message);
       socket.off("typingStart", typingStart);
       socket.off("typingStop", typingStop);
