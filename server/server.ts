@@ -95,6 +95,7 @@ const main = async () => {
     socket.join(socket.data.userID as string);
     console.log("A user has connected");
     socket.emit("rooms", await getRooms());
+    const sessionList = await updateSessionList();
 
     await sessionCollection.updateOne(
       { sessionID: socket.data.sessionID },
@@ -104,6 +105,7 @@ const main = async () => {
     await joinLastRoom(socket);
 
     io.emit("users", await getConnectedUsers());
+    io.emit("updateSessionList", sessionList);
 
     //----------------ROOMS----------------//
 
