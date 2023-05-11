@@ -4,7 +4,7 @@ import { useSocket } from "../../context/SocketContext";
 import { theme } from "../../theme";
 
 export default function SidebarUserList() {
-  const { joinDM, sessionList } = useSocket();
+  const { joinDM, sessionList, currentUser, loggedInUser } = useSocket();
 
   useEffect(() => {
     console.log(sessionList);
@@ -12,10 +12,14 @@ export default function SidebarUserList() {
 
   return (
     <List sx={styledList}>
-      {sessionList.map((user) => (
+      {sessionList.map((user) => 
+       user.username !== loggedInUser && (
         <ListItem key={user.userID} sx={listItemStyling}>
           <Link
-            sx={styledLink}
+            sx={{
+              ...styledLink,
+              backgroundColor: user.userID === currentUser?.userID ? theme.palette.primary.main : "",
+            }}
             onClick={() => {
               joinDM(user);
             }}

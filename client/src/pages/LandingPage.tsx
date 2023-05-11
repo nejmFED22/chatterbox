@@ -38,10 +38,10 @@ export default function LandingPage() {
   return (
     <Box sx={outerContainer}>
       <Typography variant="h1">
-        Welcome to Chatterb🄾x!
+        Welcome to Chatterb❑x!
         <br />
         What's your name?
-        {/* □ ▣ ❑ ⛾ 🞔 🞑 ⌗ ⬚ 🞖*/}
+        {/* □ ▣ ❑ ⛾ 🞔 🞑 ⌗ ⬚ 🞖 🄾*/}
       </Typography>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Box sx={formContainer}>

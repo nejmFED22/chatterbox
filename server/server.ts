@@ -314,6 +314,7 @@ const main = async () => {
     }));
   }
 
+  // Fetches all sessions and returns sessions that are connected
   async function getConnectedUsers() {
     try {
       const activeSessions = await sessionCollection

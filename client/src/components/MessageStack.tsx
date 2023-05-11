@@ -35,40 +35,39 @@ export default function MessageStack(
         />
       }
       sx={styledStack}
-    >
-      {!isPrivate
-        ? messages.map((message, index) => (
-            <Card key={index}>
-              <Container>
-                <CardContent
-                  sx={styledCardContent(loggedInUser === message.author)}
-                >
-                  <Typography variant="body1">{message.author}</Typography>
-                  <Typography variant={largeScreen ? "h3" : "h4"}>
-                    {message.content}
-                  </Typography>
-                </CardContent>
-              </Container>
-            </Card>
-          ))
-        : privateMessages.map((message, index) => (
-            <Card key={index}>
-              <Container>
-                <CardContent
-                  sx={styledCardContent(
-                    loggedInUser === message.authorUsername
-                  )}
-                >
-                  <Typography variant="body1">
-                    {message.authorUsername}
-                  </Typography>
-                  <Typography variant={largeScreen ? "h3" : "h4"}>
-                    {message.content}
-                  </Typography>
-                </CardContent>
-              </Container>
-            </Card>
-          ))}
+    >      
+      {!isPrivate ? (
+      messages.map((message, index) => (
+        <Card key={index}>
+          <Container>
+            <CardContent
+              sx={styledCardContent(loggedInUser === message.author)}
+            >
+              <Typography variant="body1">{message.author}</Typography>
+              <Typography variant={largeScreen ? "h3" : "h4"}>
+                {message.content}
+              </Typography>
+            </CardContent>
+          </Container>
+        </Card>
+      ))
+      ) : (
+        privateMessages.map((message, index) => (
+          <Card key={index}>
+            <Container>
+              <CardContent
+                sx={styledCardContent(loggedInUser === message.authorUsername)}
+              >
+                <Typography variant="body1">{message.authorUsername}</Typography>
+                <Typography variant={largeScreen ? "h3" : "h4"}>
+                  {message.content}
+                </Typography>
+              </CardContent>
+            </Container>
+          </Card>
+        ))
+      )
+    }
       <div ref={messageEndRef} />
     </Stack>
   );

@@ -37,7 +37,10 @@ const styledAddButton = {
   bottom: "1.2rem",
   right: "1.2rem",
   "&:hover": {
-    background: theme.palette.primary.main,
+    background: theme.palette.primary.dark,
+  },
+  '&:hover > svg': {
+    color: theme.palette.primary.main,
   },
 };
 
