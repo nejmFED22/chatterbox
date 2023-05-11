@@ -1,13 +1,17 @@
 import { Button, Typography } from "@mui/material";
+import { useSocket } from "../context/SocketContext";
 import { theme } from "../theme";
 
-function handleClearSessionStorage() {
-  sessionStorage.clear();
-  sessionStorage.clear();
-  location.reload();
-}
-
 export default function LogoutButton() {
+  const { socket } = useSocket();
+
+  function handleClearSessionStorage() {
+    const deletedSession = sessionStorage.getItem("sessionID");
+    sessionStorage.clear();
+    socket.emit("logout", deletedSession);
+    location.reload();
+  }
+
   return (
     <>
       <Button sx={styledAddButton} onClick={handleClearSessionStorage}>
