@@ -147,6 +147,8 @@ function SocketProvider({ children }: PropsWithChildren) {
         setMessages(history);
       }
     }
+
+    // Remove the unused user parameter?
     function handleDMHistory(user: User, history: PrivateMessage[]) {
       // if (user === currentUser) {
       setPrivateMessages(history);
