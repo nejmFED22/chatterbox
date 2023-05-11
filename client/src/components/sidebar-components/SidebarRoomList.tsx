@@ -3,6 +3,7 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  Box,
   Link,
   List,
   ListItem,
@@ -16,7 +17,7 @@ export default function SidebarRoomList() {
   // States and variables
   const { roomList, joinRoom } = useSocket();
   const users = ["Jenny", "Nat", "Marcus", "Ellen"];
-  const [activeRoom, setActiveRoom] = useState<string | null>(null); // Skapa en state-variabel för att hålla reda på det aktiva styledAccordion-elementet
+  const [activeRoom, setActiveRoom] = useState<string | null>(null);
 
   useEffect(() => {
     console.log("activeRoom " + activeRoom);
@@ -34,14 +35,10 @@ export default function SidebarRoomList() {
       height: "56px",
     },
 
-    "& .MuiAccordionSummary-expandIconWrapper": {
-      margin: 0,
-      height: "100%",
-    },
-
     "& .MuiTypography-root": {
       display: "flex",
       alignItems: "center",
+      paddingLeft: "1rem",
     },
 
     "&.Mui-expanded": {
@@ -70,6 +67,8 @@ export default function SidebarRoomList() {
                   id="panel1a-header"
                   sx={getAccordionStyle(room.name)}
                 >
+                  <Box sx={styledArrowBackground}></Box>
+
                   <Link
                     sx={styledLink}
                     onClick={(e) => {
@@ -79,17 +78,15 @@ export default function SidebarRoomList() {
                     }}
                     className={activeRoom === room.name ? "active" : ""}
                   >
-                    <Typography variant="h4">
-                      ({room.onlineUsers}) {room.name}
-                    </Typography>
+                    <Typography variant="h4">{room.name}</Typography>
                   </Link>
                 </AccordionSummary>
                 {/* List of online users in the room */}
                 <AccordionDetails>
                   <List>
-                    {users.map((user) => (
+                    {room.onlineUsers.map((user) => (
                       <ListItem key={user}>
-                        <Typography variant="body2">{user}</Typography>
+                        <Typography variant="body1">{user}</Typography>
                       </ListItem>
                     ))}
                   </List>
@@ -99,14 +96,14 @@ export default function SidebarRoomList() {
           ))}
         </List>
       ) : (
-        <>
+        <Box sx={styledNoRoomText}>
           <Typography gutterBottom variant="h3">
             No rooms available :-(
           </Typography>
           <Typography variant="h5">
             Why not create one with the button below?
           </Typography>
-        </>
+        </Box>
       )}
     </>
   );
@@ -137,12 +134,19 @@ const styledAccordion = {
   justifyContent: "space-between",
 };
 
+const styledArrowBackground = {
+  position: "absolute",
+  right: 0,
+  background: theme.palette.primary.light,
+  height: "56px",
+  width: "56px",
+};
+
 const styledArrowIcon = {
   color: theme.palette.primary.dark,
   cursor: "pointer",
-  zIndex: 2,
   padding: "1rem",
-  background: theme.palette.primary.light,
+  position: "relative",
 };
 
 const styledList = {
@@ -157,4 +161,12 @@ const styledListItem = {
   color: theme.palette.primary.light,
   textDecoration: "none",
   cursor: "pointer",
+};
+
+const styledNoRoomText = {
+  padding: "1rem 2rem",
+
+  "& h3": {
+    fontSize: "1.66rem",
+  },
 };

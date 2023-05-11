@@ -30,12 +30,12 @@ Utöver koden ska en muntligt presentation skall genomföras per grupp där ni d
 
 **Krav för väl godkänt:**
 
-- [ ] Alla punkter för godkänt är uppfyllda.
+- [x] Alla punkter för godkänt är uppfyllda.
 
-- [ ] Varje rum i listan skall även visa vilka användare som finns i rummet.
+- [x] Varje rum i listan skall även visa vilka användare som finns i rummet.
 
-- [ ] Det ska gå att ha privata konversationer med enskilda användare (DM’s).
+- [x] Det ska gå att ha privata konversationer med enskilda användare (DM’s).
 
-- [ ] Historik ska sparas för skickade meddelanden och visas när en konversation öppnas (gäller både för Rum och för DM’s).
+- [x] Historik ska sparas för skickade meddelanden och visas när en konversation öppnas (gäller både för Rum och för DM’s).
 
 - [ ] När sidan laddas om ska användaren behålla sitt användarnamn, läggas tillbaka i konversationen som den befann sig i (Rum eller DM) och kunna sina läsa tidigare DM’s.

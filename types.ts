@@ -1,6 +1,6 @@
 export interface Room {
   name: string;
-  onlineUsers: number;
+  onlineUsers: string[];
   //users: User[];
   //messages: Message[]
 }
@@ -33,4 +33,5 @@ export interface SocketData {
   username: string;
   userID: string;
   sessionID: string;
+  isConnected?: boolean;
 }

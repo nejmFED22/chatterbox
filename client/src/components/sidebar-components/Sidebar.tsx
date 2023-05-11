@@ -3,7 +3,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { IconButton, Tab, Tabs, useMediaQuery } from "@mui/material";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
-import React from "react";
+import React, { useEffect } from "react";
 import { theme } from "../../theme";
 import LogoutButton from "../LogoutButton";
 import AddRoomButtom from "./../AddRoomButton";
@@ -43,11 +43,9 @@ function a11yProps(index: number) {
 }
 
 // Sidebar component
-
 export default function Sidebar({
-  // Decides whether sidebar is permanent or toggleable
   toggleSidebar,
-  sidebarOpen,
+  sidebarOpen = true,
 }: {
   toggleSidebar: () => void;
   sidebarOpen: boolean;
@@ -56,7 +54,23 @@ export default function Sidebar({
     toggleSidebar();
   };
 
-  const isMobile = useMediaQuery("(max-width: 600px)");
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+  // Changes sidebar open when you resize window.
+  useEffect(() => {
+    const handleResize = () => {
+      if (isMobile && sidebarOpen) {
+        toggleSidebar();
+      }
+      if (!isMobile && !sidebarOpen) {
+        toggleSidebar();
+      }
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [isMobile, sidebarOpen, toggleSidebar]);
+
+  // Tab logic
   const [tab, setTab] = React.useState(0);
 
   const handleTabChange = (_event: React.SyntheticEvent, newTab: number) => {
@@ -65,7 +79,7 @@ export default function Sidebar({
 
   return (
     <Box sx={sidebarStyles}>
-      {!isMobile || sidebarOpen ? (
+      {sidebarOpen ? (
         <>
           <Drawer
             variant="permanent"
@@ -83,6 +97,8 @@ export default function Sidebar({
                 value={tab}
                 onChange={handleTabChange}
                 aria-label="basic tabs example"
+                indicatorColor="secondary"
+                sx={styledTabs}
               >
                 <Tab sx={styledLink} label="Rooms" {...a11yProps(0)} />
                 <Tab sx={styledLink} label="DMs" {...a11yProps(1)} />
@@ -90,20 +106,18 @@ export default function Sidebar({
               </Tabs>
 
               {/* Close button on mobile */}
-              {isMobile && sidebarOpen && (
-                <IconButton
-                  size="small"
-                  sx={styledCloseIcon}
-                  onClick={handleSidebarToggle}
-                >
-                  <CloseIcon sx={styledCloseIcon} />
-                </IconButton>
-              )}
+              <IconButton
+                size="small"
+                sx={styledCloseIcon}
+                onClick={handleSidebarToggle}
+              >
+                <CloseIcon sx={styledCloseIcon} />
+              </IconButton>
             </Box>
 
             {/* Tab content */}
             <TabPanel value={tab} index={0}>
-              <Box sx={{ p: 3 }}>
+              <Box>
                 <SidebarRoomList />
               </Box>
               <AddRoomButtom />
@@ -114,7 +128,7 @@ export default function Sidebar({
               </Box>
             </TabPanel>
             <TabPanel value={tab} index={2}>
-              <Box sx={{ p: 3 }}>
+              <Box sx={{ p: 0 }}>
                 <SidebarUserList />
               </Box>
             </TabPanel>
@@ -133,15 +147,21 @@ const drawerWidth = 340;
 const sidebarStyles = {
   display: "flex",
   width: "100vw",
-  zIndex: 100,
+  zIndex: 10000000,
   position: "fixed",
 };
 
 const styledBox = {
+  padding: 0,
   display: "flex",
   gap: "0.1rem",
   justifyContent: "center",
-  marginTop: "0.3rem",
+  marginBottom: "0.8rem",
+};
+
+const styledTabs = {
+  minHeight: "40px",
+  height: "44px",
 };
 
 const styledLink = {
@@ -150,35 +170,12 @@ const styledLink = {
   cursor: "pointer",
   justifyContent: "center",
   fontWeight: 700,
+  padding: "0px 16px",
 
-  "&:hover": {
-    textDecoration: "underline",
-  },
   "&.Mui-selected": {
     color: "black",
   },
 };
-
-// const hoverStyles = {
-//   "&:hover": {
-//     background: theme.palette.primary.dark,
-//     color: theme.palette.primary.light,
-//   },
-// };
-
-// const activeStyles = {
-//   "&:active": {
-//     background: theme.palette.primary.main,
-//     color: theme.palette.primary.dark,
-//   },
-// };
-
-// const styledAccordionInner = {
-//   display: "flex",
-//   alignItems: "center",
-//   justifyContent: "space-between",
-//   width: "100%",
-// };
 
 const drawerPaperStyles = {
   width: drawerWidth,

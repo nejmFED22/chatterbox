@@ -77,6 +77,7 @@ const main = async () => {
       sessionID: socket.data.sessionID,
       userID: socket.data.userID,
       username: socket.data.username,
+      isConnected: true,
     });
     socket.emit("setSession", {
       username: socket.data.username as string,
@@ -96,14 +97,14 @@ const main = async () => {
     console.log("A user has connected");
     socket.emit("rooms", await getRooms(socket));
     const sessionList = await updateSessionList();
-    io.emit("updateSessionList", sessionList);
-    io.emit("users", getUsers());
-
-    // Disconnecting and leaving all rooms
-    socket.on("disconnect", async () => {
-      io.emit("rooms", await getRooms(socket));
-      io.emit("users", getUsers());
-    });
+    
+    await sessionCollection.updateOne(
+      { sessionID: socket.data.sessionID },
+      { $set: { isConnected: true } }
+      );
+      
+      io.emit("users", await getConnectedUsers());
+      io.emit("updateSessionList", sessionList);
 
     //----------------ROOMS----------------//
 
@@ -221,6 +222,16 @@ const main = async () => {
           });
       }
     );
+    // Disconnecting and leaving all rooms
+    socket.on("disconnect", async () => {
+      await sessionCollection.updateOne(
+        { sessionID: socket.data.sessionID },
+        { $set: { isConnected: false } }
+      );
+
+      io.emit("rooms", await getRooms(socket));
+      io.emit("users", await getConnectedUsers());
+    });
   });
 
   //-----------------SERVER FUNCTIONS-----------------//
@@ -235,15 +246,19 @@ const main = async () => {
 
     for (const [name, setOfSocketIds] of rooms) {
       if (!setOfSocketIds.has(name)) {
-        console.log(name);
         if (!listOfUserIDs.includes(name)) {
           roomList.push({
             name: name,
-            onlineUsers: setOfSocketIds.size,
+            onlineUsers:
+              Array.from(setOfSocketIds).map(
+                (socketId) =>
+                  io.sockets.sockets.get(socketId)?.data.username as string
+              ) || [],
           });
         }
       }
     }
+    console.log("Room list: ", roomList);
     return roomList;
   }
 
@@ -257,18 +272,23 @@ const main = async () => {
     }));
   }
 
-  // Updates list of users
-  function getUsers() {
-    const userList: User[] = [];
-    console.log(userList);
-    for (let [id, socket] of io.of("/").sockets) {
-      userList.push({
-        userID: id,
-        username: socket.data.username as string,
-        sessionID: socket.data.sessionID as string,
-      });
+  async function getConnectedUsers() {
+    try {
+      const activeSessions = await sessionCollection
+        .find({ isConnected: true })
+        .toArray();
+      const connectedUserList = activeSessions.map((session) => ({
+        userID: session.userID,
+        username: session.username,
+        sessionID: session.sessionID,
+      }));
+
+      console.log("Connected users:", connectedUserList);
+      return connectedUserList;
+    } catch (e) {
+      console.error("Failed to fetch active sessions:", e);
+      return [];
     }
-    return userList;
   }
 
   // Fetches room history from database
