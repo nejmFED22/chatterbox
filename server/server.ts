@@ -92,6 +92,7 @@ const main = async () => {
 
     // Joins room
     socket.on("join", async (room) => {
+      // leave current room
       socket.join(room);
       io.emit("rooms", getRooms());
       const roomHistory = await getRoomHistory(room);
@@ -165,7 +166,7 @@ const main = async () => {
 
   // Updates list of rooms
   function getRooms() {
-    const { rooms } = io.sockets.adapter;
+    const { rooms } = io.of("/").adapter;
     const roomList: Room[] = [];
 
     for (const [name, setOfSocketIds] of rooms) {
