@@ -43,12 +43,19 @@ function SocketProvider({ children }: PropsWithChildren) {
   const [loggedInUser, setLoggedInUser] = useState(
     sessionStorage.getItem("username") || ""
   );
+  //Private/Public chat
   const [isPrivate, setIsPrivate] = useState(false);
+
+  //Room you are in
   const [currentRoom, setCurrentRoom] = useState<string>();
+
+  //User you are DMing
   const [currentUser, setCurrentUser] = useState<User>();
+
   const [roomList, setRoomList] = useState<Room[]>([]);
   const [sessionList, setSessonList] = useState<Session[]>([]);
   const [userList, setUserList] = useState<User[]>([]);
+
   const [messages, setMessages] = useState<Message[]>([]);
   const [privateMessages, setPrivateMessages] = useState<PrivateMessage[]>([]);
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
@@ -112,15 +119,15 @@ function SocketProvider({ children }: PropsWithChildren) {
     socket.emit("sendPrivateMessage", message, currentUser);
   };
 
+  //-----------CONNECTION AND SESSION MANAGEMENT----------//
+
   useEffect(() => {
-    //-----------CONNECTION AND SESSION MANAGEMENT----------//
 
     function connect() {
       socket.emit("sessions");
       console.log("Connected to server");
     }
 
-    // Vad gör den här funktionen?
     function handleSessions(sessions: Session[]) {
       setSessonList(sessions);
     }

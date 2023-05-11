@@ -28,9 +28,9 @@ const DB = "chatterbox";
 const COLLECTION = "socket.io-adapter-events";
 
 const mongoClient = new MongoClient(
-  // "mongodb+srv://nabl:o8A3Lq7bAFyvlUg1@chatterbox.ugl1wjb.mongodb.net/"
+  "mongodb+srv://nabl:o8A3Lq7bAFyvlUg1@chatterbox.ugl1wjb.mongodb.net/"
   //"mongodb+srv://jenny:zyqluPwgsy7Scf5H@chatterboxtest.w6o91jx.mongodb.net/"
-  "mongodb+srv://marcus:5bgDikBCj7g88b6p@chatterbox.tzxzwxr.mongodb.net/"
+  //"mongodb+srv://marcus:5bgDikBCj7g88b6p@chatterbox.tzxzwxr.mongodb.net/"
 );
 
 const main = async () => {
@@ -89,8 +89,9 @@ const main = async () => {
     next();
   });
 
+  //-----------------SOCKET CONNECTION-----------------//
+  
   io.on("connection", async (socket) => {
-    //-----------------SOCKET CONNECTION-----------------//
 
     // Updates session list and room list
     socket.join(socket.data.userID as string);
@@ -278,6 +279,7 @@ const main = async () => {
     }));
   }
 
+  // Fetches all sessions and returns sessions that are connected
   async function getConnectedUsers() {
     try {
       const activeSessions = await sessionCollection
@@ -289,7 +291,6 @@ const main = async () => {
         sessionID: session.sessionID,
       }));
 
-      console.log("Connected users:", connectedUserList);
       return connectedUserList;
     } catch (e) {
       console.error("Failed to fetch active sessions:", e);

@@ -15,8 +15,7 @@ import { theme } from "../../theme";
 
 export default function SidebarRoomList() {
   // States and variables
-  const { roomList, joinRoom } = useSocket();
-  const users = ["Jenny", "Nat", "Marcus", "Ellen"];
+  const { roomList, joinRoom, currentRoom } = useSocket();
   const [activeRoom, setActiveRoom] = useState<string | null>(null);
 
   useEffect(() => {
@@ -45,7 +44,7 @@ export default function SidebarRoomList() {
       minHeight: "0px",
     },
 
-    ...(activeRoom === roomName && {
+    ...(currentRoom === roomName && {
       background: theme.palette.primary.main,
       padding: 0,
       textDecoration: "none",
@@ -76,7 +75,7 @@ export default function SidebarRoomList() {
                       joinRoom(room.name);
                       setActiveRoom(room.name);
                     }}
-                    className={activeRoom === room.name ? "active" : ""}
+                    className={currentRoom === room.name ? "active" : ""}
                   >
                     <Typography variant="h4">{room.name}</Typography>
                   </Link>
