@@ -38,6 +38,7 @@ export default function SidebarRoomList() {
 
     "&.Mui-expanded": {
       minHeight: "0px",
+      margin: "0px",
     },
 
     ...(activeRoom === roomName && {
@@ -113,7 +114,6 @@ const styledLink = {
   fontFamily: "Inter",
   paddingRight: "2rem",
   width: "100%",
-  height: "100%",
 
   "&:hover": {
     textDecoration: "underline",
@@ -146,9 +146,6 @@ const styledArrowIcon = {
 
 const styledList = {
   padding: "0",
-  display: "flex",
-  flexDirection: "column",
-  gap: "1rem",
 };
 
 const styledListItem = {
