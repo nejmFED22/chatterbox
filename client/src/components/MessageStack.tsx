@@ -19,8 +19,8 @@ export default function MessageStack(
   { isMobile }: Props = { isMobile: false }
 ) {
   // We'll fetch this from the context eventually
-  const { messages, loggedInUser } = useSocket();
-
+  const { messages, isPrivate, privateMessages, loggedInUser, currentUser, currentRoom } = useSocket();
+  console.log(privateMessages)
   const largeScreen = useMediaQuery(theme.breakpoints.up("md"));
 
   // useEffect(() => {
@@ -50,7 +50,9 @@ export default function MessageStack(
       ))} */}
 
       {/* TODO: Ändra index till id? */}
-      {messages.map((message, index) => (
+      
+      {!isPrivate ? (
+      messages.map((message, index) => (
         <Card key={index}>
           <Container>
             <CardContent
@@ -63,7 +65,24 @@ export default function MessageStack(
             </CardContent>
           </Container>
         </Card>
-      ))}
+      ))
+      ) : (
+        privateMessages.map((message, index) => (
+          <Card key={index}>
+            <Container>
+              <CardContent
+                sx={styledCardContent(loggedInUser === message.author)}
+              >
+                <Typography variant="body1">{message.author}</Typography>
+                <Typography variant={largeScreen ? "h3" : "h4"}>
+                  {message.content}
+                </Typography>
+              </CardContent>
+            </Container>
+          </Card>
+        ))
+      )
+    }
     </Stack>
   );
 }

@@ -17,7 +17,7 @@ export default function MessageInput({ isMobile }: Props) {
   const [typing, setTyping] = useState(false);
   const timerRef = useRef<number | null>(null);
 
-  const { typingStart, typingStop, typingUsers, currentRoom, sendPrivateMessage, loggedInUser } =
+  const { typingStart, typingStop, typingUsers, sendMessage, sendPrivateMessage, loggedInUser, currentRoom, currentUser, isPrivate } =
     useSocket();
 
   function handleTyping(e: React.ChangeEvent<HTMLInputElement>) {
@@ -36,8 +36,15 @@ export default function MessageInput({ isMobile }: Props) {
   function handleSendMessage(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (message.trim() && loggedInUser) {
-      sendPrivateMessage({ content: message, author: loggedInUser, recipient: currentRoom as string });
-      //console.log("Message '" + message + "' has been sent.");
+      if (isPrivate && currentUser) {
+        console.log("Current user: ", currentUser)
+        console.log("Current room: ", currentRoom)
+        sendPrivateMessage({ content: message, author: loggedInUser, recipient: currentUser.userID as string });
+      } else {
+        console.log("Current user: ", currentUser)
+        console.log("Current room: ", currentRoom)
+        sendMessage({ content: message, author: loggedInUser });
+      }
       setMessage("");
     }
   }

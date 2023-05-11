@@ -116,6 +116,12 @@ const main = async () => {
       socket.emit("roomHistory", room, roomHistory);
     });
 
+    // Joins DM
+    socket.on("joinDM", async (user) => {
+      const DMHistory = await getDMHistory(user, socket);
+      socket.emit("DMHistory", user, DMHistory);
+    });
+
     // Leaves room
     socket.on("leave", (room) => {
       socket.leave(room);
@@ -129,10 +135,10 @@ const main = async () => {
     });
 
     // Fetch DM room history from database
-    // socket.on("getDMRoomHistory", async (room: string) => {
-    //   const history = await getDMRoomHistory(room);
-    //   socket.emit("roomHistory", room, history);
-    // });
+    socket.on("getDMHistory", async (user: User) => {
+      const history = await getDMHistory(user, socket);
+      socket.emit("DMHistory", user, history);
+    });
 
     //-----------------MESSAGES-----------------//
 
@@ -272,6 +278,26 @@ const main = async () => {
       return {
         content: doc.content,
         author: doc.author,
+      };
+    });
+    return history;
+  }
+
+  // Fetches DM history from database
+  async function getDMHistory(user: User, socket: Socket) {
+    const userID = user.userID
+    const historyDocs = await DMHistoryCollection.find({
+      $or: [
+        { $and: [{ author: userID }, { recipient: socket.data.userID as string }] },
+        { $and: [{ author: socket.data.userID as string }, { recipient: userID }] }
+      ]
+  }).toArray();
+    console.log(historyDocs)
+    const history: PrivateMessage[] = historyDocs.map((doc) => {
+      return {
+        content: doc.content,
+        author: doc.author,
+        recipient: doc.recipient,
       };
     });
     return history;

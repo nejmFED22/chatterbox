@@ -15,7 +15,7 @@ export default function ChatPage() {
     setSidebarOpen(!sidebarOpen);
   };
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const { currentRoom, socket } = useSocket();
+  const { currentRoom, currentUser, socket } = useSocket();
 
   useEffect(() => {
     socket.connect();
@@ -28,7 +28,7 @@ export default function ChatPage() {
   return (
     <Fragment>
       <Header toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
-      {currentRoom ? (
+      {currentRoom || currentUser ? (
         <>
           <Box sx={{ width: windowWidth, ...styledBox }} component={"main"}>
             <MessageStack isMobile={isMobile} />

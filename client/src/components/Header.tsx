@@ -58,8 +58,13 @@ export default function Header({
       },
     };
   };
-
-  const { leaveAllRooms, currentRoom } = useSocket();
+  const { leaveAllRooms, currentRoom, currentUser } = useSocket();
+  let roomName = "Chatterbox"
+  if (currentRoom) {
+    roomName = currentRoom;
+  } else if (currentUser) {
+    roomName = currentUser.username;
+  }
 
   return (
     <>
@@ -67,7 +72,7 @@ export default function Header({
         <AppBar sx={getStyleAppBar()} position={"relative"}>
           <Container maxWidth="lg" sx={styledContainer}>
             <Box sx={styledLeft}>
-              {currentRoom ? (
+              {currentRoom || currentUser ? (
                 <IconButton
                   aria-label="exit-room"
                   size={"large"}
@@ -83,7 +88,7 @@ export default function Header({
                 component="div"
                 sx={{ ...styledLeft, ml: 1 }}
               >
-               {currentRoom ? currentRoom : "Chatterbox"}
+               {roomName}
               </Typography>
             </Box>
             {isMobile && (

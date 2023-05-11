@@ -27,6 +27,9 @@ interface ContextValues {
   roomList?: Room[];
   userList: User[];
   sessionList: Session[];
+  isPrivate: boolean;
+  setIsPrivate: React.Dispatch<React.SetStateAction<boolean>>;
+  currentUser?: User;
 }
 
 const SocketContext = createContext<ContextValues>(null as any);
@@ -40,7 +43,9 @@ function SocketProvider({ children }: PropsWithChildren) {
   const [loggedInUser, setLoggedInUser] = useState(
     sessionStorage.getItem("username") || ""
   );
+  const [isPrivate, setIsPrivate] = useState(false);
   const [currentRoom, setCurrentRoom] = useState<string>();
+  const [currentUser, setCurrentUser] = useState<User>();
   const [roomList, setRoomList] = useState<Room[]>([]);
   const [sessionList, setSessonList] = useState<Session[]>([]);
   const [userList, setUserList] = useState<User[]>([]);
@@ -59,6 +64,7 @@ function SocketProvider({ children }: PropsWithChildren) {
   //-----------------------------FUNCTIONS-----------------------------//
 
   function joinRoom(room: string) {
+    setIsPrivate(false);
     console.log("Joining room: " + room);
     if (currentRoom) {
       console.log(`Left room: ${currentRoom}`);
@@ -66,12 +72,20 @@ function SocketProvider({ children }: PropsWithChildren) {
     }
     socket.emit("join", room);
     console.log(`Joined room: ${room}`);
+    setCurrentUser(undefined);
     setCurrentRoom(room);
   }
 
   function joinDM(user: Session) {
-    console.log(`Joined room: ${user.username}`);
-    setCurrentRoom(user.userID);
+    setIsPrivate(true);
+    if (currentRoom) {
+      console.log(`Left room: ${currentRoom}`);
+      socket.emit("leave", currentRoom as string);
+      setCurrentRoom(undefined);
+    }
+    socket.emit("joinDM", user);
+    console.log(`Joined DM with ${user.username}`);
+    setCurrentUser(user);
   }
 
   function leaveAllRooms() {
@@ -106,7 +120,6 @@ function SocketProvider({ children }: PropsWithChildren) {
     }
 
     function handleSessions(sessions: Session[]) {
-      console.log("Sessions:", sessions);
       setSessonList(sessions);
     }
 
@@ -136,6 +149,11 @@ function SocketProvider({ children }: PropsWithChildren) {
         setMessages(history);
       }
     }
+    function handleDMHistory(user: User, history: PrivateMessage[]) {
+      // if (user === currentUser) {
+        setPrivateMessages(history);
+      // }
+    }
 
     //------------------MESSAGE------------------//
 
@@ -148,6 +166,7 @@ function SocketProvider({ children }: PropsWithChildren) {
 
     function privateMessage(message: PrivateMessage) {
       console.log(`${message.author} sent "${message.content}" to ${message.recipient}`);
+      
       setPrivateMessages((privateMessages) => [...privateMessages, message]);
     }
 
@@ -172,6 +191,7 @@ function SocketProvider({ children }: PropsWithChildren) {
     socket.on("rooms", rooms);
     socket.on("users", getUsers);
     socket.on("roomHistory", handleRoomHistory);
+    socket.on("DMHistory", handleDMHistory);
 
     return () => {
       socket.off("connect", connect);
@@ -185,6 +205,7 @@ function SocketProvider({ children }: PropsWithChildren) {
       socket.off("rooms", rooms);
       socket.off("users", getUsers);
       socket.off("roomHistory", handleRoomHistory);
+      socket.off("DMHistory", handleDMHistory);
     };
   }, [currentRoom]);
 
@@ -208,6 +229,9 @@ function SocketProvider({ children }: PropsWithChildren) {
         sendMessage,
         sendPrivateMessage,
         sessionList,
+        isPrivate,
+        setIsPrivate,
+        currentUser,
       }}
     >
       {children}

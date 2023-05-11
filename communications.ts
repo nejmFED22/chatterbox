@@ -10,6 +10,7 @@ export interface ServerToClientEvents {
   typingStart: (user: string) => void;
   typingStop: (user: string) => void;
   roomHistory: (room: string, history: Message[]) => void;
+  DMHistory: (user: User, history: Message[]) => void;
 }
 
 export interface ClientToServerEvents {
@@ -17,11 +18,13 @@ export interface ClientToServerEvents {
   message: (room: string, message: Message) => void;
   privateMessage: (message: PrivateMessage) => void;
   join: (room: string) => void;
+  joinDM: (user: User) => void;
   leave: (room: string) => void;
   createRoom: (roomName: string, firstUser: string) => void;
   typingStart: (room: string, user: string) => void;
   typingStop: (room: string, user: string) => void;
   getRoomHistory: (room: string) => void;
+  getDMHistory: (user: User) => void;
 }
 
 export interface InterServerEvents {}
