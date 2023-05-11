@@ -79,7 +79,7 @@ const main = async () => {
       { $set: { isConnected: true } }
     );
 
-    socket.emit("rooms", getRooms());
+    emitRooms(socket);
 
     await emitSessions(socket);
     io.emit("users", await getConnectedUsers());
@@ -99,10 +99,10 @@ const main = async () => {
       socket.join(room);
       //socket.emit("joined", room);
 
-      const roomHistory = await getRoomHistory(room);
-      socket.emit("roomHistory", room, roomHistory);
+      // const roomHistory = await getRoomHistory(room);
+      // socket.emit("roomHistory", room, roomHistory);
 
-      io.emit("rooms", getRooms());
+      emitRooms(io);
     });
 
     // Leaves room
@@ -161,7 +161,7 @@ const main = async () => {
         { $set: { isConnected: false } }
       );
 
-      io.emit("rooms", getRooms());
+      emitRooms(io);
       io.emit("users", await getConnectedUsers());
     });
   });
