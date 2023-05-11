@@ -11,7 +11,7 @@ export default function SidebarUserList() {
   }, [sessionList]);
 
   return (
-    <List>
+    <List sx={styledList}>
       {sessionList.map((user) => 
        user.username !== loggedInUser && (
         <ListItem key={user.userID} sx={listItemStyling}>
@@ -37,13 +37,16 @@ const styledLink = {
   textDecoration: "none",
   cursor: "pointer",
   width: "100%",
-  weight: "100%",
   color: theme.palette.primary.dark,
   "&:hover": {
     backgroundColor: theme.palette.primary.dark,
     color: theme.palette.primary.light,
     textDecoration: "underline",
   },
+};
+
+const styledList = {
+  padding: "0",
 };
 
 const listItemStyling = {

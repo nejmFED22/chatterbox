@@ -60,9 +60,6 @@ export default function Sidebar({
       if (isMobile && sidebarOpen) {
         toggleSidebar();
       }
-      if (!isMobile && !sidebarOpen) {
-        toggleSidebar();
-      }
     };
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
@@ -124,7 +121,7 @@ export default function Sidebar({
               <AddRoomButtom />
             </TabPanel>
             <TabPanel value={tab} index={1}>
-              <Box sx={{ p: 0 }}>
+              <Box>
                 <SidebarUserList />
               </Box>
             </TabPanel>

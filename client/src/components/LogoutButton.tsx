@@ -1,4 +1,5 @@
 import { Button, Typography } from "@mui/material";
+import { theme } from "../theme";
 
 function handleClearSessionStorage() {
   sessionStorage.clear();
@@ -7,7 +8,6 @@ function handleClearSessionStorage() {
 }
 
 export default function LogoutButton() {
-
   return (
     <>
       <Button sx={styledAddButton} onClick={handleClearSessionStorage}>
@@ -18,14 +18,16 @@ export default function LogoutButton() {
 }
 
 const styledAddButton = {
-  padding: "1rem",
+  padding: "1.6rem",
+  paddingBottom: "2.6rem",
+  background: theme.palette.primary.light,
   fontWeight: 600,
   color: "black",
   justifySelf: "center",
   width: "4.8rem",
   height: "2.2rem",
-  position: "absolute",
-  bottom: "1.6rem",
+  position: "fixed",
+  bottom: "0",
   right: "14.5rem",
   "&:hover": {
     textDecoration: "underline",
