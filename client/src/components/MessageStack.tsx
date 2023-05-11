@@ -71,9 +71,9 @@ export default function MessageStack(
           <Card key={index}>
             <Container>
               <CardContent
-                sx={styledCardContent(loggedInUser === message.author)}
+                sx={styledCardContent(loggedInUser === message.authorUsername)}
               >
-                <Typography variant="body1">{message.author}</Typography>
+                <Typography variant="body1">{message.authorUsername}</Typography>
                 <Typography variant={largeScreen ? "h3" : "h4"}>
                   {message.content}
                 </Typography>

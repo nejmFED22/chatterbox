@@ -169,7 +169,6 @@ function SocketProvider({ children }: PropsWithChildren) {
       console.log(`${message.author} sent "${message.content}" to ${message.recipient}`);
       if (currentUser) {
         if (currentUser.userID === message.author) {
-        message.author = currentUser.username;
         setPrivateMessages((privateMessages) => [...privateMessages, message]);
         }
     }
