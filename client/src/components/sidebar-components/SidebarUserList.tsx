@@ -28,7 +28,6 @@ const styledLink = {
   textDecoration: "none",
   cursor: "pointer",
   width: "100%",
-  weight: "100%",
   color: theme.palette.primary.dark,
   "&:hover": {
     backgroundColor: theme.palette.primary.dark,

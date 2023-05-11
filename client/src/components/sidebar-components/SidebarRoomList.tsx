@@ -118,7 +118,6 @@ const styledLink = {
   fontFamily: "Inter",
   paddingRight: "2rem",
   width: "100%",
-  height: "100%",
 
   "&:hover": {
     textDecoration: "underline",
