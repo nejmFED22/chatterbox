@@ -83,7 +83,6 @@ const main = async () => {
       sessionID: socket.data.sessionID as string,
     });
     const sessionList = await updateSessionList();
-    console.log(sessionList);
     io.emit("updateSessionList", sessionList);
     next();
   });
@@ -119,7 +118,7 @@ const main = async () => {
       await sessionCollection.deleteOne({ sessionID: session });
       const sessionList = await updateSessionList();
       io.emit("updateSessionList", sessionList);
-    })
+    });
 
     // Joins DM
     socket.on("joinDM", (user) => {
@@ -249,13 +248,13 @@ const main = async () => {
   async function joinRoom(room: string, socket: Socket) {
     socket.join(room);
     io.emit("rooms", await getRooms());
+    socket.emit("roomJoined", room);
     const roomHistory = await getRoomHistory(room);
     socket.emit("roomHistory", room, roomHistory);
     sessionCollection.updateOne(
       { sessionID: socket.data.sessionID },
       { $set: { lastRoom: room } }
     );
-    socket.emit("roomJoined", room);
   }
 
   async function joinDM(user: Session, socket: Socket) {
@@ -272,7 +271,6 @@ const main = async () => {
     const session = await sessionCollection.findOne({
       sessionID: socket.data.sessionID,
     });
-    console.log(session);
     if (Boolean(session?.lastRoom)) {
       typeof session?.lastRoom === "string"
         ? joinRoom(session.lastRoom, socket)
@@ -306,7 +304,6 @@ const main = async () => {
   // Updates list of sessions
   async function updateSessionList(): Promise<Session[]> {
     const sessions = await sessionCollection.find().toArray();
-    console.log(sessions);
     return sessions.map(({ sessionID, userID, username }) => ({
       sessionID,
       userID,
@@ -373,6 +370,7 @@ const main = async () => {
         recipientUsername: doc.recipientUsername,
       };
     });
+    console.log("History:", history);
     return history;
   }
 
