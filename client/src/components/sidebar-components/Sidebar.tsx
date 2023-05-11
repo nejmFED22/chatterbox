@@ -101,8 +101,8 @@ export default function Sidebar({
                 sx={styledTabs}
               >
                 <Tab sx={styledLink} label="Rooms" {...a11yProps(0)} />
-                <Tab sx={styledLink} label="DMs" {...a11yProps(1)} />
-                <Tab sx={styledLink} label="Users" {...a11yProps(2)} />
+                {/* <Tab sx={styledLink} label="DMs" {...a11yProps(1)} /> */}
+                <Tab sx={styledLink} label="Direct Messages" {...a11yProps(1)} />
               </Tabs>
 
               {/* Close button on mobile */}
@@ -122,12 +122,12 @@ export default function Sidebar({
               </Box>
               <AddRoomButtom />
             </TabPanel>
-            <TabPanel value={tab} index={1}>
+            {/* <TabPanel value={tab} index={1}>
               <Box sx={{ p: 3 }}>
                 <SidebarDMList />
               </Box>
-            </TabPanel>
-            <TabPanel value={tab} index={2}>
+            </TabPanel> */}
+            <TabPanel value={tab} index={1}>
               <Box sx={{ p: 0 }}>
                 <SidebarUserList />
               </Box>

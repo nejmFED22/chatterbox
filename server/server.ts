@@ -1,5 +1,4 @@
 import { createAdapter } from "@socket.io/mongo-adapter";
-import { Emitter } from "@socket.io/mongo-emitter";
 import { MongoClient } from "mongodb";
 import { Server, Socket } from "socket.io";
 import { v4 as uuidv4 } from "uuid";
@@ -8,7 +7,14 @@ import {
   InterServerEvents,
   ServerToClientEvents,
 } from "../communications";
-import { Message, Room, SocketData } from "../types";
+import {
+  Message,
+  PrivateMessage,
+  Room,
+  Session,
+  SocketData,
+  User,
+} from "../types";
 const io = new Server<
   ClientToServerEvents,
   ServerToClientEvents,
@@ -16,12 +22,15 @@ const io = new Server<
   SocketData
 >();
 
+//-------------------------MONGODB SETUP-------------------------//
+
 const DB = "chatterbox";
 const COLLECTION = "socket.io-adapter-events";
 
 const mongoClient = new MongoClient(
   "mongodb+srv://nabl:o8A3Lq7bAFyvlUg1@chatterbox.ugl1wjb.mongodb.net/"
-  // "mongodb+srv://jenny:zyqluPwgsy7Scf5H@chatterboxtest.w6o91jx.mongodb.net/"
+  //"mongodb+srv://jenny:zyqluPwgsy7Scf5H@chatterboxtest.w6o91jx.mongodb.net/"
+  // "mongodb+srv://marcus:5bgDikBCj7g88b6p@chatterbox.tzxzwxr.mongodb.net/"
 );
 
 const main = async () => {
@@ -33,18 +42,19 @@ const main = async () => {
       size: 1e6,
     });
   } catch (e) {
-    // collection already exists
+    // console.log("Collection already exists");
   }
   const mongoCollection = mongoClient.db(DB).collection(COLLECTION);
-  const historyCollection = mongoClient.db(DB).collection("history");
-  const sessionCollection = mongoClient.db(DB).collection("session");
-  const sessionEmitter = new Emitter(sessionCollection);
+  const historyCollection = mongoClient.db(DB).collection("Room History");
+  const DMHistoryCollection = mongoClient.db(DB).collection("DM Room History");
+  const sessionCollection = mongoClient.db(DB).collection("Sessions");
 
   io.adapter(createAdapter(mongoCollection));
 
+  //-----------------SOCKET SESSION SETUP-----------------//
+
   io.use(async (socket, next) => {
     const sessionID = socket.handshake.auth.sessionID;
-    console.log("Session ID: " + sessionID);
     if (sessionID) {
       const session = await sessionCollection.findOne({ sessionID });
       if (session) {
@@ -56,9 +66,8 @@ const main = async () => {
     }
     const username = socket.handshake.auth.username;
     if (!username) {
-      return next(new Error("invalid username"));
+      return next(new Error("Not logged in"));
     }
-    console.log("Creating user");
     socket.data.sessionID = uuidv4();
     socket.data.userID = uuidv4();
     socket.data.username = username;
@@ -69,12 +78,24 @@ const main = async () => {
       isConnected: true,
       lastRoom: undefined,
     });
+    socket.emit("setSession", {
+      username: socket.data.username as string,
+      userID: socket.data.userID as string,
+      sessionID: socket.data.sessionID as string,
+    });
+    const sessionList = await updateSessionList();
+    io.emit("updateSessionList", sessionList);
     next();
   });
 
   io.on("connection", async (socket) => {
-    // Setup for client
+    //-----------------SOCKET CONNECTION-----------------//
+
+    // Updates session list and room list
+    socket.join(socket.data.userID as string);
     console.log("A user has connected");
+    socket.emit("rooms", await getRooms());
+    const sessionList = await updateSessionList();
 
     await sessionCollection.updateOne(
       { sessionID: socket.data.sessionID },
@@ -83,37 +104,48 @@ const main = async () => {
 
     await joinLastRoom(socket);
 
-    socket.emit("rooms", getRooms());
-    await emitSessions(socket);
     io.emit("users", await getConnectedUsers());
+    io.emit("updateSessionList", sessionList);
 
-    socket.emit("session", {
-      username: socket.data.username as string,
-      userID: socket.data.userID as string,
-      sessionID: socket.data.sessionID as string,
-    });
+    //----------------ROOMS----------------//
 
     // Joins room
     socket.on("join", (room) => {
       joinRoom(room, socket);
     });
 
+    // Joins DM
+    socket.on("joinDM", async (user) => {
+      const DMHistory = await getDMHistory(user, socket);
+      socket.emit("DMHistory", user, DMHistory);
+    });
+
     // Leaves room
-    socket.on("leave", (room) => {
+    socket.on("leave", async (room) => {
       socket.leave(room);
-      io.emit("rooms", getRooms());
+      io.emit("rooms", await getRooms());
       sessionCollection.updateOne(
         { sessionID: socket.data.sessionID },
         { $set: { lastRoom: undefined } }
       );
     });
 
+    // Fetch room history from database
+    socket.on("getRoomHistory", async (room: string) => {
+      const history = await getRoomHistory(room);
+      socket.emit("roomHistory", room, history);
+    });
+
+    // Fetch DM room history from database
+    socket.on("getDMHistory", async (user: User) => {
+      const history = await getDMHistory(user, socket);
+      socket.emit("DMHistory", user, history);
+    });
+
+    //-----------------MESSAGES-----------------//
+
     // Receives and sends out messages
     socket.on("message", async (room: string, message: Message) => {
-      console.log(
-        `Message received: ${message.content} from ${message.author} in room ${room}`
-      );
-
       // Save message to history collection
       try {
         await historyCollection.insertOne({
@@ -139,12 +171,6 @@ const main = async () => {
       });
     });
 
-    // Fetch room history from database
-    socket.on("getRoomHistory", async (room: string) => {
-      const history = await getRoomHistory(room);
-      socket.emit("roomHistory", room, history);
-    });
-
     // Communicate to client that user started typing
     socket.on("typingStart", (room, user) => {
       socket.broadcast.to(room).emit("typingStart", user);
@@ -155,6 +181,51 @@ const main = async () => {
       socket.broadcast.to(room).emit("typingStop", user);
     });
 
+    //-----------------PRIVATE MESSAGES-----------------//
+
+    // Receives and sends out messages
+    socket.on(
+      "sendPrivateMessage",
+      async (message: PrivateMessage, user: User) => {
+        // Save message to history collection
+        try {
+          await DMHistoryCollection.insertOne({
+            content: message.content,
+            author: socket.data.userID,
+            recipient: message.recipient,
+            authorUsername: socket.data.username,
+            recipientUsername: user.username,
+          });
+        } catch (e) {
+          console.error("Failed to save message to history:", e);
+        }
+
+        // Fetch the message from the history collection
+        const historyDocs = await DMHistoryCollection.find({
+          content: message.content,
+          author: socket.data.userID,
+          recipient: message.recipient,
+          authorUsername: socket.data.username,
+          recipientUsername: user.username,
+        })
+          .sort({ _id: -1 })
+          .limit(1)
+          .toArray();
+        const retrievedMessage = historyDocs[0];
+
+        // Sends message to recipient and sender
+        socket
+          .to(message.recipient)
+          .to(socket.data.userID as string)
+          .emit("recievePrivateMessage", {
+            content: retrievedMessage.content,
+            author: retrievedMessage.author,
+            recipient: retrievedMessage.recipient,
+            authorUsername: retrievedMessage.authorUsername,
+            recipientUsername: retrievedMessage.recipientUsername,
+          });
+      }
+    );
     // Disconnecting and leaving all rooms
     socket.on("disconnect", async () => {
       await sessionCollection.updateOne(
@@ -162,16 +233,16 @@ const main = async () => {
         { $set: { isConnected: false } }
       );
 
-      io.emit("rooms", getRooms());
+      io.emit("rooms", await getRooms());
       io.emit("users", await getConnectedUsers());
     });
   });
 
-  // ------------ FUNCTIONS ------------ //
+  //-----------------SERVER FUNCTIONS-----------------//
 
   async function joinRoom(room: string, socket: Socket) {
     socket.join(room);
-    io.emit("rooms", getRooms());
+    io.emit("rooms", await getRooms());
     const roomHistory = await getRoomHistory(room);
     socket.emit("roomHistory", room, roomHistory);
     sessionCollection.updateOne(
@@ -185,32 +256,40 @@ const main = async () => {
     const session = await sessionCollection.findOne({
       sessionID: socket.data.sessionID,
     });
-    console.log("Last room: " + session?.lastRoom);
     session?.lastRoom && joinRoom(session.lastRoom, socket);
   }
 
-  function getRooms() {
+  async function getRooms() {
     const { rooms } = io.sockets.adapter;
     const roomList: Room[] = [];
+    const sessionList = await sessionCollection.find({}).toArray();
+    const listOfUserIDs = sessionList.map(({ userID }) => userID.toString());
 
     for (const [name, setOfSocketIds] of rooms) {
       if (!setOfSocketIds.has(name)) {
-        roomList.push({
-          name: name,
-          onlineUsers:
-            Array.from(setOfSocketIds).map(
-              (socketId) =>
-                io.sockets.sockets.get(socketId)?.data.username as string
-            ) || [],
-        });
+        if (!listOfUserIDs.includes(name)) {
+          roomList.push({
+            name: name,
+            onlineUsers:
+              Array.from(setOfSocketIds).map(
+                (socketId) =>
+                  io.sockets.sockets.get(socketId)?.data.username as string
+              ) || [],
+          });
+        }
       }
     }
     return roomList;
   }
 
-  async function emitSessions(socket: Socket) {
+  // Updates list of sessions
+  async function updateSessionList(): Promise<Session[]> {
     const sessions = await sessionCollection.find().toArray();
-    socket.emit("sessions", sessions);
+    return sessions.map(({ sessionID, userID, username }) => ({
+      sessionID,
+      userID,
+      username,
+    }));
   }
 
   async function getConnectedUsers() {
@@ -231,6 +310,7 @@ const main = async () => {
     }
   }
 
+  // Fetches room history from database
   async function getRoomHistory(room: string) {
     const historyDocs = await historyCollection.find({ room }).toArray();
     const history: Message[] = historyDocs.map((doc) => {
@@ -242,6 +322,38 @@ const main = async () => {
     return history;
   }
 
+  // Fetches DM history from database
+  async function getDMHistory(user: User, socket: Socket) {
+    const userID = user.userID;
+    const historyDocs = await DMHistoryCollection.find({
+      $or: [
+        {
+          $and: [
+            { author: userID },
+            { recipient: socket.data.userID as string },
+          ],
+        },
+        {
+          $and: [
+            { author: socket.data.userID as string },
+            { recipient: userID },
+          ],
+        },
+      ],
+    }).toArray();
+    const history: PrivateMessage[] = historyDocs.map((doc) => {
+      return {
+        content: doc.content,
+        author: doc.author,
+        recipient: doc.recipient,
+        authorUsername: doc.authorUsername,
+        recipientUsername: doc.recipientUsername,
+      };
+    });
+    return history;
+  }
+
+  // Starts server
   io.listen(3000);
   console.log("listening on port 3000");
 };

@@ -3,14 +3,19 @@ import { useSocket } from "../../context/SocketContext";
 import { theme } from "../../theme";
 
 export default function SidebarUserList() {
-  const { userList } = useSocket();
+  const { joinDM, sessionList } = useSocket();
 
   return (
     <List>
-      {userList.map((user) => (
+      {sessionList.map((user) => (
         <ListItem key={user.userID} sx={listItemStyling}>
-          <Link sx={styledLink}>
-          <Typography variant="h4">{user.username}</Typography>          
+          <Link
+            sx={styledLink}
+            onClick={() => {
+              joinDM(user);
+            }}
+          >
+            <Typography variant="h4">{user.username}</Typography>
           </Link>
         </ListItem>
       ))}
@@ -30,10 +35,8 @@ const styledLink = {
     color: theme.palette.primary.light,
     textDecoration: "underline",
   },
-}
+};
 
 const listItemStyling = {
   padding: 0,
-}
-
-
+};
