@@ -150,6 +150,7 @@ const styledBox = {
   gap: "0.1rem",
   justifyContent: "center",
   marginBottom: "0.8rem",
+  marginTop: "0.32rem"
 };
 
 const styledTabs = {
@@ -179,7 +180,11 @@ const drawerPaperStyles = {
 const styledCloseIcon = {
   color: theme.palette.primary.dark,
   cursor: "pointer",
-  paddingLeft: "0.4rem",
-  paddingRight: "0.4rem",
+  marginTop: "0.1rem",
+  paddingLeft: "0.55rem",
+  paddingRight: "0.1rem",
   zIndex: 2,
+  '&:hover': {
+    backgroundColor: "transparent",
+  }
 };

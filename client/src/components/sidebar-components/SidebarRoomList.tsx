@@ -55,7 +55,7 @@ export default function SidebarRoomList() {
         <List sx={styledList}>
           {roomList.map((room) => (
             <ListItem key={room.name} sx={styledListItem}>
-              <Accordion sx={styledAccordion}>
+              <Accordion disableGutters sx={styledAccordion}>
                 {/* Room information */}
                 <AccordionSummary
                   expandIcon={<ArrowForwardIosIcon sx={styledArrowIcon} />}

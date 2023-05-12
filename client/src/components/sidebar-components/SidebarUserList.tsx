@@ -1,4 +1,4 @@
-import { Link, List, ListItem, Typography } from "@mui/material";
+import { Box, Link, List, ListItem, Typography } from "@mui/material";
 import { useEffect } from "react";
 import { useSocket } from "../../context/SocketContext";
 import { theme } from "../../theme";
@@ -11,24 +11,38 @@ export default function SidebarUserList() {
   }, [sessionList]);
 
   return (
-    <List sx={styledList}>
-      {sessionList.map((user) => 
-       user.username !== loggedInUser && (
-        <ListItem key={user.userID} sx={listItemStyling}>
-          <Link
-            sx={{
-              ...styledLink,
-              backgroundColor: user.userID === currentUser?.userID ? theme.palette.primary.main : "",
-            }}
-            onClick={() => {
-              joinDM(user);
-            }}
-          >
-            <Typography variant="h4">{user.username}</Typography>
-          </Link>
-        </ListItem>
-      ))}
-    </List>
+    <>
+      {sessionList && sessionList.length > 0 ? (
+        <List sx={styledList}>
+          {sessionList.map((user) => (
+            user.username !== loggedInUser && (
+              <ListItem key={user.userID} sx={listItemStyling}>
+                <Link
+                  sx={{
+                    ...styledLink,
+                    backgroundColor: user.userID === currentUser?.userID ? theme.palette.primary.main : '',
+                  }}
+                  onClick={() => {
+                    joinDM(user);
+                  }}
+                >
+                  <Typography variant="h4">{user.username}</Typography>
+                </Link>
+              </ListItem>
+            )
+          ))}
+        </List>
+      ) : (
+        <Box sx={styledNoRoomText}>
+        <Typography gutterBottom variant="h3">
+          No users online :-(
+        </Typography>
+        <Typography variant="h5">
+          Recommend Chatterbox to your friends!
+        </Typography>
+      </Box>
+      )}
+    </>
   );
 }
 
@@ -51,4 +65,12 @@ const styledList = {
 
 const listItemStyling = {
   padding: 0,
+};
+
+const styledNoRoomText = {
+  padding: "1rem 2rem",
+
+  "& h3": {
+    fontSize: "1.66rem",
+  },
 };
