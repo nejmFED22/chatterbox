@@ -179,6 +179,7 @@ const drawerPaperStyles = {
 const styledCloseIcon = {
   color: theme.palette.primary.dark,
   cursor: "pointer",
+  marginTop: "0.1rem",
   paddingLeft: "0.4rem",
   paddingRight: "0.4rem",
   zIndex: 2,
